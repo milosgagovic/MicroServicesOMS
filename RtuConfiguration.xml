@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ProcessControllers>
+	<ProcessController>
+		<DeviceAddress>1</DeviceAddress>
+		<HostName>localhost</HostName>
+		<HostPort>4021</HostPort>
+		<Name>RTU-1</Name>
+	</ProcessController>
+	<ProcessController>
+		<DeviceAddress>2</DeviceAddress>
+		<HostName>localhost</HostName>
+		<HostPort>4022</HostPort>
+		<Name>RTU-2</Name>
+	</ProcessController>
+</ProcessControllers>

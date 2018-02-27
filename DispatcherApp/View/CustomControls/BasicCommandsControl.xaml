@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="DispatcherApp.View.BasicCommandsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DispatcherApp.View"
+             mc:Ignorable="d">
+    <Grid HorizontalAlignment="Stretch">
+        <StackPanel Height="Auto" Width="Auto" HorizontalAlignment="Left">
+            <!--<Button Height="30" Background="Transparent" BorderThickness="0">
+                <Image Source="DispatcherApp/View/Resources/Images/sun.png"/>
+            </Button>-->
+        </StackPanel>
+    </Grid>
+</UserControl>

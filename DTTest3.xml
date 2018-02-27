@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:cim="http://iec.ch/TC57/2010/CIM-schema-cim15#"
+	xmlns:ftn="http://www.ftnydro.com/CIM15/2010/extension#">	
+	
+	<cim:ConnectivityNodeContainer rdf:ID="CNC_1">
+		<cim:IdentifiedObject.mRID>CNC_1</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNodeContainer_1</cim:IdentifiedObject.name>
+	</cim:ConnectivityNodeContainer>
+	
+	<cim:ConnectivityNode rdf:ID="CN_7">
+		<cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#CNC_1"/>
+		<cim:IdentifiedObject.mRID>CN_7</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNode_7</cim:IdentifiedObject.name>
+	</cim:ConnectivityNode>
+	
+	<cim:Terminal rdf:ID="TERM_17">
+		<cim:Terminal.ConductingEquipment rdf:resource="#EC_4"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_7"/>
+		<cim:IdentifiedObject.mRID>TERM_17</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_17</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:EnergyConsumer rdf:ID="EC_4">
+		<cim:EnergyConsumer.pfixed></cim:EnergyConsumer.pfixed>
+		<cim:EnergyConsumer.qfixed></cim:EnergyConsumer.qfixed>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>EC_4</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>EnergyConsumer_4</cim:IdentifiedObject.name>
+	</cim:EnergyConsumer>
+
+</rdf:RDF>

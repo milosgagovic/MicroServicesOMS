@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScadaModel>
+  <RTUS>
+    <RTU>
+      <Address>1</Address>
+      <Name>RTU-2</Name>
+      <FreeSpaceForDigitals>true</FreeSpaceForDigitals>
+      <FreeSpaceForAnalogs>true</FreeSpaceForAnalogs>
+      <Protocol>ModbusTCP</Protocol>
+      <DigOutStartAddr>0</DigOutStartAddr>
+      <DigInStartAddr>1000</DigInStartAddr>
+      <AnaOutStartAddr>3000</AnaOutStartAddr>
+      <AnaInStartAddr>2000</AnaInStartAddr>
+      <CounterStartAddr>3500</CounterStartAddr>
+      <DigOutCount>8</DigOutCount>
+      <DigInCount>8</DigInCount>
+      <AnaInCount>8</AnaInCount>
+      <AnaOutCount>8</AnaOutCount>
+      <CounterCount>2</CounterCount>
+      <AnaInRawMin>50</AnaInRawMin>
+      <AnaInRawMax>16000</AnaInRawMax>
+      <AnaOutRawMin>50</AnaOutRawMin>
+      <AnaOutRawMax>16000</AnaOutRawMax>
+    </RTU>
+    <RTU>
+      <Address>1</Address>
+      <Name>RTU-1</Name>
+      <FreeSpaceForDigitals>true</FreeSpaceForDigitals>
+      <FreeSpaceForAnalogs>true</FreeSpaceForAnalogs>
+      <Protocol>ModbusTCP</Protocol>
+      <DigOutStartAddr>0</DigOutStartAddr>
+      <DigInStartAddr>1000</DigInStartAddr>
+      <AnaOutStartAddr>3000</AnaOutStartAddr>
+      <AnaInStartAddr>2000</AnaInStartAddr>
+      <CounterStartAddr>3500</CounterStartAddr>
+      <DigOutCount>20</DigOutCount>
+      <DigInCount>20</DigInCount>
+      <AnaInCount>8</AnaInCount>
+      <AnaOutCount>8</AnaOutCount>
+      <CounterCount>2</CounterCount>
+      <AnaInRawMin>150</AnaInRawMin>
+      <AnaInRawMax>16000</AnaInRawMax>
+      <AnaOutRawMin>150</AnaOutRawMin>
+      <AnaOutRawMax>16000</AnaOutRawMax>
+    </RTU>
+  </RTUS>
+  <Digitals>
+  </Digitals>
+  <Analogs>
+  </Analogs>
+  <Counters />
+</ScadaModel>

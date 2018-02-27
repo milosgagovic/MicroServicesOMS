@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{22B4189D-4F0E-4692-8CC2-B6F6D1E70234}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SCADA</RootNamespace>
+    <AssemblyName>SCADA</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClientHandler\DMSClient.cs" />
+    <Compile Include="ClientHandler\Invoker.cs" />
+    <Compile Include="ClientHandler\SCADAService.cs" />
+    <Compile Include="ClientHandler\SCADATransactionService.cs" />
+    <Compile Include="CommunicationAndControlling\SecondaryDataProcessing\AnalogProcessor.cs" />
+    <Compile Include="CommunicationAndControlling\SecondaryDataProcessing\CommAcqEngine.cs" />
+    <Compile Include="CommunicationAndControlling\IORequestsQueue.cs" />
+    <Compile Include="CommunicationAndControlling\PCCommunicationEngine.cs" />
+    <Compile Include="RealtimeDatabase\Catalogs\Unit.cs" />
+    <Compile Include="RealtimeDatabase\Model\Analog.cs" />
+    <Compile Include="RealtimeDatabase\Model\RTU.cs" />
+    <Compile Include="ConfigurationParser\CommunicationModelParser.cs" />
+    <Compile Include="ConfigurationParser\ScadaModelParser.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealtimeDatabase\Catalogs\DigitalDeviceClasses.cs" />
+    <Compile Include="RealtimeDatabase\Database.cs" />
+    <Compile Include="RealtimeDatabase\DBContext.cs" />
+    <Compile Include="RealtimeDatabase\Model\Counter.cs" />
+    <Compile Include="RealtimeDatabase\Model\Digital.cs" />
+    <Compile Include="RealtimeDatabase\Model\Object.cs" />
+    <Compile Include="RealtimeDatabase\Model\ProcessVariable.cs" />
+    <Compile Include="RealtimeDatabase\Catalogs\VariableTypes.cs" />
+    <Compile Include="CommunicationAndControlling\SecondaryDataProcessing\CommandValidator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\OMSSCADACommon\OMSSCADACommon.csproj">
+      <Project>{a7f86ca6-39f1-4b61-bf71-c01e327fa861}</Project>
+      <Name>OMSSCADACommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DMSContract\DMSContract.csproj">
+      <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>
+      <Name>DMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PCCommon\PCCommon.csproj">
+      <Project>{5bc05be9-6f8a-428d-83e7-c406d6736401}</Project>
+      <Name>PCCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServiceContracts\SCADAContracts\SCADAContracts.csproj">
+      <Project>{91FA4DB9-E3E0-4A3C-B0AB-29DCEC746770}</Project>
+      <Name>SCADAContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TransactionManagerContract\TransactionManagerContract.csproj">
+      <Project>{72a5dd5a-5613-49cb-8351-3ce33a86fc01}</Project>
+      <Name>TransactionManagerContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModbusTCPDriver\ModbusTCPDriver.csproj">
+      <Project>{6bd692a7-28ac-432b-a316-deb277ede45a}</Project>
+      <Name>ModbusTCPDriver</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

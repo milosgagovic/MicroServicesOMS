@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:cim="http://iec.ch/TC57/2010/CIM-schema-cim15#"
+	xmlns:ftn="http://www.ftnydro.com/CIM15/2010/extension#">
+	
+	<cim:ConnectivityNodeContainer rdf:ID="CNC_1">
+		<cim:IdentifiedObject.mRID>CNC_1</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNodeContainer_1</cim:IdentifiedObject.name>
+	</cim:ConnectivityNodeContainer>
+	
+	<cim:ConnectivityNode rdf:ID="CN_7">
+		<cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#CNC_1"/>
+		<cim:IdentifiedObject.mRID>CN_7</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNode_7</cim:IdentifiedObject.name>
+	</cim:ConnectivityNode>
+	
+	<cim:ConnectivityNode rdf:ID="CN_60">
+		<cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#CNC_1"/>
+		<cim:IdentifiedObject.mRID>CN_60</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNode_60</cim:IdentifiedObject.name>
+	</cim:ConnectivityNode>
+	
+	<cim:Breaker rdf:ID="BR_12">
+		<cim:Switch.normalOpen>false</cim:Switch.normalOpen>
+		<cim:Switch.switchOnCount></cim:Switch.switchOnCount>
+		<cim:Switch.switchOnDate></cim:Switch.switchOnDate>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>BR_12</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Breaker_12</cim:IdentifiedObject.name>
+	</cim:Breaker>
+	
+	<cim:ACLineSegment rdf:ID="ACLS_3">
+		<cim:Conductor.length></cim:Conductor.length>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>ACLS_3</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ACLineSegment_3</cim:IdentifiedObject.name>
+	</cim:ACLineSegment>
+	
+	<cim:Terminal rdf:ID="TERM_401">
+		<cim:Terminal.ConductingEquipment rdf:resource="#ACLS_3"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_60"/>
+		<cim:IdentifiedObject.mRID>TERM_401</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_401</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_400">
+		<cim:Terminal.ConductingEquipment rdf:resource="#BR_12"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_60"/>
+		<cim:IdentifiedObject.mRID>TERM_400</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_400</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_21">
+		<cim:Terminal.ConductingEquipment rdf:resource="#BR_12"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_7"/>
+		<cim:IdentifiedObject.mRID>TERM_21</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_21</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Discrete rdf:ID="MEAS_D_12">
+		<cim:Discrete.maxValue>1</cim:Discrete.maxValue>
+		<cim:Discrete.minValue>0</cim:Discrete.minValue>
+		<cim:Discrete.normalValue>1</cim:Discrete.normalValue>
+		<cim:Discrete.validStates>
+		
+		</cim:Discrete.validStates>
+		<cim:Discrete.validCommands>
+			Open Close
+		</cim:Discrete.validCommands>
+		<cim:Measurement.direction>ReadWrite</cim:Measurement.direction>
+		<cim:Measurement.measurementType></cim:Measurement.measurementType>
+		<cim:Measurement.PowerSystemResource rdf:resource="#BR_12"/>
+		<cim:Measurement.unitSymbol>none</cim:Measurement.unitSymbol>
+		<cim:IdentifiedObject.mRID>MEAS_D_12</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>DiscreteMeasurement_12</cim:IdentifiedObject.name>
+	</cim:Discrete>
+
+</rdf:RDF>

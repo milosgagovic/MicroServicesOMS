@@ -1,0 +1,23 @@
+	<cim:Analog rdf:ID="MEAS_A_1">
+		<cim:Analog.maxValue>500</cim:Analog.maxValue>
+		<cim:Analog.minValue>50</cim:Analog.minValue>
+		<cim:Analog.normalValue>250</cim:Analog.normalValue>
+		<cim:Measurement.direction>ReadWrite</cim:Measurement.direction>
+		<cim:Measurement.measurementType>Analog</cim:Measurement.measurementType>
+		<cim:Measurement.PowerSystemResource rdf:resource="#EC_1"/>
+		<cim:Measurement.unitSymbol>W</cim:Measurement.unitSymbol>
+		<cim:IdentifiedObject.mRID>MEAS_A_1</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>AnalogMeasurement_1</cim:IdentifiedObject.name>
+	</cim:Analog>
+	
+	<cim:Analog rdf:ID="MEAS_A_2">
+		<cim:Analog.maxValue>500</cim:Analog.maxValue>
+		<cim:Analog.minValue>50</cim:Analog.minValue>
+		<cim:Analog.normalValue>370</cim:Analog.normalValue>
+		<cim:Measurement.direction>ReadWrite</cim:Measurement.direction>
+		<cim:Measurement.measurementType>Analog</cim:Measurement.measurementType>
+		<cim:Measurement.PowerSystemResource rdf:resource="#EC_2"/>
+		<cim:Measurement.unitSymbol>W</cim:Measurement.unitSymbol>
+		<cim:IdentifiedObject.mRID>MEAS_A_1</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>AnalogMeasurement_1</cim:IdentifiedObject.name>
+	</cim:Analog>

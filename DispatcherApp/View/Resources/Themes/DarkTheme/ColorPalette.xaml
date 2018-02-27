@@ -1,0 +1,35 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DispatcherApp.View.Resources.Themes.DarkTheme">
+    
+    <SolidColorBrush x:Key="SignatureColor" Color="#16BCB1">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="SignatureDarkColor" Color="#078E85">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="SignatureLightColor" Color="#31DBD0">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="DarkestColor" Color="#211F1F">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="DarkColor" Color="#393535">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="MediumColor" Color="Gray">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="LightColor" Color="LightGray">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="WhiteColor" Color="White">
+    </SolidColorBrush>
+
+    <GridLength x:Key="BorderTabTopLineHeight">20
+    </GridLength>
+
+    <GridLength x:Key="BorderTabSideLineWidth">20
+    </GridLength>
+    
+</ResourceDictionary>

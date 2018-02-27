@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{133321F9-9473-4A5C-B009-B7B11A384BA7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TransactionManager</RootNamespace>
+    <AssemblyName>TransactionManager</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Actors, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Actors.3.0.456\lib\net45\Microsoft.ServiceFabric.Actors.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Actors.Wcf, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Actors.Wcf.3.0.456\lib\net45\Microsoft.ServiceFabric.Actors.Wcf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Data, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Data.3.0.456\lib\net45\Microsoft.ServiceFabric.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Data.Interfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Data.3.0.456\lib\net45\Microsoft.ServiceFabric.Data.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Diagnostics, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Diagnostics.Internal.3.0.456\lib\net45\Microsoft.ServiceFabric.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.FabricTransport, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.FabricTransport.Internal.3.0.456\lib\net45\Microsoft.ServiceFabric.FabricTransport.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.FabricTransport.V2, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.FabricTransport.Internal.3.0.456\lib\net45\Microsoft.ServiceFabric.FabricTransport.V2.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Internal, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.1.456\lib\net45\Microsoft.ServiceFabric.Internal.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Internal.Strings, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.1.456\lib\net45\Microsoft.ServiceFabric.Internal.Strings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Preview, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.1.456\lib\net45\Microsoft.ServiceFabric.Preview.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Services, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Services.3.0.456\lib\net45\Microsoft.ServiceFabric.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Services.Remoting, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Services.Remoting.3.0.456\lib\net45\Microsoft.ServiceFabric.Services.Remoting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Services.Wcf, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.Services.Wcf.3.0.456\lib\net45\Microsoft.ServiceFabric.Services.Wcf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Fabric, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.1.456\lib\net45\System.Fabric.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Fabric.Management.ServiceModel, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.1.456\lib\net45\System.Fabric.Management.ServiceModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Fabric.Management.ServiceModel.XmlSerializers, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.1.456\lib\net45\System.Fabric.Management.ServiceModel.XmlSerializers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Fabric.Strings, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.1.456\lib\net45\System.Fabric.Strings.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MappingEngineTransactionManager.cs" />
+    <Compile Include="ModelGDATMS.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SCADAClient.cs" />
+    <Compile Include="ServicecFabricClients\ServiceFabricDMSClient.cs" />
+    <Compile Include="ServicecFabricClients\WCFDMSTransactionClient.cs" />
+    <Compile Include="TransactionCallback.cs" />
+    <Compile Include="TransactionManager.cs" />
+    <Compile Include="TransactionManagerService.cs" />
+    <Compile Include="WCFIMSClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\DMSCommon\DMSCommon.csproj">
+      <Project>{86D0FD27-8DA2-476E-A046-FCB849F12414}</Project>
+      <Name>DMSCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\OMSSCADACommon\OMSSCADACommon.csproj">
+      <Project>{A7F86CA6-39F1-4B61-BF71-C01E327FA861}</Project>
+      <Name>OMSSCADACommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DispatcherApp\DispatcherApp.csproj">
+      <Project>{147E8CD4-1935-4A34-AFF6-ECB0F8F29B7A}</Project>
+      <Name>DispatcherApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DMSContract\DMSContract.csproj">
+      <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>
+      <Name>DMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IMSContract\IMSContract.csproj">
+      <Project>{db3da680-83f3-422a-9c7d-7f3f883472a2}</Project>
+      <Name>IMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetworkModelService\DataModel\DataModel.csproj">
+      <Project>{ADE96497-7C11-40B6-AE82-57F956C9F104}</Project>
+      <Name>DataModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetworkModelService\NetworkModelService.csproj">
+      <Project>{2630D180-1B68-4E84-AEAC-42EE8C88B50F}</Project>
+      <Name>NetworkModelService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetworkModelService\Test\NMSTestClient\NMSTestClient.csproj">
+      <Project>{32EE9373-A350-42AC-972B-41B2EDABA082}</Project>
+      <Name>NMSTestClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceContracts\NetworkModelQueryContract\NetworkModelGDAContract.csproj">
+      <Project>{B726FB71-D295-41EE-9644-B2B0B1BC8911}</Project>
+      <Name>NetworkModelGDAContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceContracts\SCADAContracts\SCADAContracts.csproj">
+      <Project>{91FA4DB9-E3E0-4A3C-B0AB-29DCEC746770}</Project>
+      <Name>SCADAContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransactionManagerContract\TransactionManagerContract.csproj">
+      <Project>{72A5DD5A-5613-49CB-8351-3CE33A86FC01}</Project>
+      <Name>TransactionManagerContract</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.ServiceFabric.Actors.3.0.456\build\net45\Microsoft.ServiceFabric.Actors.targets" Condition="Exists('..\packages\Microsoft.ServiceFabric.Actors.3.0.456\build\net45\Microsoft.ServiceFabric.Actors.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.ServiceFabric.Actors.3.0.456\build\net45\Microsoft.ServiceFabric.Actors.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ServiceFabric.Actors.3.0.456\build\net45\Microsoft.ServiceFabric.Actors.targets'))" />
+  </Target>
+</Project>

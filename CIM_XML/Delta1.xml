@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:cim="http://iec.ch/TC57/2010/CIM-schema-cim15#"
+	xmlns:ftn="http://www.ftnydro.com/CIM15/2010/extension#">
+	
+	<cim:ConnectivityNodeContainer rdf:ID="CNC_1">
+		<cim:IdentifiedObject.mRID>CNC_1</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNodeContainer_1</cim:IdentifiedObject.name>
+	</cim:ConnectivityNodeContainer>
+	
+	<cim:ConnectivityNode rdf:ID="CN_21">
+		<cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#CNC_1"/>
+		<cim:IdentifiedObject.mRID>CN_21</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNode_21</cim:IdentifiedObject.name>
+	</cim:ConnectivityNode>
+	
+	<cim:ConnectivityNode rdf:ID="CN_52">
+		<cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#CNC_1"/>
+		<cim:IdentifiedObject.mRID>CN_52</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNode_52</cim:IdentifiedObject.name>
+	</cim:ConnectivityNode>
+	
+	<cim:Breaker rdf:ID="BR_11">
+		<cim:Switch.normalOpen>false</cim:Switch.normalOpen>
+		<cim:Switch.switchOnCount></cim:Switch.switchOnCount>
+		<cim:Switch.switchOnDate></cim:Switch.switchOnDate>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>BR_11</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Breaker_11</cim:IdentifiedObject.name>
+	</cim:Breaker>
+	
+	<cim:EnergyConsumer rdf:ID="EC_30">
+		<cim:EnergyConsumer.pfixed></cim:EnergyConsumer.pfixed>
+		<cim:EnergyConsumer.qfixed></cim:EnergyConsumer.qfixed>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>EC_30</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>EnergyConsumer_30</cim:IdentifiedObject.name>
+	</cim:EnergyConsumer>
+	
+	<cim:EnergyConsumer rdf:ID="EC_23">
+		<cim:EnergyConsumer.pfixed></cim:EnergyConsumer.pfixed>
+		<cim:EnergyConsumer.qfixed></cim:EnergyConsumer.qfixed>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>EC_23</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>EnergyConsumer_23</cim:IdentifiedObject.name>
+	</cim:EnergyConsumer>
+	
+	<cim:Terminal rdf:ID="TERM_300">
+		<cim:Terminal.ConductingEquipment rdf:resource="#BR_11"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_21"/>
+		<cim:IdentifiedObject.mRID>TERM_300</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_300</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_303">
+		<cim:Terminal.ConductingEquipment rdf:resource="#EC_30"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_52"/>
+		<cim:IdentifiedObject.mRID>TERM_303</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_303</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_301">
+		<cim:Terminal.ConductingEquipment rdf:resource="#BR_11"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_52"/>
+		<cim:IdentifiedObject.mRID>TERM_301</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_301</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_64">
+		<cim:Terminal.ConductingEquipment rdf:resource="#EC_23"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_52"/>
+		<cim:IdentifiedObject.mRID>TERM_64</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_64</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Analog rdf:ID="MEAS_A_30">
+		<cim:Analog.maxValue>500</cim:Analog.maxValue>
+		<cim:Analog.minValue>50</cim:Analog.minValue>
+		<cim:Analog.normalValue>250</cim:Analog.normalValue>
+		<cim:Measurement.direction>ReadWrite</cim:Measurement.direction>
+		<cim:Measurement.measurementType>Analog</cim:Measurement.measurementType>
+		<cim:Measurement.PowerSystemResource rdf:resource="#EC_30"/>
+		<cim:Measurement.unitSymbol>W</cim:Measurement.unitSymbol>
+		<cim:IdentifiedObject.mRID>MEAS_A_30</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>AnalogMeasurement_30</cim:IdentifiedObject.name>
+	</cim:Analog>
+	
+	<!-- <cim:Discrete rdf:ID="MEAS_D_11"> -->
+		<!-- <cim:Discrete.maxValue>1</cim:Discrete.maxValue> -->
+		<!-- <cim:Discrete.minValue>0</cim:Discrete.minValue> -->
+		<!-- <cim:Discrete.normalValue>1</cim:Discrete.normalValue> -->
+		<!-- <cim:Discrete.validStates> -->
+		
+		<!-- </cim:Discrete.validStates> -->
+		<!-- <cim:Discrete.validCommands> -->
+			<!-- Open Close -->
+		<!-- </cim:Discrete.validCommands> -->
+		<!-- <cim:Measurement.direction>ReadWrite</cim:Measurement.direction> -->
+		<!-- <cim:Measurement.measurementType></cim:Measurement.measurementType> -->
+		<!-- <cim:Measurement.PowerSystemResource rdf:resource="#BR_11"/> -->
+		<!-- <cim:Measurement.unitSymbol>none</cim:Measurement.unitSymbol> -->
+		<!-- <cim:IdentifiedObject.mRID>MEAS_D_11</cim:IdentifiedObject.mRID> -->
+		<!-- <cim:IdentifiedObject.name>DiscreteMeasurement_11</cim:IdentifiedObject.name> -->
+	<!-- </cim:Discrete> -->
+
+</rdf:RDF>

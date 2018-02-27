@@ -1,0 +1,9 @@
+git rm -r --cached . 
+
+pa onda
+
+git add .
+
+
+i onda neki commit bilo cega...
+u posle tog komita bi trebalo da uvazava gitignore

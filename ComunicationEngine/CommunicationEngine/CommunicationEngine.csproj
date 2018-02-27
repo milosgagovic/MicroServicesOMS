@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\NUnit3TestAdapter.3.9.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\packages\NUnit3TestAdapter.3.9.0\build\net35\NUnit3TestAdapter.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BB454887-1F4B-4712-A2FD-FB1990598EDB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CommunicationEngine</RootNamespace>
+    <AssemblyName>CommunicationEngine</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClientCommEngine.cs" />
+    <Compile Include="CommunicationEngine.cs" />
+    <Compile Include="CommunicationEngineTransactionService.cs" />
+    <Compile Include="CommunicEngineService.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="MappingEngine.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SCADACallback.cs" />
+    <Compile Include="SCADAClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\OMSSCADACommon\OMSSCADACommon.csproj">
+      <Project>{A7F86CA6-39F1-4B61-BF71-C01E327FA861}</Project>
+      <Name>OMSSCADACommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DispatcherApp\DispatcherApp.csproj">
+      <Project>{147E8CD4-1935-4A34-AFF6-ECB0F8F29B7A}</Project>
+      <Name>DispatcherApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PubSubscribe\PubSubscribe.csproj">
+      <Project>{36299CC7-43BA-4F75-AF82-96A54DD3D0E9}</Project>
+      <Name>PubSubscribe</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServiceContracts\CommunicationEngineContract\CommunicationEngineContract.csproj">
+      <Project>{F4F76A34-3088-41D6-ACEF-47D2DDC94441}</Project>
+      <Name>CommunicationEngineContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServiceContracts\SCADAContracts\SCADAContracts.csproj">
+      <Project>{91FA4DB9-E3E0-4A3C-B0AB-29DCEC746770}</Project>
+      <Name>SCADAContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TransactionManagerContract\TransactionManagerContract.csproj">
+      <Project>{72a5dd5a-5613-49cb-8351-3ce33a86fc01}</Project>
+      <Name>TransactionManagerContract</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

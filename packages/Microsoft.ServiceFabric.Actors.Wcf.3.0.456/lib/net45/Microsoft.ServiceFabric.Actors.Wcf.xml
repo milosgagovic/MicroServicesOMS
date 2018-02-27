@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.ServiceFabric.Actors.Wcf</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Client.WcfActorRemotingClientFactory">
+            <summary>
+                An <see cref="T:Microsoft.ServiceFabric.Services.Remoting.V2.Client.IServiceRemotingClientFactory"/> that uses 
+                Windows Communication Foundation to create <see cref="T:Microsoft.ServiceFabric.Services.Remoting.V2.Client.IServiceRemotingClient"/> 
+                to communicate with an actor service and actors hosted by it, using actor and service interfaces that are remoted via
+                <see cref="T:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Runtime.WcfActorServiceRemotingListener"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Client.WcfActorRemotingClientFactory.#ctor(Microsoft.ServiceFabric.Services.Remoting.V2.Client.IServiceRemotingCallbackMessageHandler)">
+            <summary>
+                Constructs a WCF based actor remoting factory.
+            </summary>
+            <param name="callbackClient">
+                The callback client that receives the callbacks from the service.
+            </param>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Client.WcfActorRemotingClientFactory.#ctor(System.ServiceModel.Channels.Binding,Microsoft.ServiceFabric.Services.Remoting.V2.Client.IServiceRemotingCallbackMessageHandler,System.Collections.Generic.IEnumerable{Microsoft.ServiceFabric.Services.Communication.Client.IExceptionHandler},Microsoft.ServiceFabric.Services.Client.IServicePartitionResolver,System.String,Microsoft.ServiceFabric.Services.Remoting.V2.IServiceRemotingMessageSerializationProvider)">
+            <summary>
+                Constructs a WCF based actor remoting factory.
+            </summary>
+            <param name="clientBinding">
+                WCF binding to use for the client. If the client binding is null,
+                a default client binding is created using 
+                <see cref="M:Microsoft.ServiceFabric.Services.Communication.Wcf.WcfUtility.CreateTcpClientBinding(System.Int64,System.TimeSpan,System.TimeSpan)"/> method 
+                which creates a <see cref="T:System.ServiceModel.NetTcpBinding"/> with no security.
+            </param>
+            <param name="callbackClient">
+                The callback client that receives the callbacks from the service.
+            </param>
+            <param name="exceptionHandlers">
+                Exception handlers to handle the exceptions encountered in communicating with the service.
+            </param>
+            <param name="servicePartitionResolver">
+                Service partition resolver to resolve the service endpoints. If not specified, a default 
+                service partition resolver returned by <see cref="M:Microsoft.ServiceFabric.Services.Client.ServicePartitionResolver.GetDefault"/> is used.
+            </param>
+            <param name="traceId">
+                Id to use in diagnostics traces from this component.
+            </param>
+            <param name="serializationProvider"></param>
+            <remarks>
+                This factory uses <see cref="T:Microsoft.ServiceFabric.Services.Communication.Wcf.Client.WcfExceptionHandler"/>,
+                <see cref="T:Microsoft.ServiceFabric.Actors.Remoting.Client.ActorRemotingExceptionHandler"/>, in addition to the 
+                exception handlers supplied to the constructor. 
+            </remarks>
+        </member>
+        <member name="T:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Runtime.WcfActorServiceRemotingListener">
+            <summary>
+            An <see cref="T:Microsoft.ServiceFabric.Services.Remoting.Runtime.IServiceRemotingListener"/> that uses
+            Windows Communication Foundation to provide interface remoting for actor services.
+            </summary>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Runtime.WcfActorServiceRemotingListener.#ctor(Microsoft.ServiceFabric.Actors.Runtime.ActorService,System.ServiceModel.Channels.Binding)">
+            <summary>
+            Constructs a WCF based actor remoting listener. 
+            </summary>
+            <param name="listenerBinding">WCF binding to use for the listener. If the listener binding is not specified or null,
+            a default listener binding is created using <see cref="M:Microsoft.ServiceFabric.Services.Communication.Wcf.WcfUtility.CreateTcpListenerBinding(System.Int64,System.TimeSpan,System.TimeSpan)"/> method which creates
+            a <see cref="T:System.ServiceModel.NetTcpBinding"/> with no security.
+            </param>
+            <param name="actorService">The actor service.</param>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Runtime.WcfActorServiceRemotingListener.#ctor(System.Fabric.ServiceContext,Microsoft.ServiceFabric.Services.Remoting.V2.Runtime.IServiceRemotingMessageHandler,Microsoft.ServiceFabric.Services.Remoting.V2.IServiceRemotingMessageSerializationProvider,System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+            <summary>
+            Constructs a WCF based service remoting listener. 
+            </summary>
+            <param name="serviceContext">The context of the service for which the remoting listener is being constructed.</param>
+            <param name="serviceRemotingMessageHandler">The handler for receiving and processing remoting messages. As the messages are received
+            the listener delivers the messages to the handler.
+            </param>
+            <param name="serializationProvider"></param>
+            <param name="listenerBinding">WCF binding to use for the listener. If the listener binding is not specified or null,
+            a default listener binding is created using <see cref="M:Microsoft.ServiceFabric.Services.Communication.Wcf.WcfUtility.CreateTcpListenerBinding(System.Int64,System.TimeSpan,System.TimeSpan)"/> method.
+            </param>
+            <param name="address">The endpoint address to use for the WCF listener. If not specified or null, the endpoint
+            address is created using the default endpoint resource named "ServiceEndpoint" defined in the service manifest. 
+            </param>
+        </member>
+        <member name="T:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute">
+            <summary>
+                Sets WCF as the default remoting provider for actors.
+            </summary>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.#ctor">
+            <summary>
+            Creates a <see cref="T:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute"/> which can be used to set 
+            WCF as the default remoting provider for actors.
+            </summary>
+        </member>
+        <member name="P:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.MaxMessageSize">
+            <summary>
+            Gets or Sets the maximum size of the remoting message in bytes.
+            If value for this property is not specified or it is less than or equals to zero,
+            a default value of 4,194,304 bytes (4 MB) is used.
+            </summary>
+            <value>
+                The maximum size of the remoting message in bytes. If this value is not specified 
+                or it is less than or equals to zero, a default value of 4,194,304 bytes (4 MB) is used.
+            </value>
+        </member>
+        <member name="P:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.OpenTimeoutInMilliSeconds">
+            <summary>
+                Gets or Sets time to wait in milliseconds for opening the connection.
+            </summary>
+            <value>
+                Time to wait in milliseconds for opening the connection. If this value is not specified 
+                or it is less than zero, default value of 5000 milliseconds is used.
+            </value>
+        </member>
+        <member name="P:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.CloseTimeoutInMilliSeconds">
+            <summary>
+                Gets or Sets time to wait in milliseconds for messages to drain on the connections before aborting the connection. 
+            </summary>
+            <value>
+                Time to wait in milliseconds for messages to drain on the connections before aborting the connection.
+            </value>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.CreateServiceRemotingClientFactory(Microsoft.ServiceFabric.Services.Remoting.V1.IServiceRemotingCallbackClient)">
+            <summary>
+                Creates a service remoting client factory to connect to the remoted actor interfaces.
+            </summary>
+            <param name="callbackClient">
+                Client implementation where the callbacks should be dispatched.
+            </param>
+            <returns>
+                A <see cref="T:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Client.WcfActorRemotingClientFactory"/>
+                as <see cref="T:Microsoft.ServiceFabric.Services.Remoting.V1.Client.IServiceRemotingClientFactory"/>
+                that can be used with <see cref="T:Microsoft.ServiceFabric.Actors.Client.ActorProxyFactory"/> to 
+                generate actor proxy to talk to the actor over remoted actor interface.
+            </returns>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.CreateServiceRemotingListenerV2(Microsoft.ServiceFabric.Actors.Runtime.ActorService)">
+            <summary>
+                Creates a V2 service remoting listener for remoting the actor interfaces.
+            </summary>
+            <param name="actorService">
+                The implementation of the actor service that hosts the actors whose interfaces
+                needs to be remoted.
+            </param>
+            <returns>
+                An <see cref="T:Microsoft.ServiceFabric.Services.Remoting.Runtime.IServiceRemotingListener"/> 
+                for the specified actor service.
+            </returns>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.CreateServiceRemotingClientFactoryV2(Microsoft.ServiceFabric.Services.Remoting.V2.Client.IServiceRemotingCallbackMessageHandler)">
+            <summary>
+                Creates a V2 service remoting client factory to connect to the remoted actor interfaces.
+            </summary>
+            <param name="callbackMessageHandler">
+                Client implementation where the callbacks should be dispatched.
+            </param>
+            <returns>
+                A <see cref="T:Microsoft.ServiceFabric.Actors.Remoting.V2.Wcf.Client.WcfActorRemotingClientFactory"/>
+                as <see cref="T:Microsoft.ServiceFabric.Services.Remoting.V2.Client.IServiceRemotingClientFactory"/>
+                that can be used with <see cref="T:Microsoft.ServiceFabric.Actors.Client.ActorProxyFactory"/> to 
+                generate actor proxy to talk to the actor over remoted actor interface.
+            </returns>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.Wcf.WcfActorRemotingProviderAttribute.CreateServiceRemotingListener(Microsoft.ServiceFabric.Actors.Runtime.ActorService)">
+            <summary>
+                Creates a service remoting listener for remoting the actor interfaces.
+            </summary>
+            <param name="actorService">
+                The implementation of the actor service that hosts the actors whose interfaces
+                needs to be remoted.
+            </param>
+            <returns>
+                An <see cref="T:Microsoft.ServiceFabric.Services.Remoting.Runtime.IServiceRemotingListener"/> 
+                for the specified actor service.
+            </returns>
+        </member>
+        <member name="T:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Runtime.WcfActorServiceRemotingListener">
+            <summary>
+            An <see cref="T:Microsoft.ServiceFabric.Services.Remoting.Runtime.IServiceRemotingListener"/> that uses
+            Windows Communication Foundation to provide interface remoting for actor services.
+            </summary>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Runtime.WcfActorServiceRemotingListener.#ctor(Microsoft.ServiceFabric.Actors.Runtime.ActorService,System.ServiceModel.Channels.Binding)">
+            <summary>
+            Constructs a WCF based actor remoting listener. 
+            </summary>
+            <param name="listenerBinding">WCF binding to use for the listener. If the listener binding is not specified or null,
+            a default listener binding is created using <see cref="M:Microsoft.ServiceFabric.Services.Communication.Wcf.WcfUtility.CreateTcpListenerBinding(System.Int64,System.TimeSpan,System.TimeSpan)"/> method which creates
+            a <see cref="T:System.ServiceModel.NetTcpBinding"/> with no security.
+            </param>
+            <param name="actorService">The actor service.</param>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Runtime.WcfActorServiceRemotingListener.#ctor(System.Fabric.ServiceContext,Microsoft.ServiceFabric.Services.Remoting.V1.Runtime.IServiceRemotingMessageHandler,System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+            <summary>
+            Constructs a WCF based service remoting listener. 
+            </summary>
+            <param name="serviceContext">The context of the service for which the remoting listener is being constructed.</param>
+            <param name="serviceRemotingMessageHandler">The handler for receiving and processing remoting messages. As the messages are received
+            the listener delivers the messages to the handler.
+            </param>
+            <param name="listenerBinding">WCF binding to use for the listener. If the listener binding is not specified or null,
+            a default listener binding is created using <see cref="M:Microsoft.ServiceFabric.Services.Communication.Wcf.WcfUtility.CreateTcpListenerBinding(System.Int64,System.TimeSpan,System.TimeSpan)"/> method.
+            </param>
+            <param name="address">The endpoint address to use for the WCF listener. If not specified or null, the endpoint
+            address is created using the default endpoint resource named "ServiceEndpoint" defined in the service manifest. 
+            </param>
+        </member>
+        <member name="T:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Client.WcfActorRemotingClientFactory">
+            <summary>
+                An <see cref="T:Microsoft.ServiceFabric.Services.Remoting.V1.Client.IServiceRemotingClientFactory"/> that uses 
+                Windows Communication Foundation to create <see cref="T:Microsoft.ServiceFabric.Services.Remoting.V1.Client.IServiceRemotingClient"/> 
+                to communicate with an actor service and actors hosted by it, using actor and service interfaces that are remoted via
+                <see cref="T:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Runtime.WcfActorServiceRemotingListener"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Client.WcfActorRemotingClientFactory.#ctor(Microsoft.ServiceFabric.Services.Remoting.V1.IServiceRemotingCallbackClient)">
+            <summary>
+                Constructs a WCF based actor remoting factory.
+            </summary>
+            <param name="callbackClient">
+                The callback client that receives the callbacks from the service.
+            </param>
+        </member>
+        <member name="M:Microsoft.ServiceFabric.Actors.Remoting.V1.Wcf.Client.WcfActorRemotingClientFactory.#ctor(System.ServiceModel.Channels.Binding,Microsoft.ServiceFabric.Services.Remoting.V1.IServiceRemotingCallbackClient,System.Collections.Generic.IEnumerable{Microsoft.ServiceFabric.Services.Communication.Client.IExceptionHandler},Microsoft.ServiceFabric.Services.Client.IServicePartitionResolver,System.String)">
+            <summary>
+                Constructs a WCF based actor remoting factory.
+            </summary>
+            <param name="clientBinding">
+                WCF binding to use for the client. If the client binding is null,
+                a default client binding is created using 
+                <see cref="M:Microsoft.ServiceFabric.Services.Communication.Wcf.WcfUtility.CreateTcpClientBinding(System.Int64,System.TimeSpan,System.TimeSpan)"/> method 
+                which creates a <see cref="T:System.ServiceModel.NetTcpBinding"/> with no security.
+            </param>
+            <param name="callbackClient">
+                The callback client that receives the callbacks from the service.
+            </param>
+            <param name="exceptionHandlers">
+                Exception handlers to handle the exceptions encountered in communicating with the service.
+            </param>
+            <param name="servicePartitionResolver">
+                Service partition resolver to resolve the service endpoints. If not specified, a default 
+                service partition resolver returned by <see cref="M:Microsoft.ServiceFabric.Services.Client.ServicePartitionResolver.GetDefault"/> is used.
+            </param>
+            <param name="traceId">
+                Id to use in diagnostics traces from this component.
+            </param>
+            <remarks>
+                This factory uses <see cref="T:Microsoft.ServiceFabric.Services.Communication.Wcf.Client.WcfExceptionHandler"/>,
+                <see cref="T:Microsoft.ServiceFabric.Services.Remoting.Client.ServiceRemotingExceptionHandler"/> and 
+                <see cref="T:Microsoft.ServiceFabric.Actors.Remoting.Client.ActorRemotingExceptionHandler"/>, in addition to the 
+                exception handlers supplied to the constructor. 
+            </remarks>
+        </member>
+        <member name="T:Microsoft.ServiceFabric.Actors.Wcf.SR">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.ServiceFabric.Actors.Wcf.SR.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.ServiceFabric.Actors.Wcf.SR.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+    </members>
+</doc>
