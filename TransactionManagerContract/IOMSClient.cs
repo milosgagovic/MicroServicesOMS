@@ -90,5 +90,11 @@ namespace TransactionManagerContract
 
         [OperationContract]
         void ClearNMSDB();
+
+        [OperationContract]
+        void Subscribe();
+
+        [OperationContract]
+        void UnSubscribe();
     }
 }

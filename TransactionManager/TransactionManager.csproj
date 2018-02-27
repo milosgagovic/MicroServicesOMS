@@ -117,6 +117,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SCADAClient.cs" />
     <Compile Include="ServicecFabricClients\ServiceFabricDMSClient.cs" />
+    <Compile Include="ServicecFabricClients\SubscriberServiceCloud.cs" />
     <Compile Include="ServicecFabricClients\WCFDMSTransactionClient.cs" />
     <Compile Include="TransactionCallback.cs" />
     <Compile Include="TransactionManager.cs" />
@@ -163,6 +164,10 @@
     <ProjectReference Include="..\NetworkModelService\Test\NMSTestClient\NMSTestClient.csproj">
       <Project>{32EE9373-A350-42AC-972B-41B2EDABA082}</Project>
       <Name>NMSTestClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PubSubContract\PubSubContract.csproj">
+      <Project>{C6CF75F4-B2F3-4139-88E9-0EBB37E04E16}</Project>
+      <Name>PubSubContract</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServiceContracts\NetworkModelQueryContract\NetworkModelGDAContract.csproj">
       <Project>{B726FB71-D295-41EE-9644-B2B0B1BC8911}</Project>

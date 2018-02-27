@@ -1,6 +1,8 @@
 ﻿using DMSCommon.Model;
 using FTN.Common;
 using IMSContract;
+using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using PubSubContract;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ namespace PubSubscribe
     public class Subscriber : IPublishing
     {
         ISubscription subscriptionProxy = null;
-
+       
         public event PublishUpdateEvent publishUpdateEvent;
         public event PublishCrewEvent publishCrewEvent;
         public event PublishReportIncident publishIncident;
@@ -40,10 +42,11 @@ namespace PubSubscribe
             try
             {  //***git
                 NetTcpBinding netTcpbinding = new NetTcpBinding();
-                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:7002/Sub");
+                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:4080/SubscriptionService");
                 InstanceContext callback = new InstanceContext(this);
                 DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, netTcpbinding, endpointAddress);
                 subscriptionProxy = channelFactory.CreateChannel();
+
             }
             catch (Exception e)
             {
@@ -56,6 +59,7 @@ namespace PubSubscribe
         {
             try
             {
+                // proxyToCloud.InvokeWithRetry(client => client.Channel.Subscribe());
                 subscriptionProxy.Subscribe();
             }
             catch (Exception e)
@@ -70,6 +74,7 @@ namespace PubSubscribe
         {
             try
             {
+                //     proxyToCloud.InvokeWithRetry(client => client.Channel.UnSubscribe());
                 subscriptionProxy.UnSubscribe();
             }
             catch (Exception e)

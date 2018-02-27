@@ -129,7 +129,7 @@ namespace DispatcherApp.ViewModel
         #region Constructor
         public DispatcherAppViewModel()
         {
-            Thread.Sleep(5000);
+        //    Thread.Sleep(5000);
 
             subscriber = new Subscriber();
             subscriber.Subscribe();

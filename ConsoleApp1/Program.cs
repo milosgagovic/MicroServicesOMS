@@ -140,13 +140,16 @@ namespace ConsoleApp1
                                      wcfClientFactory,
                                      new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
                                      ServicePartitionKey.Singleton);
-
-                    List<Crew> crews = ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
-                    Console.WriteLine("Procitao:\n");
-                    foreach (Crew c in crews)
-                    {
-                        Console.WriteLine("Crew name: " + c.CrewName + ", Crew Type: " + c.Type);
-                    }
+                    IncidentReport report = new IncidentReport();
+                    report.MrID = "BR_3";
+                    ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.AddReport(report));
+                    Console.WriteLine("Dodao u bazu");
+                    //List<Crew> crews = ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
+                    //Console.WriteLine("Procitao:\n");
+                    //foreach (Crew c in crews)
+                    //{
+                    //    Console.WriteLine("Crew name: " + c.CrewName + ", Crew Type: " + c.Type);
+                    //}
                     Console.ReadLine();
                 }
                 else

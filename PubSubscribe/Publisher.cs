@@ -1,6 +1,8 @@
 ﻿using DMSCommon.Model;
 using FTN.Common;
 using IMSContract;
+using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using PubSubContract;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,7 @@ namespace PubSubscribe
     public class Publisher
     {
         IPublishing proxy;
+        PublishServiceCloud proxyToCloud = null;
 
         public Publisher()
         {
@@ -37,7 +40,8 @@ namespace PubSubscribe
         {
             try
             {
-                proxy.PublishCrewUpdate(update);
+                proxyToCloud.InvokeWithRetry(client => client.Channel.PublishCrewUpdate(update));
+             //   proxy.PublishCrewUpdate(update);
             }
             catch { }
         }
@@ -46,7 +50,8 @@ namespace PubSubscribe
         {
             try
             {
-                proxy.PublishIncident(report);
+                proxyToCloud.InvokeWithRetry(client => client.Channel.PublishIncident(report));
+               // proxy.PublishIncident(report);
             }
             catch { }
         }
@@ -71,19 +76,41 @@ namespace PubSubscribe
 
         private void CreateProxy()
         {
-            string address = "";
-            try
-            {
-                address = "net.tcp://localhost:7001/Pub";
-                EndpointAddress endpointAddress = new EndpointAddress(address);
-                NetTcpBinding netTcpBinding = new NetTcpBinding();
-                proxy = ChannelFactory<IPublishing>.CreateChannel(netTcpBinding, endpointAddress);
-            }
-            catch (Exception e)
-            {
-                throw e;
-                //TODO log error;
-            }
+            NetTcpBinding binding = new NetTcpBinding();
+            // Create a partition resolver
+            IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
+
+            //create calllback
+            // duplex channel for DMS transaction
+            //  TransactionCallback CallBackTransactionDMS2 = new TransactionCallback();
+            // create a  WcfCommunicationClientFactory object.
+            var wcfClientFactory = new WcfCommunicationClientFactory<IPublishing>
+                (clientBinding: binding, servicePartitionResolver: partitionResolver);
+
+            //
+            // Create a client for communicating with the ICalculator service that has been created with the
+            // Singleton partition scheme.
+            //
+            proxyToCloud = new PublishServiceCloud(
+                            wcfClientFactory,
+                            new Uri("fabric:/ServiceFabricOMS/PubSubStatelessService"),
+                            ServicePartitionKey.Singleton,
+                            listenerName: "SubscriptionService");
+
+
+            //string address = "";
+            //try
+            //{
+            //    address = "net.tcp://localhost:7001/Pub";
+            //    EndpointAddress endpointAddress = new EndpointAddress(address);
+            //    NetTcpBinding netTcpBinding = new NetTcpBinding();
+            //    proxy = ChannelFactory<IPublishing>.CreateChannel(netTcpBinding, endpointAddress);
+            //}
+            //catch (Exception e)
+            //{
+            //    throw e;
+            //    //TODO log error;
+            //}
 
         }
     }

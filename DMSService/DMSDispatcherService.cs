@@ -247,28 +247,28 @@ namespace DMSService
         private void ProcessCrew(IncidentReport report)
         {
             bool isImsAvailable = false;
-            do
-            {
-                try
-                {
-                    if (IMSClient.State == CommunicationState.Created)
-                    {
-                        IMSClient.Open();
-                    }
+            //do
+            //{
+            //    try
+            //    {
+            //        if (IMSClient.State == CommunicationState.Created)
+            //        {
+            //            IMSClient.Open();
+            //        }
 
-                    isImsAvailable = IMSClient.Ping();
-                }
-                catch (Exception e)
-                {
-                    //Console.WriteLine(e);
-                    Console.WriteLine("ProcessCrew() -> IMS is not available yet.");
-                    if (IMSClient.State == CommunicationState.Faulted)
-                        IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-                }
-                Thread.Sleep(2000);
-            } while (!isImsAvailable);
-
-            report.Id = IMSClient.GetReport(report.Time).Id;
+            //        isImsAvailable = IMSClient.Ping();
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        //Console.WriteLine(e);
+            //        Console.WriteLine("ProcessCrew() -> IMS is not available yet.");
+            //        if (IMSClient.State == CommunicationState.Faulted)
+            //            IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
+            //    }
+            //    Thread.Sleep(2000);
+            //} while (!isImsAvailable);
+            report.Id = ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetReport(report.Time)).Id;
+            //report.Id = IMSClient.GetReport(report.Time).Id;
 
             if (report != null)
             {
@@ -298,13 +298,13 @@ namespace DMSService
 
                 Array values1 = Enum.GetValues(typeof(IncidentState));
                 report.IncidentState = (IncidentState)values1.GetValue(rand.Next(2, values.Length - 1));
-
-                IMSClient.UpdateReport(report);
+                ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.UpdateReport(report));
+                //IMSClient.UpdateReport(report);
 
                 Publisher publisher = new Publisher();
                 publisher.PublishIncident(report);
 
-                //publisher.PublishCrew(new SCADAUpdateModel(sw.ElementGID, true));
+                publisher.PublishCrew(new SCADAUpdateModel(sw.ElementGID, true));
             }
         }
 

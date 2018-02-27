@@ -19,7 +19,7 @@ namespace IncidentManagementSystem.Service
 
         public bool AddCrew(Crew crew)
         {
-            using (var ctx = new IncidentContext())
+            using (var ctx = new IncidentCloudContext())
             {
                 try
                 {
@@ -57,12 +57,6 @@ namespace IncidentManagementSystem.Service
 
         public void AddElementStateReport(ElementStateReport report)
         {
-            using (var ctx = new IncidentContext())
-            {
-                ctx.ElementStateReports.Add(report);
-                ctx.SaveChanges();
-                Console.WriteLine("Upisano:\n MRID: " + report.MrID + ", Date Time: " + report.Time + ", State: " + report.State);
-            }
             using (var ctxCloud = new IncidentCloudContext())
             {
                 ctxCloud.ElementStateReports.Add(report);
@@ -73,11 +67,6 @@ namespace IncidentManagementSystem.Service
 
         public void AddReport(IncidentReport report)
         {
-            using (var ctx = new IncidentContext())
-            {
-                ctx.IncidentReports.Add(report);
-                ctx.SaveChanges();
-            }
             using (var ctxCloud = new IncidentCloudContext())
             {
                 ctxCloud.IncidentReports.Add(report);
@@ -88,36 +77,18 @@ namespace IncidentManagementSystem.Service
         public List<ElementStateReport> GetAllElementStateReports()
         {
             List<ElementStateReport> retVal = new List<ElementStateReport>();
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                foreach (ElementStateReport ir in ctx.ElementStateReports)
+                foreach (ElementStateReport ir in ctxCloud.ElementStateReports)
                 {
                     retVal.Add(ir);
                 }
             }
             return retVal;
-            //List<ElementStateReport> retVal = new List<ElementStateReport>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    foreach (ElementStateReport ir in ctxCloud.ElementStateReports)
-            //    {
-            //        retVal.Add(ir);
-            //    }
-            //}
-            //return retVal;
         }
 
         public List<IncidentReport> GetAllReports()
         {
-            //List<IncidentReport> retVal = new List<IncidentReport>();
-            //using (var ctx = new IncidentContext())
-            //{
-            //    foreach (IncidentReport ir in ctx.IncidentReports.Include("Crew"))
-            //    {
-            //        retVal.Add(ir);
-            //    }
-            //}
-            //return retVal;
             List<IncidentReport> retVal = new List<IncidentReport>();
             using (var ctxCloud = new IncidentCloudContext())
             {
@@ -132,61 +103,10 @@ namespace IncidentManagementSystem.Service
         public List<Crew> GetCrews()
         {
             List<Crew> retVal = new List<Crew>();
-            var cb = new SqlConnectionStringBuilder();
-            cb.DataSource = "oms-sqlserver.database.windows.net";
-            cb.UserID = "milos.gagovic";
-            cb.Password = "Omsbaza1";
-            cb.InitialCatalog = "OMS";
-            using (var connection = new SqlConnection(cb.ConnectionString))
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                connection.Open();
-                string tsql = @"SELECT crew.CrewName, crew.Type FROM Crews as crew";
-                using (var command = new SqlCommand(tsql, connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                Crew c = new Crew();
-                                c.CrewName = reader.GetSqlString(0).ToString();
-                                switch (reader.GetSqlInt32(1).ToString())
-                                {
-                                    case "0":
-                                        c.Type = CrewType.TYPE1;
-                                        break;
-                                    case "1":
-                                        c.Type = CrewType.TYPE2;
-                                        break;
-                                    case "2":
-                                        c.Type = CrewType.TYPE3;
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                retVal.Add(c);
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("No rows found.");
-                        }
-                        reader.Close();
-                    }
-                }
+                ctxCloud.Crews.ToList().ForEach(u => retVal.Add(u));
             }
-
-            //using (var ctx = new IncidentContext())
-            //{
-            //    ctx.Crews.ToList().ForEach(u => retVal.Add(u));
-            //}
-            //return retVal;
-            //List<Crew> retVal = new List<Crew>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.Crews.ToList().ForEach(u => retVal.Add(u));
-            //}
             return retVal;
         }
 
@@ -196,11 +116,11 @@ namespace IncidentManagementSystem.Service
             Dictionary<string, List<ElementStateReport>> reportsByBreaker = new Dictionary<string, List<ElementStateReport>>();
             List<List<ElementStateReport>> retVal = new List<List<ElementStateReport>>();
 
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                ctx.IncidentReports.ToList();
+                ctxCloud.IncidentReports.ToList();
 
-                foreach (ElementStateReport report in ctx.ElementStateReports.ToList())
+                foreach (ElementStateReport report in ctxCloud.ElementStateReports.ToList())
                 {
                     if (report.MrID == mrID)
                     {
@@ -208,18 +128,6 @@ namespace IncidentManagementSystem.Service
                     }
                 }
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.IncidentReports.ToList();
-
-            //    foreach (ElementStateReport report in ctxCloud.ElementStateReports.ToList())
-            //    {
-            //        if (report.MrID == mrID)
-            //        {
-            //            temp.Add(report);
-            //        }
-            //    }
-            //}
 
             foreach (ElementStateReport report in temp)
             {
@@ -246,52 +154,35 @@ namespace IncidentManagementSystem.Service
         public List<ElementStateReport> GetElementStateReportsForSpecificMrIDAndSpecificTimeInterval(string mrID, DateTime startTime, DateTime endTime)
         {
             List<ElementStateReport> retVal = new List<ElementStateReport>();
-            using (var ctx = new IncidentContext())
+            using (var ctxClud = new IncidentCloudContext())
             {
-                ctx.ElementStateReports.Where(u => u.MrID == mrID && u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
+                ctxClud.ElementStateReports.Where(u => u.MrID == mrID && u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
             }
             return retVal;
-            //List<ElementStateReport> retVal = new List<ElementStateReport>();
-            //using (var ctxClud = new IncidentCloudContext())
-            //{
-            //    ctxClud.ElementStateReports.Where(u => u.MrID == mrID && u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
-            //}
-            //return retVal;
         }
 
         public List<ElementStateReport> GetElementStateReportsForSpecificTimeInterval(DateTime startTime, DateTime endTime)
         {
+
             List<ElementStateReport> retVal = new List<ElementStateReport>();
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                ctx.ElementStateReports.Where(u => u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
+                ctxCloud.ElementStateReports.Where(u => u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
             }
             return retVal;
-            //List<ElementStateReport> retVal = new List<ElementStateReport>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.ElementStateReports.Where(u => u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
-            //}
-            //return retVal;
         }
 
         public IncidentReport GetReport(DateTime id)
         {
             List<IncidentReport> retVal = new List<IncidentReport>();
-            using (var ctx = new IncidentContext())
+
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                foreach (IncidentReport ir in ctx.IncidentReports)
+                foreach (IncidentReport ir in ctxCloud.IncidentReports)
                 {
                     retVal.Add(ir);
                 }
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    foreach (IncidentReport ir in ctxCloud.IncidentReports)
-            //    {
-            //        retVal.Add(ir);
-            //    }
-            //}
 
             IncidentReport res = null;
             foreach (IncidentReport report in retVal)
@@ -303,14 +194,10 @@ namespace IncidentManagementSystem.Service
                 }
             }
 
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                res = ctx.IncidentReports.Where(ir => ir.Id == res.Id).Include("Crew").FirstOrDefault();
+                res = ctxCloud.IncidentReports.Where(ir => ir.Id == res.Id).Include("InvestigationCrew").FirstOrDefault();
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    res = ctxCloud.IncidentReports.Where(ir => ir.Id == res.Id).Include("Crew").FirstOrDefault();
-            //}
             return res;
         }
 
@@ -320,11 +207,12 @@ namespace IncidentManagementSystem.Service
             Dictionary<string, List<IncidentReport>> reportsByBreaker = new Dictionary<string, List<IncidentReport>>();
             List<List<IncidentReport>> retVal = new List<List<IncidentReport>>();
 
-            using (var ctx = new IncidentContext())
-            {
-                ctx.IncidentReports.ToList();
 
-                foreach (IncidentReport report in ctx.IncidentReports.ToList())
+            using (var ctxCloud = new IncidentCloudContext())
+            {
+                ctxCloud.IncidentReports.ToList();
+
+                foreach (IncidentReport report in ctxCloud.IncidentReports.ToList())
                 {
                     if (report.MrID == mrID)
                     {
@@ -332,18 +220,6 @@ namespace IncidentManagementSystem.Service
                     }
                 }
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.IncidentReports.ToList();
-
-            //    foreach (IncidentReport report in ctxCloud.IncidentReports.ToList())
-            //    {
-            //        if (report.MrID == mrID)
-            //        {
-            //            temp.Add(report);
-            //        }
-            //    }
-            //}
 
             foreach (IncidentReport report in temp)
             {
@@ -369,40 +245,30 @@ namespace IncidentManagementSystem.Service
 
         public List<IncidentReport> GetReportsForSpecificMrIDAndSpecificTimeInterval(string mrID, DateTime startTime, DateTime endTime)
         {
+
             List<IncidentReport> retVal = new List<IncidentReport>();
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                ctx.IncidentReports.Where(u => u.MrID == mrID && u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
+                ctxCloud.IncidentReports.Where(u => u.MrID == mrID && u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
             }
             return retVal;
-            //List<IncidentReport> retVal = new List<IncidentReport>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.IncidentReports.Where(u => u.MrID == mrID && u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
-            //}
-            //return retVal;
         }
 
         public List<IncidentReport> GetReportsForSpecificTimeInterval(DateTime startTime, DateTime endTime)
         {
+
             List<IncidentReport> retVal = new List<IncidentReport>();
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                ctx.IncidentReports.Where(u => u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
+                ctxCloud.IncidentReports.Where(u => u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
             }
             return retVal;
-            //List<IncidentReport> retVal = new List<IncidentReport>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.IncidentReports.Where(u => u.Time > startTime && u.Time < endTime).ToList().ForEach(x => retVal.Add(x));
-            //}
-            //return retVal;
         }
 
         public void UpdateReport(IncidentReport report)
         {
             List<IncidentReport> list = new List<IncidentReport>();
-            using (var ctx = new IncidentContext())
+            using (var ctx = new IncidentCloudContext())
             {
                 foreach (IncidentReport ir in ctx.IncidentReports)
                 {
@@ -469,11 +335,11 @@ namespace IncidentManagementSystem.Service
                 reportsByBreaker.Add(mrid, new List<IncidentReport>());
             }
 
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                ctx.IncidentReports.ToList();
+                ctxCloud.IncidentReports.ToList();
 
-                foreach (IncidentReport report in ctx.IncidentReports.ToList())
+                foreach (IncidentReport report in ctxCloud.IncidentReports.ToList())
                 {
                     if (report.Time.Date == date)
                     {
@@ -481,18 +347,6 @@ namespace IncidentManagementSystem.Service
                     }
                 }
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.IncidentReports.ToList();
-
-            //    foreach (IncidentReport report in ctxCloud.IncidentReports.ToList())
-            //    {
-            //        if (report.Time.Date == date)
-            //        {
-            //            temp.Add(report);
-            //        }
-            //    }
-            //}
 
             foreach (IncidentReport report in temp)
             {
@@ -520,14 +374,10 @@ namespace IncidentManagementSystem.Service
                 reportsByBreaker.Add(mrid, new List<IncidentReport>());
             }
 
-            using (var ctx = new IncidentContext())
+            using (var ctxCloud = new IncidentCloudContext())
             {
-                temp = ctx.IncidentReports.ToList();
+                temp = ctxCloud.IncidentReports.ToList();
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    temp = ctxCloud.IncidentReports.ToList();
-            //}
 
             foreach (IncidentReport report in temp)
             {

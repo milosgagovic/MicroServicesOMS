@@ -8,6 +8,7 @@ using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using OMSSCADACommon;
 using OMSSCADACommon.Commands;
 using OMSSCADACommon.Responses;
+using PubSubContract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace TransactionManager
         IDMSContract proxyToDispatcherDMS;
         WCFIMSClient ServiceCommunicationClient;
         ServiceFabricDMSClient proxyToDMS;
-
+        SubscriberServiceCloud proxyToSubscriberServiceCloud;
         WCFDMSTransactionClient _WCFDMSTransactionClient;
         WCFDMSTransactionClient _WCFNMSTransactionClient;
         ModelGDATMS gdaTMS;
@@ -84,66 +85,7 @@ namespace TransactionManager
 
             gdaTMS = new ModelGDATMS();
         }
-        /*
-        private void InitializeChanels()
-        {
-            Console.WriteLine("InitializeChannels()");
 
-            var binding = new NetTcpBinding();
-            binding.CloseTimeout = TimeSpan.FromMinutes(10);
-            binding.OpenTimeout = TimeSpan.FromMinutes(10);
-            binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-            binding.SendTimeout = TimeSpan.FromMinutes(10);
-            binding.TransactionFlow = true;
-            binding.MaxReceivedMessageSize = Int32.MaxValue;
-
-            // duplex channel for NMS transaction
-            CallBackTransactionNMS = new TransactionCallback();
-            TransactionCallbacks.Add(CallBackTransactionNMS);
-            DuplexChannelFactory<ITransaction> factoryTransactionNMS = new DuplexChannelFactory<ITransaction>(CallBackTransactionNMS,
-                                                         binding,
-                                                         new EndpointAddress("net.tcp://localhost:8018/NetworkModelTransactionService"));
-            ProxyTransactionNMS = factoryTransactionNMS.CreateChannel();
-            TransactionProxys.Add(ProxyTransactionNMS);
-
-            // duplex channel for DMS transaction
-            CallBackTransactionDMS = new TransactionCallback();
-            TransactionCallbacks.Add(CallBackTransactionDMS);
-            DuplexChannelFactory<ITransaction> factoryTransactionDMS = new DuplexChannelFactory<ITransaction>(CallBackTransactionDMS,
-                                                            binding,
-                                                            new EndpointAddress("net.tcp://localhost:8028/DMSTransactionService"));
-            ProxyTransactionDMS = factoryTransactionDMS.CreateChannel();
-            TransactionProxys.Add(ProxyTransactionDMS);
-
-            // duplex channel for SCADA transaction
-            CallBackTransactionSCADA = new TransactionCallback();
-            TransactionCallbacks.Add(CallBackTransactionSCADA);
-            DuplexChannelFactory<ITransactionSCADA> factoryTransactionSCADA = new DuplexChannelFactory<ITransactionSCADA>(CallBackTransactionSCADA,
-                                                            binding,
-                                                            new EndpointAddress("net.tcp://localhost:8078/SCADATransactionService"));
-            ProxyTransactionSCADA = factoryTransactionSCADA.CreateChannel();
-
-            // client channel for SCADA 
-
-
-            // client channel for DMSDispatcherService
-            ChannelFactory<IDMSContract> factoryDispatcherDMS = new ChannelFactory<IDMSContract>(binding, new EndpointAddress("net.tcp://localhost:8029/DMSDispatcherService"));
-            proxyToDispatcherDMS = factoryDispatcherDMS.CreateChannel();
-
-
-
-            //ChannelFactory<IIMSContract> factoryToIMS = new ChannelFactory<IIMSContract>(binding, new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-            // proxyToIMS = factoryToIMS.CreateChannel();
-
-            ProxyToNMSService = new NetworkModelGDAProxy("NetworkModelGDAEndpoint");
-            ProxyToNMSService.Open();
-
-
-            // client channel for IMS
-            // factoryToIMS = new ChannelFactory<IIMSContract>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-            //IMSClient = factoryToIMS.CreateChannel();
-
-        }*/
         private void InitializeChanels()
         {
 
@@ -194,18 +136,12 @@ namespace TransactionManager
 
             TransactionProxys.Add(_WCFDMSTransactionClient);
             TransactionCallbacks.Add(CallBackTransactionDMS);
-            //  ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
-            // client channel for IMS
-            // factoryToIMS = new ChannelFactory<IIMSContract>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-            //IMSClient = factoryToIMS.CreateChannel();
+
 
             NetTcpBinding binding3 = new NetTcpBinding();
             // Create a partition resolver
             IServicePartitionResolver partitionResolver3 = ServicePartitionResolver.GetDefault();
 
-            //create calllback
-            // duplex channel for DMS transaction
-            //TransactionCallback CallBackTransactionNMS2 = new TransactionCallback();
             TransactionCallbacks.Add(CallBackTransactionNMS);
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactory3 = new WcfCommunicationClientFactory<ITransaction>
@@ -234,8 +170,28 @@ namespace TransactionManager
 
 
 
-            
-           
+            NetTcpBinding binding4 = new NetTcpBinding();
+            // Create a partition resolver
+            IServicePartitionResolver partitionResolver4 = ServicePartitionResolver.GetDefault();
+
+            //create calllback
+            // duplex channel for DMS transaction
+            //  TransactionCallback CallBackTransactionDMS2 = new TransactionCallback();
+            // create a  WcfCommunicationClientFactory object.
+            var wcfClientFactory4 = new WcfCommunicationClientFactory<ISubscription>
+                (clientBinding: binding4, servicePartitionResolver: partitionResolver4);
+
+            //
+            // Create a client for communicating with the ICalculator service that has been created with the
+            // Singleton partition scheme.
+            //
+            proxyToSubscriberServiceCloud = new SubscriberServiceCloud(
+                            wcfClientFactory4,
+                            new Uri("fabric:/ServiceFabricOMS/PubSubStatelessService"),
+                            ServicePartitionKey.Singleton,
+                            listenerName: "SubscriptionService");
+
+
         }
 
         #region 2PC methods
@@ -552,7 +508,8 @@ namespace TransactionManager
 
         public void SendCrew(IncidentReport report)
         {
-            proxyToDispatcherDMS.SendCrewToDms(report);
+            proxyToDMS.InvokeWithRetry(client => client.Channel.SendCrewToDms(report));
+            //proxyToDispatcherDMS.SendCrewToDms(report);
             return;
         }
 
@@ -736,7 +693,17 @@ namespace TransactionManager
             return IMSClient.GetAllReportsSortByBreaker(mrids);
         }
 
-       
+        public void Subscribe()
+        {
+            proxyToSubscriberServiceCloud.InvokeWithRetry(client => client.Channel.Subscribe());
+        }
+
+        public void UnSubscribe()
+        {
+            proxyToSubscriberServiceCloud.InvokeWithRetry(client => client.Channel.UnSubscribe());
+        }
+
+
         #endregion
     }
 }

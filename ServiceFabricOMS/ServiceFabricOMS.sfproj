@@ -35,6 +35,7 @@
     <ProjectReference Include="..\DMStatelessService\DMStatelessService.csproj" />
     <ProjectReference Include="..\IMStatelessService\IMStatelessService.csproj" />
     <ProjectReference Include="..\NMStatelessService\NMStatelessService.csproj" />
+    <ProjectReference Include="..\PubSubStatelessService\PubSubStatelessService.csproj" />
     <ProjectReference Include="..\TMStatelessService\TMStatelessService.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
