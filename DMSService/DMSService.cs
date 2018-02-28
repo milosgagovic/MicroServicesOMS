@@ -442,6 +442,39 @@ namespace DMSService
                         else
                         {
                             sw.UnderSCADA = false;
+
+                            ElementStateReport elementStateReport = elementStates.Where(s => s.MrID == sw.MRID).LastOrDefault();
+
+                            if (elementStateReport != null)
+                            {
+                                sw = new Switch(branch, mrid, (SwitchState)elementStateReport.State) { UnderSCADA = false };
+                            }
+                            else
+                            {
+                                sw = new Switch(branch, mrid, SwitchState.Closed) { UnderSCADA = false };
+                            }
+                        }
+
+                        foreach (IncidentReport report in reports)
+                        {
+                            if (report.MrID == sw.MRID && report.IncidentState != IncidentState.REPAIRED)
+                            {
+                                sw.Incident = true;
+
+                                if (sw.UnderSCADA)
+                                {
+                                    sw.CanCommand = false;
+                                }
+                                
+                                break;
+                            }
+                            else if (report.MrID == sw.MRID && report.IncidentState == IncidentState.REPAIRED)
+                            {
+                                if (sw.State == SwitchState.Open)
+                                {
+                                    sw.CanCommand = true;
+                                }
+                            }
                         }
 
                         sw.End1 = n.ElementGID;

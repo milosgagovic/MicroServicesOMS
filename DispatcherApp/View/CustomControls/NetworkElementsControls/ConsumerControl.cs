@@ -1,6 +1,7 @@
 ﻿using DispatcherApp.Model.Properties;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace DispatcherApp.View.CustomControls.NetworkElementsControls
 {
@@ -93,6 +95,44 @@ namespace DispatcherApp.View.CustomControls.NetworkElementsControls
 
             EnergyConsumerProperties consumerProperties = (EnergyConsumerProperties)dataContext;
 
+            Canvas callCanvas = new Canvas();
+            Border callBorder = new Border()
+            {
+                Height = buttonSize,
+                Width = buttonSize,
+                Background = new ImageBrush(new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "/../../View/Resources/Images/call.png"))),
+                ToolTip = "Call"
+            };
+
+            Style callStyle = new Style();
+
+            Setter callSetter1 = new Setter();
+            callSetter1.Property = Canvas.VisibilityProperty;
+            callSetter1.Value = Visibility.Hidden;
+
+            callStyle.Setters.Add(callSetter1);
+
+            Setter callSetter2 = new Setter();
+            callSetter2.Property = Canvas.VisibilityProperty;
+            callSetter2.Value = Visibility.Visible;
+
+            DataTrigger callTrigger = new DataTrigger();
+            callTrigger.Binding = new Binding("Call");
+            callTrigger.Value = true;
+            callTrigger.Setters.Add(callSetter2);
+
+            callStyle.Triggers.Add(callTrigger);
+
+            callCanvas.Style = callStyle;
+            callCanvas.IsHitTestVisible = false;
+
+            Canvas.SetLeft(callBorder, -(callBorder.Width / 2));
+            Canvas.SetTop(callBorder, -(callBorder.Height / 2));
+
+            callCanvas.Children.Add(callBorder);
+
+            this.ButtonCanvas.Children.Add(callCanvas);
+
             if (consumerProperties.IsUnderScada)
             {
                 Canvas scadaCanvas = new Canvas();
@@ -107,7 +147,7 @@ namespace DispatcherApp.View.CustomControls.NetworkElementsControls
                 scadaBorder.CornerRadius = new CornerRadius(scadaBorder.Height / 2);
                 scadaBorder.BorderThickness = new Thickness(scadaBorder.Height / 10);
                 Canvas.SetLeft(scadaBorder, -(scadaBorder.Width / 4));
-                Canvas.SetTop(scadaBorder, -(scadaBorder.Height / 4));
+                Canvas.SetTop(scadaBorder, (scadaBorder.Height));
                 scadaCanvas.Children.Add(scadaBorder);
 
                 TextBlock scadaTextblock = new TextBlock()

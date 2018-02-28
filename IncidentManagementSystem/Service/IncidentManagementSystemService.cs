@@ -45,7 +45,7 @@ namespace IncidentManagementSystem.Service
             Crew c1 = new Crew() { Id = "1", CrewName = "Adam Smith", Type = CrewType.Investigation };
             Crew c2 = new Crew() { Id = "2", CrewName = "Danny Phillips", Type = CrewType.Investigation };
             Crew c3 = new Crew() { Id = "3", CrewName = "Anna Davis", Type = CrewType.Investigation };
-            Crew c4 = new Crew() { Id = "4", CrewName = "Mark Crow ", Type = CrewType.Repair };
+            Crew c4 = new Crew() { Id = "4", CrewName = "Mark Crow", Type = CrewType.Repair };
             Crew c5 = new Crew() { Id = "5", CrewName = "Jullie Stephenson", Type = CrewType.Repair };
             Crew c6 = new Crew() { Id = "6", CrewName = "David Phill", Type = CrewType.Repair };
             crews.Add(c1);

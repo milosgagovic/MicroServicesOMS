@@ -9,7 +9,7 @@ namespace DMSCommon.Model
     [DataContract]
     public enum SwitchState
     {
-        Open = 0,
-        Closed = 1
+        Closed = 0,
+        Open = 1
     }
 }
