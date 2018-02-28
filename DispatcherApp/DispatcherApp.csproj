@@ -125,9 +125,11 @@
     <Compile Include="View\CustomControls\TopMenuControl.xaml.cs">
       <DependentUpon>TopMenuControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Resources\Converters\BigLettersToRegularText.cs" />
     <Compile Include="View\Resources\Converters\BoolToVisibility.cs" />
     <Compile Include="View\Resources\Converters\CrewTypeToCrews.cs" />
     <Compile Include="View\Resources\Converters\IncidentStateToBool.cs" />
+    <Compile Include="View\Resources\Converters\IncidentStateToVisibility.cs" />
     <Compile Include="View\Resources\Converters\SendCrewParameters.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

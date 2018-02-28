@@ -1,5 +1,4 @@
-﻿using IMSContract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,20 +8,20 @@ using System.Windows.Data;
 
 namespace DispatcherApp.View.Resources.Converters
 {
-    public class IncidentStateToBool : IValueConverter
+    public class BigLettersToRegularText : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return null;
+            string text = string.Empty;
 
-            if ((IncidentState)value == IncidentState.UNRESOLVED || (IncidentState)value == IncidentState.READY_FOR_REPAIR)
+            string[] parts = value.ToString().Split('_');
+
+            foreach (string part in parts)
             {
-                return true;
+                text += part[0] + part.Substring(1).ToLower() + " ";
             }
-            else
-            {
-                return false;
-            }
+
+            return text;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

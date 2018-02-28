@@ -17,32 +17,22 @@ namespace DispatcherApp.View.Resources.Converters
             ObservableCollection<Crew> res = new ObservableCollection<Crew>();
             ObservableCollection<Crew> crews = new ObservableCollection<Crew>();
             IncidentReport report = new IncidentReport();
+            CrewType type;
 
             try
             {
                 crews = (ObservableCollection<Crew>)values[0];
                 report = (IncidentReport)values[1];
+                type = (CrewType)values[2];
             }
             catch { return null; }
 
-            //if (report.Crew != null)
-            //{
-            //    res.Add(report.Crew);
-            //    return res;
-            //}
-
             foreach (Crew crew in crews)
             {
-                if (report.Crewtype == crew.Type)
+                if (type == crew.Type && !crew.Working)
                 {
                     res.Add(crew);
                 }
-            }
-
-            if (res.Count == 0)
-            {
-                report.IncidentState = IncidentState.NO_CREWS;
-                return res;
             }
 
             return res;

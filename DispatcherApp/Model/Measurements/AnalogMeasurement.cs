@@ -18,6 +18,7 @@ namespace DispatcherApp.Model.Measurements
             try { this.Value = rd.GetProperty(ModelCode.ANALOG_NORMVAL).AsFloat(); } catch { }
             try { this.MeasurementType = rd.GetProperty(ModelCode.MEASUREMENT_TYPE).AsString(); } catch { }
             try { this.UnitSymbol = (UnitSymbol)rd.GetProperty(ModelCode.MEASUREMENT_UNITSYMB).AsEnum(); } catch { }
+
             base.ReadFromResourceDescription(rd);
         }
 

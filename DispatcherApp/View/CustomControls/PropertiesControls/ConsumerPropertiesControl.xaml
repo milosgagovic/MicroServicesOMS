@@ -31,6 +31,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Label>Type:
                     </Label>
@@ -52,6 +53,10 @@
                     </Label>
                     <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentProperty.IsEnergized}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
                     </TextBlock>
+                    <Label Grid.Row="5">Active power (kW):
+                    </Label>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentProperty.Pfixed}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    </TextBlock>
                 </Grid>
             </Expander>
         </Grid>
@@ -69,7 +74,7 @@
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0">Measurement Type:
                     </Label>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding CurrentProperty.Measurements[0].MeasurementType}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="Power consumption" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="1">Value:
                     </Label>

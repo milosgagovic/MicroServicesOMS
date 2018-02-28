@@ -1,6 +1,7 @@
 ﻿using DMSCommon.Model;
 using DMSContract;
 using IMSContract;
+using IncidentManagementSystem.Service;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using OMSSCADACommon;
@@ -17,12 +18,13 @@ namespace DMSService
 {
     public class DMSDispatcherService : IDMSContract
     {
-        private WCFIMSClient serviceCommunicationClient;
-        private WCFIMSClient ServiceCommunicationClient
+        private IMServiceFabricClient imsCommunicationClient;
+
+        private IMServiceFabricClient IMSCommunicationClient
         {
             get
             {
-                if (serviceCommunicationClient == null)
+                if (imsCommunicationClient == null)
                 {
                     NetTcpBinding binding = new NetTcpBinding();
                     // Create a partition resolver
@@ -35,27 +37,14 @@ namespace DMSService
                     // Create a client for communicating with the ICalculator service that has been created with the
                     // Singleton partition scheme.
                     //
-                    serviceCommunicationClient = new WCFIMSClient(
+                    imsCommunicationClient = new IMServiceFabricClient(
                                     wcfClientFactory,
                                     new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
                                     ServicePartitionKey.Singleton);
                 }
-                return serviceCommunicationClient;
+                return imsCommunicationClient;
             }
-            set { serviceCommunicationClient = value; }
-        }
-        private IMSClient imsClient;
-        private IMSClient IMSClient
-        {
-            get
-            {
-                if (imsClient == null)
-                {
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-                }
-                return imsClient;
-            }
-            set { imsClient = value; }
+            set { imsCommunicationClient = value; }
         }
 
         public DMSDispatcherService()
@@ -63,6 +52,7 @@ namespace DMSService
             Console.WriteLine("Dispatcher instantiated");
             //Pokretanje inicijalizacije mreze
             DMSService dmsService = DMSService.Instance;
+            DMSCallService call = new DMSCallService();
         }
 
         public List<Element> GetAllElements()
@@ -212,8 +202,6 @@ namespace DMSService
             {
                 Source s = (Source)DMSService.Instance.Tree.Data[DMSService.Instance.Tree.Roots[0]];
                 return s;
-
-
             }
             catch (Exception)
             {
@@ -230,7 +218,6 @@ namespace DMSService
             }
             catch (Exception)
             {
-
                 return new Dictionary<long, Element>();
             }
         }
@@ -246,65 +233,79 @@ namespace DMSService
 
         private void ProcessCrew(IncidentReport report)
         {
-            bool isImsAvailable = false;
-            //do
-            //{
-            //    try
-            //    {
-            //        if (IMSClient.State == CommunicationState.Created)
-            //        {
-            //            IMSClient.Open();
-            //        }
-
-            //        isImsAvailable = IMSClient.Ping();
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        //Console.WriteLine(e);
-            //        Console.WriteLine("ProcessCrew() -> IMS is not available yet.");
-            //        if (IMSClient.State == CommunicationState.Faulted)
-            //            IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-            //    }
-            //    Thread.Sleep(2000);
-            //} while (!isImsAvailable);
-            report.Id = ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetReport(report.Time)).Id;
-            //report.Id = IMSClient.GetReport(report.Time).Id;
+            report.Id = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetReport(report.Time)).Id;
 
             if (report != null)
             {
-                var rnd = new Random(DateTime.Now.Second);
-                int repairtime = rnd.Next(5, 180);
-
-                Thread.Sleep(repairtime * 100);
-
-                Switch sw = null;
-                foreach (var item in DMSService.Instance.Tree.Data.Values)
+                if (report.Crewtype == CrewType.Investigation)
                 {
-                    if (item.MRID == report.MrID)
+                    Thread.Sleep(TimeSpan.FromSeconds(4));
+
+                    var rnd = new Random(DateTime.Now.Second);
+                    int repairtime = rnd.Next(30, 180);
+
+                    Array values = Enum.GetValues(typeof(ReasonForIncident));
+                    Random rand = new Random();
+                    ReasonForIncident res = (ReasonForIncident)values.GetValue(rand.Next(1, values.Length));
+
+                    report.Reason = res;
+                    report.RepairTime = TimeSpan.FromMinutes(repairtime);
+                    report.CrewSent = true;
+
+                    report.IncidentState = IncidentState.READY_FOR_REPAIR;
+                    report.Crewtype = CrewType.Repair;
+                }
+                else if (report.Crewtype == CrewType.Repair)
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(report.RepairTime.TotalMinutes / 10));
+
+                    report.IncidentState = IncidentState.REPAIRED;
+
+                    Switch sw = null;
+                    foreach (var item in DMSService.Instance.Tree.Data.Values)
                     {
-                        sw = (Switch)item;
-                        sw.CanCommand = true;
-                        break;
+                        if (item.MRID == report.MrID)
+                        {
+                            sw = (Switch)item;
+
+                            if (item.UnderSCADA)
+                            {
+                                sw.CanCommand = true;
+                                break;
+                            }
+                            else
+                            {
+                                sw.State = SwitchState.Closed;
+                                ElementStateReport elementStateReport = new ElementStateReport() { MrID = sw.MRID, Time = DateTime.UtcNow, State = 0 };
+                                IMSCommunicationClient.InvokeWithRetry(client => client.Channel.AddElementStateReport(elementStateReport));
+
+                                List<SCADAUpdateModel> networkChange = new List<SCADAUpdateModel>();
+                                if (EnergizationAlgorithm.TraceUp((Node)DMSService.Instance.Tree.Data[sw.End1], DMSService.Instance.Tree))
+                                {
+                                    networkChange.Add(new SCADAUpdateModel(sw.ElementGID, true, OMSSCADACommon.States.CLOSED));
+                                    sw.Marker = true;
+                                    Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
+                                    n.Marker = true;
+                                    networkChange.Add(new SCADAUpdateModel(n.ElementGID, true));
+                                    networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, true, false, DMSService.Instance.Tree);
+                                }
+                                else
+                                {
+                                    networkChange.Add(new SCADAUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.CLOSED));
+                                }
+
+                                Publisher publisher1 = new Publisher();
+                                publisher1.PublishUpdate(networkChange);
+                                break;
+                            }
+                        }
                     }
                 }
 
-                Array values = Enum.GetValues(typeof(CrewResponse));
-                Random rand = new Random();
-                ReasonForIncident res = (ReasonForIncident)values.GetValue(rand.Next(1, values.Length));
-
-                report.Reason = res;
-                report.RepairTime = TimeSpan.FromMinutes(repairtime);
-                report.CrewSent = true;
-
-                Array values1 = Enum.GetValues(typeof(IncidentState));
-                report.IncidentState = (IncidentState)values1.GetValue(rand.Next(2, values.Length - 1));
-                ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.UpdateReport(report));
-                //IMSClient.UpdateReport(report);
+                IMSCommunicationClient.InvokeWithRetry(client => client.Channel.UpdateReport(report));
 
                 Publisher publisher = new Publisher();
                 publisher.PublishIncident(report);
-
-                publisher.PublishCrew(new SCADAUpdateModel(sw.ElementGID, true));
             }
         }
 

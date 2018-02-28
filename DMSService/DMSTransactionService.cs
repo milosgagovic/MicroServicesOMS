@@ -41,7 +41,6 @@ namespace DMSService
                 publisher.PublishUpdate(update);
             }
 
-
             ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
             callback.CallbackCommit("Uspjesno je prosao commit na DMS-u");
         }
@@ -53,8 +52,7 @@ namespace DMSService
             newTree = DMSService.Instance.InitializeNetwork(delta);
             DMSService.updatesCount += 1;
             ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
-
-            // i ovde puca nekad
+            
             if (newTree.Data.Values.Count != 0)
             {
                 callback.CallbackPrepare(true);
@@ -64,6 +62,7 @@ namespace DMSService
                 callback.CallbackPrepare(false);
             }
         }
+
         public void Rollback()
         {
             Console.WriteLine("Pozvan je RollBack na DMSu");

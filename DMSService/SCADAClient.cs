@@ -9,29 +9,14 @@ using System.Text;
 
 namespace DMSService
 {
-    //public class SCADAClient : ChannelFactory<ISCADAContract>, ISCADAContract, IDisposable
-    //{
-    //    SCADAProxy proxy;
-
-    //    public SCADAClient()
-    //    {
-    //        proxy = new SCADAProxy(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
-    //    }
-
-    //    public Response ExecuteCommand(Command command)
-    //    {
-    //        return proxy.ExecuteCommand(command);
-    //    }
-    //}
-
     public class SCADAClient : ClientBase<ISCADAContract>, ISCADAContract
     {
-        public SCADAClient(string endpointName) : base(new NetTcpBinding(), new EndpointAddress(endpointName))
+        public SCADAClient(string endpointName, NetTcpBinding binding) : base(binding, new EndpointAddress(endpointName))
         {
 
         }
 
-        public SCADAClient(EndpointAddress address) : base(new NetTcpBinding(), address)
+        public SCADAClient(EndpointAddress address, NetTcpBinding binding) : base(binding, address)
         {
 
         }
@@ -46,5 +31,4 @@ namespace DMSService
             return Channel.Ping();
         }
     }
-
 }

@@ -52,6 +52,12 @@ namespace DispatcherApp.ViewModel
         private string chartTitle = "";
         private string chartSubtitle = "";
 
+        private System.Timers.Timer crewTimer = new System.Timers.Timer();
+        private double timerValue = 0;
+        private double investigationMax = 4;
+        private double maxValue = 4;
+        private double minValue = 0;
+
         #region Subscriber
         private Subscriber subscriber;
         #endregion
@@ -129,7 +135,7 @@ namespace DispatcherApp.ViewModel
         #region Constructor
         public DispatcherAppViewModel()
         {
-        //    Thread.Sleep(5000);
+            //Thread.Sleep(5000);
 
             subscriber = new Subscriber();
             subscriber.Subscribe();
@@ -153,14 +159,13 @@ namespace DispatcherApp.ViewModel
 
             try
             {
-                answerFromTransactionManager = ProxyToTransactionManager.GetNetwork(); 
-
+                answerFromTransactionManager = ProxyToTransactionManager.GetNetwork();
             }
             catch (Exception e) { }
+
             InitNetwork();
             InitElementsAndProperties(answerFromTransactionManager);
             DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
-
         }
 
         public void InitNetwork()
@@ -350,6 +355,16 @@ namespace DispatcherApp.ViewModel
                             Switch breaker = element as Switch;
                             this.Breakers.Add(element);
                             BreakerProperties properties = new BreakerProperties() { IsEnergized = element.Marker, IsUnderScada = element.UnderSCADA, Incident = element.Incident, CanCommand = breaker.CanCommand };
+
+                            if (breaker.State == SwitchState.Open)
+                            {
+                                properties.State = OMSSCADACommon.States.OPENED;
+                            }
+                            else if (breaker.State == SwitchState.Closed)
+                            {
+                                properties.State = OMSSCADACommon.States.CLOSED;
+                            }
+
                             properties.ValidCommands.Add(CommandTypes.CLOSE);
                             this.CommandIndex = 0;
 
@@ -416,6 +431,27 @@ namespace DispatcherApp.ViewModel
                             DigitalMeasurement measurement = new DigitalMeasurement();
                             measurement.ReadFromResourceDescription(meas);
 
+                            Element element = null;
+                            Network.TryGetValue(psr, out element);
+
+                            Switch breaker = null;
+                            if (element != null)
+                            {
+                                breaker = element as Switch;
+
+                                if (breaker != null)
+                                {
+                                    if (breaker.State == SwitchState.Open)
+                                    {
+                                        measurement.State = OMSSCADACommon.States.OPENED;
+                                    }
+                                    else if (breaker.State == SwitchState.Closed)
+                                    {
+                                        measurement.State = OMSSCADACommon.States.CLOSED;
+                                    }
+                                }
+                            }
+
                             ElementProperties properties;
                             Properties.TryGetValue(psr, out properties);
 
@@ -423,7 +459,7 @@ namespace DispatcherApp.ViewModel
                             {
                                 properties.Measurements.Add(measurement);
                             }
-                            
+
                             this.Measurements.Add(measurement.GID, measurement);
                         }
                         else if (type == DMSType.ENERGCONSUMER)
@@ -1008,7 +1044,7 @@ namespace DispatcherApp.ViewModel
                     allDates = true;
                     date = DateTime.UtcNow;
                 }
-                 
+
                 List<List<IncidentReport>> reportsByBreaker = new List<List<IncidentReport>>();
                 List<string> mrids = new List<string>();
 
@@ -1053,7 +1089,7 @@ namespace DispatcherApp.ViewModel
 
                     this.ChartSeries.Add(series);
                 }
-                
+
                 this.ChartTitle = "Number of Incidents for Breakers";
                 if (!allDates)
                 {
@@ -1147,7 +1183,11 @@ namespace DispatcherApp.ViewModel
 
                 List<List<ElementStateReport>> reportsByBreaker = new List<List<ElementStateReport>>();
 
-                reportsByBreaker = ProxyToTransactionManager.GetElementStateReportsForMrID(breaker.MRID);
+                try
+                {
+                    reportsByBreaker = ProxyToTransactionManager.GetElementStateReportsForMrID(breaker.MRID);
+                }
+                catch { }
 
                 ClusteredColumnChart chart = new ClusteredColumnChart();
                 this.ChartSeries.Clear();
@@ -1191,7 +1231,11 @@ namespace DispatcherApp.ViewModel
                 }
             }
 
-            ProxyToTransactionManager.SendCommandToSCADA(TypeOfSCADACommand.WriteDigital, (string)parameter, CommandTypes.CLOSE, 0);
+            try
+            {
+                ProxyToTransactionManager.SendCommandToSCADA(TypeOfSCADACommand.WriteDigital, (string)parameter, CommandTypes.CLOSE, 0);
+            }
+            catch { }
         }
 
         private void ExecuteSendCrewCommand(object parameter)
@@ -1199,6 +1243,11 @@ namespace DispatcherApp.ViewModel
             var values = (object[])parameter;
             var datetime = (DateTime)values[0];
             var crew = (Crew)values[1];
+
+            if (crew == null)
+            {
+                return;
+            }
 
             IncidentReport report = new IncidentReport();
             foreach (IncidentReport ir in IncidentReports)
@@ -1210,14 +1259,45 @@ namespace DispatcherApp.ViewModel
                 }
             }
 
-           // report.Crew = crew;
+
             report.CrewSent = true;
-            report.IncidentState = IncidentState.PENDING;
+
+            crew.Working = true;
+            RaisePropertyChanged("Crews");
+
+            if (report.IncidentState == IncidentState.UNRESOLVED)
+            {
+                report.InvestigationCrew = crew;
+                report.CurrentValue = 0;
+                report.MaxValue = investigationMax;
+
+                tokenSource = new CancellationTokenSource();
+                CancellationToken token = tokenSource.Token;
+                Task.Factory.StartNew(() => ProgressBarChange(report, token), token);
+
+                report.IncidentState = IncidentState.INVESTIGATING;
+            }
+            else if (report.IncidentState == IncidentState.READY_FOR_REPAIR)
+            {
+                report.RepairCrew = crew;
+                report.CurrentValue = 0;
+                report.MaxValue = report.RepairTime.TotalMinutes / 10;
+
+                tokenSource = new CancellationTokenSource();
+                CancellationToken token = tokenSource.Token;
+                Task.Factory.StartNew(() => ProgressBarChange(report, token), token);
+
+                report.IncidentState = IncidentState.REPAIRING;
+            }
 
             ProxyToTransactionManager.SendCrew(report);
 
-            ElementProperties element = Properties.Where(p => p.Value.MRID == report.MrID).FirstOrDefault().Value;
-            element.CrewSent = true;
+            try
+            {
+                ElementProperties element = Properties.Where(p => p.Value.MRID == report.MrID).FirstOrDefault().Value;
+                element.CrewSent = true;
+            }
+            catch { }
         }
 
         private void ExecutePropertiesCommand(object parameter)
@@ -1527,10 +1607,64 @@ namespace DispatcherApp.ViewModel
                     this.BottomTabControlVisibility = Visibility.Collapsed;
                 }
             }
+            else
+            {
+                int i = 0;
+
+                for (i = 0; i < CenterTabControlTabs.Count; i++)
+                {
+                    if ((string)CenterTabControlTabs[i].Header == (string)parameter)
+                    {
+                        CenterTabControlTabs[i].Content = null;
+                        CenterTabControlTabs[i].Visibility = Visibility.Collapsed;
+                        CenterTabControlTabs.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
         }
         #endregion
 
         #region Properties
+        public double TimerValue
+        {
+            get
+            {
+                return timerValue;
+            }
+            set
+            {
+                timerValue = value;
+                RaisePropertyChanged("TimerValue");
+            }
+        }
+
+        public double MaxValue
+        {
+            get
+            {
+                return maxValue;
+            }
+            set
+            {
+                maxValue = value;
+                RaisePropertyChanged("MaxValue");
+            }
+        }
+
+        public double MinValue
+        {
+            get
+            {
+                return minValue;
+            }
+            set
+            {
+                minValue = value;
+                RaisePropertyChanged("MinValue");
+            }
+        }
+
         public ObservableCollection<BorderTabItem> LeftTabControlTabs
         {
             get
@@ -1930,14 +2064,29 @@ namespace DispatcherApp.ViewModel
 
                         if (property is BreakerProperties && i == 0)
                         {
+                            BreakerProperties breakerProperties = property as BreakerProperties;
+                            breakerProperties.State = sum.State;
                             Measurement measurement;
-                            Measurements.TryGetValue(property.Measurements[0].GID, out measurement);
-                            DigitalMeasurement digitalMeasurement = (DigitalMeasurement)measurement;
+                            DigitalMeasurement digitalMeasurement;
+                            try
+                            {
+                                Measurements.TryGetValue(property.Measurements[0].GID, out measurement);
+                                digitalMeasurement = (DigitalMeasurement)measurement;
+                            }
+                            catch (Exception)
+                            {
+                                continue;
+                            }
 
                             if (digitalMeasurement != null)
                             {
                                 digitalMeasurement.State = sum.State;
                             }
+                        }
+                        if (property is EnergyConsumerProperties)
+                        {
+                            EnergyConsumerProperties energyConsumerProperties = property as EnergyConsumerProperties;
+                            energyConsumerProperties.Call = false;
                         }
                     }
                     i++;
@@ -1968,6 +2117,24 @@ namespace DispatcherApp.ViewModel
                 temp.Reason = report.Reason;
                 temp.RepairTime = report.RepairTime;
                 temp.IncidentState = report.IncidentState;
+                temp.Crewtype = report.Crewtype;
+
+                if (temp.IncidentState == IncidentState.READY_FOR_REPAIR)
+                {
+                    if (temp.InvestigationCrew != null)
+                    {
+                        temp.InvestigationCrew.Working = false;
+                        RaisePropertyChanged("Crews");
+                    }
+                }
+                else if (temp.IncidentState == IncidentState.REPAIRED)
+                {
+                    if (temp.RepairCrew != null)
+                    {
+                        temp.RepairCrew.Working = false;
+                        RaisePropertyChanged("Crews");
+                    }
+                }
             }
             else
             {
@@ -1980,7 +2147,10 @@ namespace DispatcherApp.ViewModel
                 if (report.IncidentState == IncidentState.REPAIRED)
                 {
                     element.Incident = false;
-                    element.CanCommand = true;
+                    if (element.IsUnderScada)
+                    {
+                        element.CanCommand = true;
+                    }
                 }
                 else
                 {
@@ -1995,11 +2165,16 @@ namespace DispatcherApp.ViewModel
         {
             ElementProperties property;
             properties.TryGetValue(call.Gid, out property);
-            if (property != null)
+
+            EnergyConsumerProperties consumerProperties = property as EnergyConsumerProperties;
+
+            if (consumerProperties != null)
             {
-                property.IsEnergized = call.IsEnergized;
+                consumerProperties.IsEnergized = call.IsEnergized;
+                consumerProperties.Call = true;
             }
         }
+
         private void SearchForIncident(bool isIncident, long incidentBreaker)
         {
 
@@ -2011,14 +2186,24 @@ namespace DispatcherApp.ViewModel
                 {
                     if (isIncident == false)
                     {
+                        tokenSource.Cancel();
+                        Thread.Sleep(50);
+
                         tokenSource = new CancellationTokenSource();
                         CancellationToken token = tokenSource.Token;
 
                         blinkTask = Task.Factory.StartNew(() => Blink(propBr, token), token);
+                        propBr.IsCandidate = true;
                     }
                     else if (isIncident)
                     {
                         tokenSource.Cancel();
+                        Thread.Sleep(50);
+
+                        tokenSource = new CancellationTokenSource();
+                        CancellationToken token = tokenSource.Token;
+
+                        blinkTask = Task.Factory.StartNew(() => FinalCandidate(propBr, token), token);
                         propBr.IsCandidate = true;
                     }
                 }
@@ -2028,7 +2213,30 @@ namespace DispatcherApp.ViewModel
                 }
             }
         }
-        private async Task Blink(ElementProperties sw,CancellationToken ct)
+
+        private async Task ProgressBarChange(IncidentReport report, CancellationToken ct)
+        {
+            while (true)
+            {
+                await Task.Delay(1000);
+
+                if (report.CurrentValue != report.MaxValue)
+                {
+                    report.CurrentValue++;
+                }
+                else
+                {
+                    return;
+                }
+
+                if (ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                }
+            }
+        }
+
+        private async Task Blink(ElementProperties sw, CancellationToken ct)
         {
             while (true)
             {
@@ -2037,11 +2245,32 @@ namespace DispatcherApp.ViewModel
 
                 if (ct.IsCancellationRequested)
                 {
+                    sw.IsCandidate = false;
                     ct.ThrowIfCancellationRequested();
                 }
+            }
+        }
+
+        private async Task FinalCandidate(ElementProperties sw, CancellationToken ct)
+        {
+            int i = 0;
+            while (true)
+            {
+                if (i == 20)
+                {
+                    tokenSource.Cancel();
+                }
+                await Task.Delay(300);
+                sw.IsCandidate = sw.IsCandidate == true ? false : true;
+
+                if (ct.IsCancellationRequested)
+                {
+                    sw.IsCandidate = false;
+                    ct.ThrowIfCancellationRequested();
+                }
+                i++;
             }
         }
         #endregion
     }
 }
-

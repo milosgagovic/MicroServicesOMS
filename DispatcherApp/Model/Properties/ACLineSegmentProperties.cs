@@ -13,6 +13,7 @@ namespace DispatcherApp.Model.Properties
         public new void ReadFromResourceDescription(ResourceDescription rd)
         {
             try { this.Length = rd.GetProperty(ModelCode.CONDUCTOR_LEN).AsFloat(); } catch { }
+
             base.ReadFromResourceDescription(rd);
         }
 
