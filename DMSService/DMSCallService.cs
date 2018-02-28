@@ -17,6 +17,7 @@ using IMSContract;
 using System.ServiceModel;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
+using IncidentManagementSystem.Service;
 
 namespace DMSService
 {
@@ -35,7 +36,7 @@ namespace DMSService
             {
                 if (imsClient == null)
                 {
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
+                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), new NetTcpBinding());
                     imsClient.Open();
                 }
                 return imsClient;
