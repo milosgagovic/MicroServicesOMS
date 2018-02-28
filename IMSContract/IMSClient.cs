@@ -9,17 +9,12 @@ namespace IMSContract
 {
     public class IMSClient : ClientBase<IIMSContract>, IIMSContract
     {
-        // izbrisati iz App.config fajlova client tag...
-        //public IMSClient() : base("IMSEndpoint")
-        //{
-        //}
-
-        public IMSClient(string endpointName) : base(new NetTcpBinding(), new EndpointAddress(endpointName))
+        public IMSClient(string endpointName, NetTcpBinding binding) : base(binding, new EndpointAddress(endpointName))
         {
-            
+
         }
 
-        public IMSClient(EndpointAddress address) : base(new NetTcpBinding(), address)
+        public IMSClient(EndpointAddress address, NetTcpBinding binding) : base(binding, address)
         {
 
         }

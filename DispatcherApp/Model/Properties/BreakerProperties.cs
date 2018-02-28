@@ -9,6 +9,7 @@ namespace DispatcherApp.Model.Properties
 {
     public class BreakerProperties : ElementProperties
     {
+        private OMSSCADACommon.States state;
         private List<CommandTypes> validCommands;
 
         public BreakerProperties()
@@ -19,6 +20,19 @@ namespace DispatcherApp.Model.Properties
         public new void ReadFromResourceDescription(ResourceDescription rd)
         {
             base.ReadFromResourceDescription(rd);
+        }
+
+        public OMSSCADACommon.States State
+        {
+            get
+            {
+                return this.state;
+            }
+            set
+            {
+                this.state = value;
+                RaisePropertyChanged("State");
+            }
         }
 
         public List<CommandTypes> ValidCommands

@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMSService
+namespace IncidentManagementSystem.Service
 {
-    class IMServiceFabricClient : ServicePartitionClient<WcfCommunicationClient<IIMSContract>>
+    public class IMServiceFabricClient : ServicePartitionClient<WcfCommunicationClient<IIMSContract>>
     {
         public IMServiceFabricClient(ICommunicationClientFactory<WcfCommunicationClient<IIMSContract>> communicationClientFactory, Uri serviceUri, ServicePartitionKey partitionKey = null, TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null)
             : base(communicationClientFactory, serviceUri, partitionKey, targetReplicaSelector, listenerName, retrySettings)

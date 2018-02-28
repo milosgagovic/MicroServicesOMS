@@ -75,20 +75,21 @@ namespace DispatcherApp.View.CustomControls
             this.ColumnDefinitions.Add(buttonCol);
             this.ColumnDefinitions.Add(space1Col);
             this.ColumnDefinitions.Add(canvas1Col);
+            this.ColumnDefinitions.Add(space2Col);
             this.ColumnDefinitions.Add(canvas2Col);
 
             RowDefinition mainRow = new RowDefinition();
             mainRow.Height = new GridLength(buttonSize);
             this.RowDefinitions.Add(mainRow);
-            
+
             this.Children.Add(this.Canvas1);
             Grid.SetColumn(this.Canvas1, 0);
             this.Children.Add(this.ButtonCanvas);
             Grid.SetColumn(this.ButtonCanvas, 2);
             this.Children.Add(this.Canvas2);
-            Grid.SetColumn(this.Canvas2, 3);
-            this.Children.Add(this.Canvas3);
-            Grid.SetColumn(this.Canvas3, 5);
+            Grid.SetColumn(this.Canvas2, 4);
+            //this.Children.Add(this.Canvas3);
+            //Grid.SetColumn(this.Canvas3, 5);
 
             this.Canvas1.Background = new ImageBrush(new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "/../../View/Resources/Images/incident.png")));
             this.Canvas2.Background = new ImageBrush(new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "/../../View/Resources/Images/crew.png")));
@@ -119,7 +120,7 @@ namespace DispatcherApp.View.CustomControls
             ControlTemplate template = new ControlTemplate(typeof(Button));
             FrameworkElementFactory elemFactory = new FrameworkElementFactory(typeof(Border));
             elemFactory.Name = "Border";
-            elemFactory.SetValue(Border.CornerRadiusProperty, new CornerRadius(buttonSize/20));
+            elemFactory.SetValue(Border.CornerRadiusProperty, new CornerRadius(buttonSize / 20));
             elemFactory.SetValue(Border.BackgroundProperty, this.ActivePalette[0]);
             template.VisualTree = elemFactory;
 
@@ -191,7 +192,7 @@ namespace DispatcherApp.View.CustomControls
                     BorderBrush = Brushes.White,
                     ToolTip = "Under SCADA"
                 };
-                scadaBorder.CornerRadius = new CornerRadius(scadaBorder.Height/2);
+                scadaBorder.CornerRadius = new CornerRadius(scadaBorder.Height / 2);
                 scadaBorder.BorderThickness = new Thickness(scadaBorder.Height / 10);
                 Canvas.SetLeft(scadaBorder, -(scadaBorder.Width / 2));
                 Canvas.SetTop(scadaBorder, -(scadaBorder.Height / 2));

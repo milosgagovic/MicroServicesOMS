@@ -9,9 +9,11 @@ namespace IMSContract
     public enum IncidentState
     {
         UNRESOLVED,
-        PENDING,
+        INVESTIGATING,
+        READY_FOR_REPAIR,
+        REPAIRING,
         REPAIRED,
         FAILED_TO_REPAIR,
-        NO_CREWS
+        NO_FREE_CREWS
     }
 }

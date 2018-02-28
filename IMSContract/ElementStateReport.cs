@@ -17,6 +17,7 @@ namespace IMSContract
         {
 
         }
+
         public string MrID { get => mrID; set => mrID = value; }
         [Key]
         public DateTime Time { get => time; set => time = value; }

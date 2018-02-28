@@ -24,11 +24,14 @@ namespace IncidentManagementSystem.Service
                 try
                 {
                     ctx.Crews.Add(crew);
+
                     foreach (Crew c in ctx.Crews)
                     {
                         Console.WriteLine("Added crew: " + c.CrewName + ", crew id: " + c.Id);
                     }
+
                     ctx.SaveChanges();
+
                     using (var ctxCloud = new IncidentCloudContext())
                     {
                         try
@@ -46,6 +49,7 @@ namespace IncidentManagementSystem.Service
                             return false;
                         }
                     }
+
                 }
                 catch (Exception e)
                 {
@@ -207,7 +211,6 @@ namespace IncidentManagementSystem.Service
             Dictionary<string, List<IncidentReport>> reportsByBreaker = new Dictionary<string, List<IncidentReport>>();
             List<List<IncidentReport>> retVal = new List<List<IncidentReport>>();
 
-
             using (var ctxCloud = new IncidentCloudContext())
             {
                 ctxCloud.IncidentReports.ToList();
@@ -245,7 +248,6 @@ namespace IncidentManagementSystem.Service
 
         public List<IncidentReport> GetReportsForSpecificMrIDAndSpecificTimeInterval(string mrID, DateTime startTime, DateTime endTime)
         {
-
             List<IncidentReport> retVal = new List<IncidentReport>();
             using (var ctxCloud = new IncidentCloudContext())
             {
@@ -256,7 +258,6 @@ namespace IncidentManagementSystem.Service
 
         public List<IncidentReport> GetReportsForSpecificTimeInterval(DateTime startTime, DateTime endTime)
         {
-
             List<IncidentReport> retVal = new List<IncidentReport>();
             using (var ctxCloud = new IncidentCloudContext())
             {
@@ -289,39 +290,14 @@ namespace IncidentManagementSystem.Service
                 res.Reason = report.Reason;
                 res.RepairTime = report.RepairTime;
                 res.CrewSent = report.CrewSent;
+                res.Crewtype = report.Crewtype;
                 res.IncidentState = report.IncidentState;
                 res.LostPower = report.LostPower;
-               // res.Crew = ctx.Crews.Where(c => c.Id == report.Crew.Id).FirstOrDefault();
+                try { res.InvestigationCrew = ctx.Crews.Where(c => c.Id == report.InvestigationCrew.Id).FirstOrDefault(); } catch { }
+                try { res.RepairCrew = ctx.Crews.Where(c => c.Id == report.RepairCrew.Id).FirstOrDefault(); } catch { }
 
                 ctx.SaveChanges();
             }
-            //using (var ctxcloud = new IncidentCloudContext())
-            //{
-            //    foreach (IncidentReport ir in ctxcloud.IncidentReports)
-            //    {
-            //        list.Add(ir);
-            //    }
-
-            //    int i = 0;
-            //    for (i = 0; i < list.Count; i++)
-            //    {
-            //        if (DateTime.Compare(list[i].Time, report.Time) == 0)
-            //        {
-            //            i = list[i].Id;
-            //            break;
-            //        }
-            //    }
-
-            //    var res = ctxcloud.IncidentReports.Where(r => r.Id == i).FirstOrDefault();
-            //    res.Reason = report.Reason;
-            //    res.RepairTime = report.RepairTime;
-            //    res.CrewSent = report.CrewSent;
-            //    res.IncidentState = report.IncidentState;
-            //    res.LostPower = report.LostPower;
-            //    res.Crew = ctxcloud.Crews.Where(c => c.Id == report.Crew.Id).FirstOrDefault();
-
-            //    ctxcloud.SaveChanges();
-            //}
         }
 
         public List<List<IncidentReport>> GetReportsForSpecificDateSortByBreaker(List<string> mrids, DateTime date)
@@ -350,7 +326,10 @@ namespace IncidentManagementSystem.Service
 
             foreach (IncidentReport report in temp)
             {
-                reportsByBreaker[report.MrID].Add(report); ;
+                if (reportsByBreaker.ContainsKey(report.MrID))
+                {
+                    reportsByBreaker[report.MrID].Add(report);
+                }
             }
 
             int i = 0;

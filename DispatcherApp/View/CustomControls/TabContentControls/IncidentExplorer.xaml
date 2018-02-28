@@ -11,6 +11,8 @@
         <converters:SendCrewParameters x:Key="SendCrewParameters"/>
         <converters:IncidentStateToBool x:Key="IncidentStateToBool"/>
         <converters:CrewTypeToCrews x:Key="CrewTypeToCrews"/>
+        <converters:IncidentStateToVisibility x:Key="IncidentStateToVisibility"/>
+        <converters:BigLettersToRegularText x:Key="BigLettersToRegularText"/>
     </UserControl.Resources>
     <Border BorderThickness="0, 0, 0, 0" BorderBrush="DarkGray" Background="{StaticResource DarkestColor}">
         <Grid>
@@ -22,11 +24,9 @@
                     <DataGridTextColumn Header="Time Stamp" Binding="{Binding Time}"/>
                     <DataGridTextColumn Header="Element ID" Binding="{Binding MrID}"/>
                     <DataGridTextColumn Header="Lost active power (kW)" Binding="{Binding LostPower}"/>
-                    <DataGridTextColumn Header="Incident State" Binding="{Binding IncidentState}"/>
-                    <DataGridTextColumn Header="Repair Time" Binding="{Binding RepairTime}"/>
-                    <DataGridTextColumn Header="Reason for Incident" Binding="{Binding Reason}"/>
                     <DataGridTextColumn Header="Crew Type" Binding="{Binding Crewtype}"/>
-                    <DataGridCheckBoxColumn Header="Crew Sent" Binding="{Binding CrewSent}"/>
+                    <DataGridTextColumn Header="Investigation crew" Binding="{Binding InvestigationCrew.CrewName}"/>
+                    <DataGridTextColumn Header="Repair crew" Binding="{Binding RepairCrew.CrewName}"/>
                     <DataGridTemplateColumn Header="Chose Crew:">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -41,6 +41,7 @@
                                             <MultiBinding Converter="{StaticResource CrewTypeToCrews}">
                                                 <Binding Path="DataContext.Crews" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
                                                 <Binding/>
+                                                <Binding Path="Crewtype"/>
                                             </MultiBinding>
                                         </ComboBox.ItemsSource>
                                         <ComboBox.SelectedIndex>0
@@ -58,17 +59,27 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Width="100">
+                    <DataGridTemplateColumn Width="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Grid>
-                                </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Report">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="Report:" HorizontalAlignment="Left" Margin="0, 0, 5, 0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Incident State" Binding="{Binding IncidentState, Converter={StaticResource BigLettersToRegularText}}"/>
+                    <DataGridTextColumn Header="Repair Time" Binding="{Binding RepairTime}"/>
+                    <DataGridTextColumn Header="Reason for Incident" Binding="{Binding Reason, Converter={StaticResource BigLettersToRegularText}}"/>
                     <DataGridTemplateColumn Header="Progress:">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
+                                <ProgressBar Maximum="{Binding MaxValue}" Minimum="0"  Value="{Binding CurrentValue}" Height="20" Width="100" Margin="5, 0, 5, 0" Visibility="{Binding IncidentState, Converter={StaticResource IncidentStateToVisibility}}">
+                                </ProgressBar>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

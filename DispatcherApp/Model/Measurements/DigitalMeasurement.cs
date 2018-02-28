@@ -20,6 +20,7 @@ namespace DispatcherApp.Model.Measurements
                 var temp = rd.GetProperty(ModelCode.DISCRETE_NORMVAL).AsInt();
                 this.State = (OMSSCADACommon.States)Enum.GetValues(typeof(OMSSCADACommon.States)).GetValue(temp);
             } catch { }
+
             base.ReadFromResourceDescription(rd);
         }
 

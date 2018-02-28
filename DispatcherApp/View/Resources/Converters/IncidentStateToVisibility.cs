@@ -5,23 +5,24 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 
 namespace DispatcherApp.View.Resources.Converters
 {
-    public class IncidentStateToBool : IValueConverter
+    public class IncidentStateToVisibility : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return null;
 
-            if ((IncidentState)value == IncidentState.UNRESOLVED || (IncidentState)value == IncidentState.READY_FOR_REPAIR)
+            if ((IncidentState)value == IncidentState.INVESTIGATING || (IncidentState)value == IncidentState.REPAIRING)
             {
-                return true;
+                return Visibility.Visible;
             }
             else
             {
-                return false;
+                return Visibility.Hidden;
             }
         }
 

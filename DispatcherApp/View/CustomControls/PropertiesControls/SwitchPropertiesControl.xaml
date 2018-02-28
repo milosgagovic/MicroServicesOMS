@@ -75,7 +75,7 @@
                     </TextBlock>-->
                     <Label Grid.Row="0">State:
                     </Label>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CurrentProperty.Measurements[0].State}" Background="#393535" Foreground="White" Padding="5, 2, 0, 0" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CurrentProperty.State}" Background="#393535" Foreground="White" Padding="5, 2, 0, 0" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <ComboBox Style="{StaticResource VoidwalkerDarkComboBox}" Grid.Row="3" Margin="5, 5, 10, 0" ItemsSource="{Binding CurrentProperty.ValidCommands }" IsEnabled="{Binding CurrentProperty.CanCommand }" SelectedIndex="{Binding CommandIndex}"/>
                     <Button Style="{StaticResource ButtonStyle}" Grid.Row="3" Grid.Column="1" Width="Auto" Margin="30, 5, 30, 0" IsEnabled="{Binding CurrentProperty.CanCommand }" Command="{Binding ExecuteSwitchCommand}" CommandParameter="{Binding CurrentProperty.Measurements[0].MRID}">Execute

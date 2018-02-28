@@ -4,6 +4,7 @@ using DMSCommon.TreeGraph.Tree;
 using DMSContract;
 using FTN.Common;
 using IMSContract;
+using IncidentManagementSystem.Service;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using OMSSCADACommon.Commands;
@@ -39,19 +40,6 @@ namespace DMSService
 
         private ModelResourcesDesc modelResourcesDesc = new ModelResourcesDesc();
         private ModelGdaDMS gda = new ModelGdaDMS();
-        private SCADAClient scadaClient;
-        private SCADAClient ScadaClient
-        {
-            get
-            {
-                if (scadaClient == null)
-                {
-                    scadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
-                }
-                return scadaClient;
-            }
-            set { scadaClient = value; }
-        }
 
         private ServiceHost scadaHost;
 
@@ -62,6 +50,7 @@ namespace DMSService
         public static bool isNetworkInitialized = false;
 
         private IMServiceFabricClient _imServiceFabricClient;
+
         private IMServiceFabricClient _IMServiceFabricClient
         {
             get
@@ -83,51 +72,11 @@ namespace DMSService
                                     wcfClientFactory,
                                     new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
                                     ServicePartitionKey.Singleton);
-
+                    
                 }
                 return _imServiceFabricClient;
             }
             set { _imServiceFabricClient = value; }
-        }
-        private WCFIMSClient serviceCommunicationClient;
-        private WCFIMSClient ServiceCommunicationClient
-        {
-            get
-            {
-                if (serviceCommunicationClient == null)
-                {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    // Create a partition resolver
-                    IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
-                    // create a  WcfCommunicationClientFactory object.
-                    var wcfClientFactory = new WcfCommunicationClientFactory<IIMSContract>
-                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
-
-                    //
-                    // Create a client for communicating with the ICalculator service that has been created with the
-                    // Singleton partition scheme.
-                    //
-                    serviceCommunicationClient = new WCFIMSClient(
-                                    wcfClientFactory,
-                                    new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
-                                    ServicePartitionKey.Singleton);
-                }
-                return serviceCommunicationClient;
-            }
-            set { serviceCommunicationClient = value; }
-        }
-        private IMSClient imsClient;
-        private IMSClient IMSClient
-        {
-            get
-            {
-                if (imsClient == null)
-                {
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-                }
-                return imsClient;
-            }
-            set { imsClient = value; }
         }
 
         public static DMSService Instance
@@ -141,6 +90,7 @@ namespace DMSService
                 return instance;
             }
         }
+
         public static int updatesCount = 0;
 
         private DMSService()
@@ -197,9 +147,6 @@ namespace DMSService
                 Thread.Sleep(100);
             }
 
-            // ne treba da se podize host za skadu, pre nego sto se pozove InitializeNetwork
-            StartScadaHost();
-
             // svi su otvoreni
             if (hosts.Select(h => h.State == CommunicationState.Opened).ToList().Count == hosts.Count)
             {
@@ -220,87 +167,12 @@ namespace DMSService
             Console.WriteLine("DMSService()-> InitializeNetwork Called");
             Tree<Element> retVal = new Tree<Element>();
             List<long> eSources = new List<long>();
-            #region oldcall
-            /*
-            bool isScadaAvailable = false;
-            do
-            {
-                Console.WriteLine("scada not available");
-                try
-                {
-                    if (ScadaClient.State == CommunicationState.Created)
-                    {
-                        ScadaClient.Open();
-                    }
 
-                    isScadaAvailable = ScadaClient.Ping();
-                }
-                catch (Exception e)
-                {
-                    //Console.WriteLine(e);
-                    Console.WriteLine("InitializeNetwork() -> SCADA is not available yet.");
-                    if (ScadaClient.State == CommunicationState.Faulted)
-                        ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
-                }
-                Thread.Sleep(500);
-            } while (!isScadaAvailable);
-
-
-
-            do
-            {
-                try
-                {
-                    if (ScadaClient.State == CommunicationState.Created)
-                    {
-                        ScadaClient.Open();
-                    }
-
-                    if (ScadaClient.Ping())
-                        break;
-                }
-                catch (Exception e)
-                {
-                    //Console.WriteLine(e);
-                    Console.WriteLine("InitializeNetwork() -> SCADA is not available yet.");
-                    if (ScadaClient.State == CommunicationState.Faulted)
-                        ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
-                }
-                Thread.Sleep(500);
-            } while (true);
-            Console.WriteLine("InitializeNetwork() -> SCADA is available.");
-
-
-            Response response = null;
-            // get dynamic data
-            response = ScadaClient.ExecuteCommand(new ReadAll());
-
-            bool isImsAvailable = false;
-            do
-            {
-                try
-                {
-                    if (IMSClient.State == CommunicationState.Created)
-                    {
-                        IMSClient.Open();
-                    }
-                    isImsAvailable = IMSClient.Ping();
-                }
-                catch (Exception e)
-                {
-                    //Console.WriteLine(e);
-                    Console.WriteLine("InitializeNetwork() -> IMS is not available yet.");
-                    if (IMSClient.State == CommunicationState.Faulted)
-                        IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-                }
-                Thread.Sleep(100);
-            } while (!isImsAvailable);
-            List<IncidentReport> reports = imsClient.GetAllReports();
-            */
-
-            #endregion oldcall
             List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
+            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
+
             Response response = null;
+
             // if there is no insert operations it means it is system initialization,
             // and DMS should obtain the static data from NMS           
             if (delta.InsertOperations.Count == 0)
@@ -321,6 +193,7 @@ namespace DMSService
                     List<PropertyValue> propValues = (List<PropertyValue>)ctx.PropertyValue.ToList();
                     List<Property> properties = ctx.Property.ToList();
                     properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
+
                     if (properties.Count > 0)
                     {
                         foreach (ResourceDescription rd in ctx.ResourceDescription)
@@ -424,6 +297,7 @@ namespace DMSService
             }
 
             EnergySourcesRD.ForEach(x => eSources.Add(x.Id));
+
             if (eSources.Count == 0)
             {
                 Console.WriteLine("InitializeNetwork Done");
@@ -553,30 +427,21 @@ namespace DMSService
                             }
                             else
                             {
-                                sw.UnderSCADA = false;
+                                ElementStateReport elementStateReport = elementStates.Where(s => s.MrID == sw.MRID).LastOrDefault();
+
+                                if (elementStateReport != null)
+                                {
+                                    sw = new Switch(branch, mrid, (SwitchState)elementStateReport.State) { UnderSCADA = false };
+                                }
+                                else
+                                {
+                                    sw = new Switch(branch, mrid, SwitchState.Closed) { UnderSCADA = false };
+                                }
                             }
                         }
                         else
                         {
-                            // to do: fix this, repsonse will not be null
                             sw.UnderSCADA = false;
-                        }
-
-                        foreach (IncidentReport report in reports)
-                        {
-                            if (report.MrID == sw.MRID && report.IncidentState != IncidentState.REPAIRED)
-                            {
-                                sw.Incident = true;
-                                sw.CanCommand = false;
-                                break;
-                            }
-                            else if (report.MrID == sw.MRID && report.IncidentState == IncidentState.REPAIRED)
-                            {
-                                if (sw.State == SwitchState.Open)
-                                {
-                                    sw.CanCommand = true;
-                                }
-                            }
                         }
 
                         sw.End1 = n.ElementGID;
@@ -821,8 +686,6 @@ namespace DMSService
 
             hosts.Add(dispatcherHost);
 
-            scadaHost = new ServiceHost(typeof(DMSServiceForSCADA));
-            //ServiceHost scadaHost = new ServiceHost(typeof(DMSServiceForSCADA));
             scadaHost.Description.Name = "DMSServiceForSCADA";
             scadaHost.AddServiceEndpoint(typeof(IDMSToSCADAContract), binding, new
             Uri("net.tcp://localhost:8039/IDMSToSCADAContract"));
@@ -839,10 +702,6 @@ namespace DMSService
             callService.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
 
             hosts.Add(callService);
-
-
-
-            //hosts.Add(scadaHost);
         }
 
         private void StartHosts()
@@ -884,29 +743,6 @@ namespace DMSService
             catch (Exception)
             {
                 throw;
-            }
-        }
-
-        private void StartScadaHost()
-        {
-            string message = string.Empty;
-
-            // hosts.Add(scadaHost);
-
-            scadaHost.Open();
-
-            message = string.Format("The WCF service {0} is ready.", scadaHost.Description.Name);
-            Console.WriteLine(message);
-            CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
-
-            message = "Endpoints:";
-            Console.WriteLine(message);
-            CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
-
-            foreach (Uri uri in scadaHost.BaseAddresses)
-            {
-                Console.WriteLine(uri);
-                CommonTrace.WriteTrace(CommonTrace.TraceInfo, uri.ToString());
             }
         }
 

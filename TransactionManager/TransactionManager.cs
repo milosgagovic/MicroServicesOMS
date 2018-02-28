@@ -3,6 +3,7 @@ using DMSContract;
 using FTN.Common;
 using FTN.ServiceContracts;
 using IMSContract;
+using IncidentManagementSystem.Service;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using OMSSCADACommon;
@@ -33,7 +34,7 @@ namespace TransactionManager
         NetworkModelGDAProxy ProxyToNMSService;
         NetworkGDAServiceFabric proxyToNMServiceFabric;
         IDMSContract proxyToDispatcherDMS;
-        WCFIMSClient ServiceCommunicationClient;
+        IMServiceFabricClient IMSCommunicationClient;
         ServiceFabricDMSClient proxyToDMS;
         SubscriberServiceCloud proxyToSubscriberServiceCloud;
         WCFDMSTransactionClient _WCFDMSTransactionClient;
@@ -61,20 +62,6 @@ namespace TransactionManager
         public TransactionCallback CallBackTransactionNMS { get => callBackTransactionNMS; set => callBackTransactionNMS = value; }
         public TransactionCallback CallBackTransactionDMS { get => callBackTransactionDMS; set => callBackTransactionDMS = value; }
         public TransactionCallback CallBackTransactionSCADA { get => callBackTransactionSCADA; set => callBackTransactionSCADA = value; }
-
-        private IMSClient imsClient;
-        private IMSClient IMSClient
-        {
-            get
-            {
-                if (imsClient == null)
-                {
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-                }
-                return imsClient;
-            }
-            set { imsClient = value; }
-        }
 
         public TransactionManager()
         {
@@ -105,7 +92,7 @@ namespace TransactionManager
             // Create a client for communicating with the ICalculator service that has been created with the
             // Singleton partition scheme.
             //
-            ServiceCommunicationClient = new WCFIMSClient(
+            IMSCommunicationClient = new IMServiceFabricClient(
                             wcfClientFactory,
                             new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
                             ServicePartitionKey.Singleton);
@@ -484,8 +471,8 @@ namespace TransactionManager
             //} while (!isImsAvailable);
 
            // var crews = IMSClient.GetCrews();
-            var crews = ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
-            var incidentReports = ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllReports());
+            var crews = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
+            var incidentReports = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllReports());
 
             TMSAnswerToClient answer = new TMSAnswerToClient(resourceDescriptionFromNMS, listOfDMSElement, GraphDeep, descMeas, crews, incidentReports);
             return answer;
@@ -583,7 +570,7 @@ namespace TransactionManager
         public void GetNetworkWithOutParam(out List<Element> DMSElements, out List<ResourceDescription> resourceDescriptions, out int GraphDeep)
         {
             //List<Element> listOfDMSElement = proxyToDMS.InvokeWithRetry(client => client.Channel.GetAllElements());
-             List<Element> listOfDMSElement = new List<Element>();//proxyToDMS.GetAllElements();
+            List<Element> listOfDMSElement = new List<Element>();//proxyToDMS.GetAllElements();
             List<ResourceDescription> resourceDescriptionFromNMS = new List<ResourceDescription>();
             List<ACLine> acList = proxyToDispatcherDMS.GetAllACLines();
             List<Node> nodeList = proxyToDispatcherDMS.GetAllNodes();
@@ -611,24 +598,19 @@ namespace TransactionManager
             // return resourceDescriptionFromNMS;
         }
 
-        //public void AddReport(string mrID, DateTime time, string state)
-        //{
-        //    IMSClient.AddReport(mrID, time, state);
-        //}
-
         public List<List<ElementStateReport>> GetElementStateReportsForMrID(string mrID)
         {
-            return IMSClient.GetElementStateReportsForMrID(mrID);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetElementStateReportsForMrID(mrID));
         }
 
         public List<ElementStateReport> GetElementStateReportsForSpecificTimeInterval(DateTime startTime, DateTime endTime)
         {
-            return IMSClient.GetElementStateReportsForSpecificTimeInterval(startTime, endTime);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetElementStateReportsForSpecificTimeInterval(startTime, endTime));
         }
 
         public List<ElementStateReport> GetElementStateReportsForSpecificMrIDAndSpecificTimeInterval(string mrID, DateTime startTime, DateTime endTime)
         {
-            return IMSClient.GetElementStateReportsForSpecificMrIDAndSpecificTimeInterval(mrID, startTime, endTime);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetElementStateReportsForSpecificMrIDAndSpecificTimeInterval(mrID, startTime, endTime));
         }
 
         public void SendCrew(string mrid)
@@ -638,59 +620,52 @@ namespace TransactionManager
 
         public List<Crew> GetCrews()
         {
-            return ServiceCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
-           // return IMSClient.GetCrews();
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
         }
-
-        //public void SendCrew(string mrid)
-        //{
-        //    proxyToDispatcherDMS.SendCrewToDms(mrid);
-        //    return;
-        //}
 
         public bool AddCrew(Crew crew)
         {
-            return IMSClient.AddCrew(crew);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.AddCrew(crew));
         }
 
         public void AddReport(IncidentReport report)
         {
-            IMSClient.AddReport(report);
+            IMSCommunicationClient.InvokeWithRetry(client => client.Channel.AddReport(report));
         }
 
         public List<IncidentReport> GetAllReports()
         {
-            return IMSClient.GetAllReports();
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllReports());
         }
 
         public List<List<IncidentReport>> GetReportsForMrID(string mrID)
         {
-            return IMSClient.GetReportsForMrID(mrID);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetReportsForMrID(mrID));
         }
 
         public List<IncidentReport> GetReportsForSpecificTimeInterval(DateTime startTime, DateTime endTime)
         {
-            return IMSClient.GetReportsForSpecificTimeInterval(startTime, endTime);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetReportsForSpecificTimeInterval(startTime, endTime));
         }
 
         public List<IncidentReport> GetReportsForSpecificMrIDAndSpecificTimeInterval(string mrID, DateTime startTime, DateTime endTime)
         {
-            return IMSClient.GetReportsForSpecificMrIDAndSpecificTimeInterval(mrID, startTime, endTime);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetReportsForSpecificMrIDAndSpecificTimeInterval(mrID, startTime, endTime));
         }
 
         public List<ElementStateReport> GetAllElementStateReports()
         {
-            return IMSClient.GetAllElementStateReports();
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
         }
 
         public List<List<IncidentReport>> GetReportsForSpecificDateSortByBreaker(List<string> mrids, DateTime date)
         {
-            return IMSClient.GetReportsForSpecificDateSortByBreaker(mrids, date);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetReportsForSpecificDateSortByBreaker(mrids, date));
         }
 
         public List<List<IncidentReport>> GetAllReportsSortByBreaker(List<string> mrids)
         {
-            return IMSClient.GetAllReportsSortByBreaker(mrids);
+            return IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllReportsSortByBreaker(mrids));
         }
 
         public void Subscribe()
@@ -702,7 +677,6 @@ namespace TransactionManager
         {
             proxyToSubscriberServiceCloud.InvokeWithRetry(client => client.Channel.UnSubscribe());
         }
-
 
         #endregion
     }
