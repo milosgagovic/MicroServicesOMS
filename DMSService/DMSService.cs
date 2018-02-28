@@ -739,7 +739,6 @@ namespace DMSService
                 message = string.Format("Trace level: {0}", CommonTrace.TraceLevel);
                 Console.WriteLine(message);
                 CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
-                DMSCallService call = new DMSCallService();
             }
             catch (Exception)
             {

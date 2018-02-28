@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
@@ -15,10 +15,8 @@ using System.Linq;
 using DMSCommon.TreeGraph.Tree;
 using IMSContract;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
-using IncidentManagementSystem.Service;
 
 namespace DMSService
 {
@@ -29,11 +27,22 @@ namespace DMSService
         public Pop3Client client;
         public List<long> clientsCall = new List<long>();
         public List<long> allBrekersUp = new List<long>();
-        bool waitForMoreCalls = true;
         public object sync = new object();
-
+        private IMSClient imsClient;
+        public IMSClient IMSClient
+        {
+            get
+            {
+                if (imsClient == null)
+                {
+                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
+                    imsClient.Open();
+                }
+                return imsClient;
+            }
+            set { imsClient = value; }
+        }
         private IMServiceFabricClient _imServiceFabricClient;
-
         private IMServiceFabricClient _IMServiceFabricClient
         {
             get
@@ -61,13 +70,11 @@ namespace DMSService
             }
             set { _imServiceFabricClient = value; }
         }
-
         public DMSCallService()
         {
             Thread t = new Thread(new ThreadStart(Process));
             t.Start();
         }
-
         public void Process()
         {
             while (true)
@@ -132,7 +139,6 @@ namespace DMSService
                 Thread.Sleep(3000);
             }
         }
-
         /// <summary>
         /// call je gid EC
         /// </summary>
@@ -140,178 +146,102 @@ namespace DMSService
         {
             List<NodeLink> maxDepthCheck = new List<NodeLink>();
             possibleBreakers = new List<List<long>>();
-
-            Task.Factory.StartNew(() => Timer());
-
-            int callsNum = 0;
-            Publisher pub = new Publisher();
-            long? incidentBreaker = null;
+            bool waitForMoreCalls = true;
 
             while (true)
             {
                 //zakljucavamo pozive klijenata i pronalazimo zajednicke prekidace
-                if (callsNum != clientsCall.Count)
+                int callsNum = clientsCall.Count;
+                lock (sync)
                 {
-                    callsNum = clientsCall.Count;
-
-                    lock (sync)
+                    foreach (long call in clientsCall)
                     {
-                        foreach (long call in clientsCall)
+                        Consumer c = (Consumer)DMSService.Instance.Tree.Data[call];
+                        Node upNode = (Node)DMSService.Instance.Tree.Data[c.End1];
+                        UpToSource(upNode, DMSService.Instance.Tree);
+                        if (allBrekersUp.Count > 0)
                         {
-                            Consumer c = (Consumer)DMSService.Instance.Tree.Data[call];
-                            Node upNode = (Node)DMSService.Instance.Tree.Data[c.End1];
-
-                            UpToSource(upNode, DMSService.Instance.Tree);
-
-                            if (allBrekersUp.Count > 0)
-                            {
-                                List<long> pom = new List<long>();
-                                foreach (var item in allBrekersUp)
-                                {
-                                    Switch s = (Switch)DMSService.Instance.Tree.Data[item];
-                                    if (s.UnderSCADA == false)
-                                    {
-                                        pom.Add(s.ElementGID);
-                                    }
-                                }
-                                possibleBreakers.Add(pom);
-                                allBrekersUp.Clear();
-                            }
-                        }
-                    }
-                    //ako lista ima vise clanova onda se bira prekidac koji je dublje u mrezi
-                    int numOfConsumers = possibleBreakers.Count;
-                    List<long> intesection = possibleBreakers.Aggregate((previousList, nextList) => previousList.Intersect(nextList).ToList());
-                    maxDepthCheck = new List<NodeLink>();
-                    foreach (long breaker in intesection)
-                    {
-                        maxDepthCheck.Add(DMSService.Instance.Tree.Links.Values.FirstOrDefault(x => x.Parent == breaker));
-                    }
-                    NodeLink possibileIncident = maxDepthCheck.FirstOrDefault(x => x.Depth == maxDepthCheck.Max(y => y.Depth));
-                    incidentBreaker = possibileIncident.Parent;
-
-                    if (waitForMoreCalls)
-                    {
-                        pub.PublishUIBreaker(false, (long)incidentBreaker);
-
-                        //Thread.Sleep(37000);
-                    }
-                }
-
-                if (!waitForMoreCalls)
-                {
-                    lock (sync)
-                    {
-                        if (/*callsNum == clientsCall.Count || */waitForMoreCalls == false)
-                        {
-                            //publishujes incident
-                            string mrid = DMSService.Instance.Tree.Data[(long)incidentBreaker].MRID;
-                            IncidentReport incident = new IncidentReport() { MrID = mrid };
-                            incident.Crewtype = CrewType.Investigation;
-
-                            // to do: BUG -> ovo state opened srediti
-                            ElementStateReport elementStateReport = new ElementStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = 1 };
-                            //ElementStateReport elementStateReport = new ElementStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = "OPENED" };                        
-
-                            _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.AddElementStateReport(elementStateReport));
-                            pub.PublishUIBreaker(true, (long)incidentBreaker);
-
-                            List<SCADAUpdateModel> networkChange = new List<SCADAUpdateModel>();
-                            Switch sw;
-                            try
-                            {
-                                sw = (Switch)DMSService.Instance.Tree.Data[(long)incidentBreaker];
-                            }
-                            catch (Exception)
-                            {
-                                return;
-                            }
-                            sw.Marker = false;
-                            sw.State = SwitchState.Open;
-                            sw.Incident = true;
-                            networkChange.Add(new SCADAUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.OPENED));
-                            Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
-                            n.Marker = false;
-                            networkChange.Add(new SCADAUpdateModel(n.ElementGID, false));
-                            networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSService.Instance.Tree);
-
-                            Source s = (Source)DMSService.Instance.Tree.Data[DMSService.Instance.Tree.Roots[0]];
-                            networkChange.Add(new SCADAUpdateModel(s.ElementGID, true));
-
-
-                            List<long> gids = new List<long>();
-                            networkChange.ForEach(x => gids.Add(x.Gid));
-                            List<long> listOfConsumersWithoutPower = gids.Where(x => (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(x) == DMSType.ENERGCONSUMER).ToList();
-                            foreach (long gid in listOfConsumersWithoutPower)
-                            {
-                                ResourceDescription resDes = DMSService.Instance.Gda.GetValues(gid);
-                                incident.LostPower += resDes.GetProperty(ModelCode.ENERGCONSUMER_PFIXED).AsFloat();
-                            }
-
-                            _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.AddReport(incident));
-
-                            Thread.Sleep(3000);
-
-                            pub.PublishUpdate(networkChange);
-                            pub.PublishIncident(incident);
-
-                            clientsCall.Clear();
-                            return;
+                            List<long> pom = new List<long>();
+                            allBrekersUp.ForEach(x => pom.Add(x));
+                            possibleBreakers.Add(pom);
+                            allBrekersUp.Clear();
                         }
                     }
                 }
+                //ako lista ima vise clanova onda se bira prekidac koji je dublje u mrezi
+                int numOfConsumers = possibleBreakers.Count;
+                List<long> intesection = possibleBreakers.Aggregate((previousList, nextList) => previousList.Intersect(nextList).ToList());
+                maxDepthCheck = new List<NodeLink>();
+                foreach (long breaker in intesection)
+                {
+                    maxDepthCheck.Add(DMSService.Instance.Tree.Links.Values.FirstOrDefault(x => x.Parent == breaker));
+                }
+                NodeLink possibileIncident = maxDepthCheck.FirstOrDefault(x => x.Depth == maxDepthCheck.Max(y => y.Depth));
+                long? incidentBreaker = possibileIncident.Parent;
+
+                Publisher pub = new Publisher();
+                if (waitForMoreCalls)
+                {
+                    pub.PublishUIBreaker(false, (long)incidentBreaker);
+
+                    Thread.Sleep(27000);
+                }
+
+                lock (sync)
+                {
+                    if (callsNum == clientsCall.Count || waitForMoreCalls == false)
+                    {
+                        //publishujes incident
+                        string mrid = DMSService.Instance.Tree.Data[(long)incidentBreaker].MRID;
+                        IncidentReport incident = new IncidentReport() { MrID = mrid };
+
+                        Random rand = new Random();
+                        Array values = Enum.GetValues(typeof(CrewType));
+                        incident.Crewtype = (CrewType)values.GetValue(rand.Next(0, values.Length));
+
+                        // to do: BUG -> ovo state opened srediti
+                        ElementStateReport elementStateReport = new ElementStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = 0 };
+                        //ElementStateReport elementStateReport = new ElementStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = "OPENED" };                        IMSClient.AddReport(incident);
+                        _IMServiceFabricClient.InvokeWithRetry(c => c.Channel.AddElementStateReport(elementStateReport)); 
+
+                        pub.PublishUIBreaker(true,(long)incidentBreaker);
+                        pub.PublishIncident(incident);
+
+                        clientsCall.Clear();
+                        return;
+                    }
+                    else
+                    {
+                        waitForMoreCalls = false;
+                        continue;
+                    }
+                }
+
+
             }
-        }
-
-        private async Task Timer()
-        {
-            await Task.Delay(37000);
-            this.waitForMoreCalls = false;
         }
 
         private void UpToSource(Node no, Tree<Element> tree)
         {
-            //Element el = tree.Data[no.Parent];
 
-            //if (tree.Data[el.ElementGID] is Source)
-            //{
-            //    return;
-            //}
-            //else if (tree.Data[el.ElementGID] is Switch)
-            //{
-            //    Switch s = (Switch)tree.Data[el.ElementGID];
-            //    allBrekersUp.Add(s.ElementGID);
-            //    Node n = (Node)tree.Data[s.End1];
-            //    UpToSource(n, tree);
-            //}
-            //else if (tree.Data[el.ElementGID] is ACLine)
-            //{
-            //    ACLine acl = (ACLine)tree.Data[el.ElementGID];
-            //    Node n = (Node)tree.Data[acl.End1];
-            //    UpToSource(n, tree);
-            //}
+            Element el = tree.Data[no.Parent];
 
-            while (true)
+            if (tree.Data[el.ElementGID] is Source)
             {
-                Element el = tree.Data[no.Parent];
-
-                if (tree.Data[el.ElementGID] is Source)
-                {
-                    return;
-                }
-                else if (tree.Data[el.ElementGID] is Switch)
-                {
-                    Switch s = (Switch)tree.Data[el.ElementGID];
-                    allBrekersUp.Add(s.ElementGID);
-                    Node n = (Node)tree.Data[s.End1];
-                    no = n;
-                }
-                else if (tree.Data[el.ElementGID] is ACLine)
-                {
-                    ACLine acl = (ACLine)tree.Data[el.ElementGID];
-                    Node n = (Node)tree.Data[acl.End1];
-                    no = n;
-                }
+                return;
+            }
+            else if (tree.Data[el.ElementGID] is Switch)
+            {
+                Switch s = (Switch)tree.Data[el.ElementGID];
+                allBrekersUp.Add(s.ElementGID);
+                Node n = (Node)tree.Data[s.End1];
+                UpToSource(n, tree);
+            }
+            else if (tree.Data[el.ElementGID] is ACLine)
+            {
+                ACLine acl = (ACLine)tree.Data[el.ElementGID];
+                Node n = (Node)tree.Data[acl.End1];
+                UpToSource(n, tree);
             }
         }
 
@@ -362,7 +292,6 @@ namespace DMSService
                 }
             } while (!canConnectToGmailServer);
         }
-
         public void SendMailMessageToClient(Message message, bool canFind)
         {
             bool canConnectToGmailServer = false;
