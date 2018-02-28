@@ -30,7 +30,7 @@ namespace PubSubscribe
         {
             try
             {
-                proxy.Publish(update);
+                proxyToCloud.InvokeWithRetry(client => client.Channel.Publish(update));
             }
             catch { }
         }
@@ -60,16 +60,19 @@ namespace PubSubscribe
         {
             try
             {
-                proxy.PublishCallIncident(call);
+                proxyToCloud.InvokeWithRetry(c => c.Channel.PublishCallIncident(call));
             }
-            catch { }
+            catch(FaultException e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void PublishUIBreaker(bool isIncident,long incidentBreaker)
         {
             try
             {
-                proxy.PublishUIBreakers(isIncident, incidentBreaker);
+                proxyToCloud.InvokeWithRetry(c => c.Channel.PublishUIBreakers(isIncident, incidentBreaker));
             }
             catch { }
         }
@@ -95,7 +98,7 @@ namespace PubSubscribe
                             wcfClientFactory,
                             new Uri("fabric:/ServiceFabricOMS/PubSubStatelessService"),
                             ServicePartitionKey.Singleton,
-                            listenerName: "SubscriptionService");
+                            listenerName: "PublishingService");
 
 
             //string address = "";

@@ -15,6 +15,8 @@ using System.Linq;
 using DMSCommon.TreeGraph.Tree;
 using IMSContract;
 using System.ServiceModel;
+using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 
 namespace DMSService
 {
@@ -39,6 +41,34 @@ namespace DMSService
                 return imsClient;
             }
             set { imsClient = value; }
+        }
+        private IMServiceFabricClient _imServiceFabricClient;
+        private IMServiceFabricClient _IMServiceFabricClient
+        {
+            get
+            {
+                if (_imServiceFabricClient == null)
+                {
+                    NetTcpBinding binding = new NetTcpBinding();
+                    // Create a partition resolver
+                    IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
+                    // create a  WcfCommunicationClientFactory object.
+                    var wcfClientFactory = new WcfCommunicationClientFactory<IIMSContract>
+                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+
+                    //
+                    // Create a client for communicating with the ICalculator service that has been created with the
+                    // Singleton partition scheme.
+                    //
+                    _imServiceFabricClient = new IMServiceFabricClient(
+                                    wcfClientFactory,
+                                    new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
+                                    ServicePartitionKey.Singleton);
+
+                }
+                return _imServiceFabricClient;
+            }
+            set { _imServiceFabricClient = value; }
         }
         public DMSCallService()
         {
@@ -172,7 +202,7 @@ namespace DMSService
                         // to do: BUG -> ovo state opened srediti
                         ElementStateReport elementStateReport = new ElementStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = 0 };
                         //ElementStateReport elementStateReport = new ElementStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = "OPENED" };                        IMSClient.AddReport(incident);
-                        IMSClient.AddElementStateReport(elementStateReport);
+                        _IMServiceFabricClient.InvokeWithRetry(c => c.Channel.AddElementStateReport(elementStateReport)); 
 
                         pub.PublishUIBreaker(true,(long)incidentBreaker);
                         pub.PublishIncident(incident);
