@@ -250,9 +250,8 @@ namespace TransactionManager
                         Rollback();
                         break;
                     }
-
-                    Commit();
                     PushDataToDatabase(fixedGuidDelta);
+                    Commit();
                     break;
                 }
             }
