@@ -472,7 +472,10 @@ namespace DMSService
                             {
                                 if (sw.State == SwitchState.Open)
                                 {
-                                    sw.CanCommand = true;
+                                    if (sw.UnderSCADA)
+                                    {
+                                        sw.CanCommand = true;
+                                    }
                                 }
                             }
                         }
