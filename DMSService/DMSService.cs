@@ -192,7 +192,8 @@ namespace DMSService
                 {
                     List<PropertyValue> propValues = (List<PropertyValue>)ctx.PropertyValue.ToList();
                     List<Property> properties = ctx.Property.ToList();
-                    properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
+                  
+                   // properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
 
                     if (properties.Count > 0)
                     {
