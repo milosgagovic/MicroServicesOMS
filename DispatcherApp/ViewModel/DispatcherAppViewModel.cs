@@ -2036,7 +2036,7 @@ namespace DispatcherApp.ViewModel
                     binding.MaxReceivedMessageSize = Int32.MaxValue;
 
                     ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-                        new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
+                        new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
                     ProxyToTransactionManager = factoryToTMS.CreateChannel();
                     TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
