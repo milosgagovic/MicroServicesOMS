@@ -4,6 +4,7 @@ using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -152,6 +153,13 @@ namespace ConsoleApp1
                     //}
                     Console.ReadLine();
                 }
+                else if (odg == "6")
+                {
+                   for(int i=0; i<15; i++)
+                    {
+                        Process.Start(@"C:\Users\Nebojsa\Desktop\Git\MicroServicesOMS\DispatcherApp\bin\Debug\DispatcherApp.exe");
+                    }
+                }
                 else
                 {
                     break;
@@ -167,6 +175,7 @@ namespace ConsoleApp1
             Console.WriteLine("3. Dodaj novi tim\n");
             Console.WriteLine("4. Gadjaj TMS na cloud-u\n");
             Console.WriteLine("5. Gadjaj IMS na cloud-u\n");
+            Console.WriteLine("6. Pokreni vise instanci\n");
             Console.WriteLine("Opcija:");
         }
 

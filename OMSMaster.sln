@@ -106,6 +106,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMStatelessService", "NMSta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubSubStatelessService", "PubSubStatelessService\PubSubStatelessService.csproj", "{62517C03-DF98-43F1-973E-3B63699A88AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMStatefulService", "TMStatefulService\TMStatefulService.csproj", "{67660010-87B5-4697-B7D5-6422657D5B40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -516,6 +518,14 @@ Global
 		{62517C03-DF98-43F1-973E-3B63699A88AB}.Release|x64.ActiveCfg = Release|x64
 		{62517C03-DF98-43F1-973E-3B63699A88AB}.Release|x64.Build.0 = Release|x64
 		{62517C03-DF98-43F1-973E-3B63699A88AB}.Release|x86.ActiveCfg = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|x64.ActiveCfg = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|x64.Build.0 = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|x86.ActiveCfg = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|Any CPU.ActiveCfg = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|x64.ActiveCfg = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|x64.Build.0 = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

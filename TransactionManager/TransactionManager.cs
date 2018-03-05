@@ -6,6 +6,8 @@ using IMSContract;
 using IncidentManagementSystem.Service;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using OMSSCADACommon;
 using OMSSCADACommon.Commands;
 using OMSSCADACommon.Responses;
@@ -40,6 +42,8 @@ namespace TransactionManager
         WCFDMSTransactionClient _WCFDMSTransactionClient;
         WCFDMSTransactionClient _WCFNMSTransactionClient;
         ModelGDATMS gdaTMS;
+        long instanceID = 0;
+
         private SCADAClient scadaClient;
         private SCADAClient ScadaClient
         {
@@ -70,6 +74,16 @@ namespace TransactionManager
 
             InitializeChanels();
 
+            gdaTMS = new ModelGDATMS();
+        }
+
+        public TransactionManager(long instanceID)
+        {
+            TransactionProxys = new List<WCFDMSTransactionClient>();
+            TransactionCallbacks = new List<TransactionCallback>();
+
+            InitializeChanels();
+            this.instanceID = instanceID;
             gdaTMS = new ModelGDATMS();
         }
 
@@ -348,34 +362,28 @@ namespace TransactionManager
 
         public TMSAnswerToClient GetNetwork()
         {
+            CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=storageomsmsc;AccountKey=Hu9kN3vtydaxcJoqHLdScZghIDqQqxVoGxZf5yi1pE/W0NY5nC5np68CeE2b72sFGTtB160zl3DBD5XY1EQQUQ==;EndpointSuffix=core.windows.net");
+            CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+            CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("logs");
+            var bla = cloudBlobContainer.CreateIfNotExists();
+
+            CloudAppendBlob appendBlob = cloudBlobContainer.GetAppendBlobReference("logfile");
+
+            if(!appendBlob.Exists())
+            {
+                appendBlob.CreateOrReplace();
+            }
+           
+            appendBlob.AppendText(string.Format("TransactionManager, GetNetwork(), instanceID: {0}, Time: {1}{2}", this.instanceID, DateTime.Now, Environment.NewLine));
+            cloudBlobContainer.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
             List<Element> listOfDMSElement = proxyToDMS.InvokeWithRetry(client => client.Channel.GetAllElements());
             // ako se ne podignu svi servisi na DMSu, ovde pada
             //   List<Element> listOfDMSElement = proxyToDispatcherDMS.GetAllElements();
 
             List<ResourceDescription> resourceDescriptionFromNMS = new List<ResourceDescription>();
             List<ResourceDescription> descMeas = new List<ResourceDescription>();
-            //using (NMSAdoNet ctx = new NMSAdoNet())
-            //{
-            //    List<PropertyValue> propValues = (List<PropertyValue>)ctx.PropertyValue.ToList();
-            //    List<Property> properties = ctx.Property.ToList();
-            //    properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
-
-            //    if (properties.Count > 0)
-            //    {
-            //        foreach (ResourceDescription rd in ctx.ResourceDescription)
-            //        {
-            //            List<Property> rdProp = (List<Property>)properties.Where(x => x.ResourceDescription_Id == rd.IdDb).ToList();
-            //            ResourceDescription res = new ResourceDescription(rd.Id, rdProp);
-            //            resourceDescriptionFromNMS.Add(res);
-            //        }
-            //    }
-            //}
-            //for (int i=0; i < 74; i++)
-            //{
-            //    resourceDescriptionFromNMS.Add(new ResourceDescription());
-            //}
-
-            // List<ResourceDescription> list = proxyToNMServiceFabric.InvokeWithRetry(client => client.Channel.GetExtentValues(ModelCode.BREAKER));
+           
             gdaTMS.GetExtentValues(ModelCode.BREAKER).ForEach(u => resourceDescriptionFromNMS.Add(u));
             gdaTMS.GetExtentValues(ModelCode.CONNECTNODE).ForEach(u => resourceDescriptionFromNMS.Add(u));
             gdaTMS.GetExtentValues(ModelCode.ENERGCONSUMER).ForEach(u => resourceDescriptionFromNMS.Add(u));
@@ -386,90 +394,7 @@ namespace TransactionManager
 
             int GraphDeep = proxyToDMS.InvokeWithRetry(client => client.Channel.GetNetworkDepth());
 
-            //try
-            //{
-            //    Command c = MappingEngineTransactionManager.Instance.MappCommand(TypeOfSCADACommand.ReadAll, "", 0, 0);
-
-            //    //bool isScadaAvailable = false;
-            //    //do
-            //    //{
-            //    //    Console.WriteLine("scada not available");
-            //    //    try
-            //    //    {
-            //    //        if (ScadaClient.State == CommunicationState.Created)
-            //    //        {
-            //    //            ScadaClient.Open();
-            //    //        }
-
-            //    //        isScadaAvailable = ScadaClient.Ping();
-            //    //    }
-            //    //    catch (Exception e)
-            //    //    {
-            //    //        //Console.WriteLine(e);
-            //    //        Console.WriteLine("InitializeNetwork() -> SCADA is not available yet.");
-            //    //        if (ScadaClient.State == CommunicationState.Faulted)
-            //    //            ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
-            //    //    }
-            //    //    Thread.Sleep(500);
-            //    //} while (!isScadaAvailable);
-
-
-
-            //    do
-            //    {
-            //        try
-            //        {
-            //            if (ScadaClient.State == CommunicationState.Created)
-            //            {
-            //                ScadaClient.Open();
-            //            }
-
-            //            if (ScadaClient.Ping())
-            //                break;
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            //Console.WriteLine(e);
-            //            Console.WriteLine("GetNetwork() -> SCADA is not available yet.");
-            //            if (ScadaClient.State == CommunicationState.Faulted)
-            //                ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
-            //        }
-            //        Thread.Sleep(500);
-            //    } while (true);
-            //    Console.WriteLine("GetNetwork() -> SCADA is available.");
-
-
-            //    Response r = ScadaClient.ExecuteCommand(c);
-            //    descMeas = MappingEngineTransactionManager.Instance.MappResult(r);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
-
-            //bool isImsAvailable = false;
-            //do
-            //{
-            //    try
-            //    {
-            //        if (IMSClient.State == CommunicationState.Created)
-            //        {
-            //            IMSClient.Open();
-            //        }
-
-            //        isImsAvailable = IMSClient.Ping();
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        //Console.WriteLine(e);
-            //        Console.WriteLine("GetNetwork() -> IMS is not available yet.");
-            //        if (IMSClient.State == CommunicationState.Faulted)
-            //            IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
-            //    }
-            //    Thread.Sleep(2000);
-            //} while (!isImsAvailable);
-
-           // var crews = IMSClient.GetCrews();
+          
             var crews = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
             var incidentReports = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllReports());
 
