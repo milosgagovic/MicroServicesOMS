@@ -94,8 +94,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMStatelessService", "IMSta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMStatelessService", "DMStatelessService\DMStatelessService.csproj", "{CBD71623-1740-4E8A-8573-33F2A4B895F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMStatelessService", "TMStatelessService\TMStatelessService.csproj", "{B810EB7D-0564-4252-99E3-25DAF9CACDF0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMStatelessService", "NMStatelessService\NMStatelessService.csproj", "{45197278-2B0B-45FC-929B-A49088CD7BF6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubSubStatelessService", "PubSubStatelessService\PubSubStatelessService.csproj", "{62517C03-DF98-43F1-973E-3B63699A88AB}"
@@ -109,6 +107,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScadaCloud", "ScadaCloud\ScadaCloud.csproj", "{38C2AF62-BAE2-4EE9-B0FF-58A12F1713F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScadaStateless", "ScadaStateless\ScadaStateless.csproj", "{3902EFCE-0FA7-4862-9A3B-2442FE34F4A5}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMStatefulService", "TMStatefulService\TMStatefulService.csproj", "{67660010-87B5-4697-B7D5-6422657D5B40}"
 EndProject
 Global
@@ -461,14 +460,6 @@ Global
 		{CBD71623-1740-4E8A-8573-33F2A4B895F3}.Release|x64.ActiveCfg = Release|x64
 		{CBD71623-1740-4E8A-8573-33F2A4B895F3}.Release|x64.Build.0 = Release|x64
 		{CBD71623-1740-4E8A-8573-33F2A4B895F3}.Release|x86.ActiveCfg = Release|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Debug|x64.ActiveCfg = Debug|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Debug|x64.Build.0 = Debug|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Debug|x86.ActiveCfg = Debug|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Release|Any CPU.ActiveCfg = Release|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Release|x64.ActiveCfg = Release|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Release|x64.Build.0 = Release|x64
-		{B810EB7D-0564-4252-99E3-25DAF9CACDF0}.Release|x86.ActiveCfg = Release|x64
 		{45197278-2B0B-45FC-929B-A49088CD7BF6}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{45197278-2B0B-45FC-929B-A49088CD7BF6}.Debug|x64.ActiveCfg = Debug|x64
 		{45197278-2B0B-45FC-929B-A49088CD7BF6}.Debug|x64.Build.0 = Debug|x64

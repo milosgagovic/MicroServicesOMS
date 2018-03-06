@@ -18,7 +18,6 @@
     <ConfigOverrides />
   </ServiceManifestImport>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="PubSubStatelessServicePkg" ServiceManifestVersion="1.0.0" />
     <ServiceManifestRef ServiceManifestName="TMStatefulServicePkg" ServiceManifestVersion="1.0.0" />
     <ConfigOverrides />
   </ServiceManifestImport>
@@ -48,6 +47,7 @@
       <StatelessService ServiceTypeName="ScadaStatelessType" InstanceCount="[ScadaStateless_InstanceCount]">
         <SingletonPartition />
       </StatelessService>
+    </Service>
     <Service Name="TMStatefulService" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="TMStatefulServiceType" TargetReplicaSetSize="[TMStatefulService_TargetReplicaSetSize]" MinReplicaSetSize="[TMStatefulService_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[TMStatefulService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
