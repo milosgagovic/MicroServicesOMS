@@ -31,53 +31,56 @@ namespace TransactionManager
         {
             List<ResourceDescription> retVal = new List<ResourceDescription>();
             ResourceDescription rd;
-
-            foreach (ResponseVariable rv in response.Variables)
+            if (response != null)
             {
-                rd = new ResourceDescription();
-                rd.AddProperty(new Property(ModelCode.IDOBJ_MRID, rv.Id));
 
-                switch (rv.VariableType)
+                foreach (ResponseVariable rv in response.Variables)
                 {
-                    case ResponseType.Analog:
-                        AnalogVariable av = rv as AnalogVariable;
-                        UnitSymbol unitSymbolValue = UnitSymbol.none;
-                        try
-                        {
-                            unitSymbolValue = (UnitSymbol)Enum.Parse(typeof(UnitSymbol), av.UnitSymbol, true);
-                        }
-                        catch (Exception e)
-                        {
+                    rd = new ResourceDescription();
+                    rd.AddProperty(new Property(ModelCode.IDOBJ_MRID, rv.Id));
 
-                            //throw;
-                        }
+                    switch (rv.VariableType)
+                    {
+                        case ResponseVarType.Analog:
+                            AnalogVariable av = rv as AnalogVariable;
+                            UnitSymbol unitSymbolValue = UnitSymbol.none;
+                            try
+                            {
+                                unitSymbolValue = (UnitSymbol)Enum.Parse(typeof(UnitSymbol), av.UnitSymbol, true);
+                            }
+                            catch (Exception e)
+                            {
 
-                        Console.WriteLine("Variable = {0}, Value = {1}, Unit={2}", av.Id, av.Value,av.UnitSymbol.ToString());
-                        rd.AddProperty(new Property(ModelCode.ANALOG_NORMVAL, av.Value));
+                                //throw;
+                            }
 
-                        break;
+                            Console.WriteLine("Variable = {0}, Value = {1}, Unit={2}", av.Id, av.Value, av.UnitSymbol.ToString());
+                            rd.AddProperty(new Property(ModelCode.ANALOG_NORMVAL, av.Value));
 
-                    case ResponseType.Digital:
+                            break;
 
-                        DigitalVariable dv = rv as DigitalVariable;
+                        case ResponseVarType.Digital:
 
-                        Console.WriteLine("Variable = {0}, STATE = {1}", dv.Id, dv.State);
+                            DigitalVariable dv = rv as DigitalVariable;
 
-                        if (dv.State.ToString() == "CLOSED")
-                        {
-                            rd.AddProperty(new Property(ModelCode.DISCRETE_NORMVAL, 0));
-                        }
-                        else
-                        {
-                            rd.AddProperty(new Property(ModelCode.DISCRETE_NORMVAL, 1));
-                        }
-                        break;
+                            Console.WriteLine("Variable = {0}, STATE = {1}", dv.Id, dv.State);
 
-                    case ResponseType.Counter:
-                        break;
+                            if (dv.State.ToString() == "CLOSED")
+                            {
+                                rd.AddProperty(new Property(ModelCode.DISCRETE_NORMVAL, 0));
+                            }
+                            else
+                            {
+                                rd.AddProperty(new Property(ModelCode.DISCRETE_NORMVAL, 1));
+                            }
+                            break;
+
+                        case ResponseVarType.Counter:
+                            break;
+                    }
+
+                    retVal.Add(rd);
                 }
-
-                retVal.Add(rd);
             }
             return retVal;
         }

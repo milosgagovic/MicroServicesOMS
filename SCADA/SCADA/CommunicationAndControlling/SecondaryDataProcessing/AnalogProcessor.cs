@@ -1,13 +1,12 @@
 ﻿using SCADA.RealtimeDatabase.Catalogs;
 using SCADA.RealtimeDatabase.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SCADA.CommunicationAndControlling.SecondaryDataProcessing
 {
+    // to do
+    // out of reasonable limits, limitis, clamp limits alarmi
+    // provera spontanih promena, provera komandovanog stanja
     public class AnalogProcessor
     {
         // bool da bude, void
@@ -96,6 +95,5 @@ namespace SCADA.CommunicationAndControlling.SecondaryDataProcessing
             }
             return retVal;
         }
-
     }
 }

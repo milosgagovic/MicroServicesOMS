@@ -1,4 +1,5 @@
-﻿using DMSCommon.Model;
+﻿using DMSCommon;
+using DMSCommon.Model;
 using DMSCommon.TreeGraph;
 using DMSCommon.TreeGraph.Tree;
 using DMSContract;
@@ -9,6 +10,7 @@ using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using OMSSCADACommon.Commands;
 using OMSSCADACommon.Responses;
+using SCADAContracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,6 +79,36 @@ namespace DMSService
                 return _imServiceFabricClient;
             }
             set { _imServiceFabricClient = value; }
+        }
+
+        private ServiceFabricSCADAClient _scadaServiceFabricClient;
+        private ServiceFabricSCADAClient _SCADAServiceFabricClient
+        {
+            get
+            {
+                if (_scadaServiceFabricClient == null)
+                {
+                    NetTcpBinding binding = new NetTcpBinding();
+                    // Create a partition resolver
+                    IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
+                    // create a  WcfCommunicationClientFactory object.
+                    var wcfClientFactory = new WcfCommunicationClientFactory<ISCADAContract>
+                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+
+                    //
+                    // Create a client for communicating with the ICalculator service that has been created with the
+                    // Singleton partition scheme.
+                    //
+                    _scadaServiceFabricClient = new ServiceFabricSCADAClient(
+                                    wcfClientFactory,
+                                    new Uri("fabric:/ServiceFabricOMS/ScadaStateless"),
+                                    ServicePartitionKey.Singleton,
+                                    listenerName: "ScadaInvoker");
+
+                }
+                return _scadaServiceFabricClient;
+            }
+            set { _scadaServiceFabricClient = value; }
         }
 
         public static DMSService Instance
@@ -345,6 +377,12 @@ namespace DMSService
             // Obrada od pocetnog CN ka svim ostalima. Iteracija po terminalima
             var watch = System.Diagnostics.Stopwatch.StartNew();
             int count = 0;
+            while (response == null)
+            {
+                response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
+                Thread.Sleep(2000);
+            }
+
             while (terminals.Count != 0)
             {
                 Node n;
@@ -520,7 +558,7 @@ namespace DMSService
 
                     if (node != null)
                     {
-                        EnergizationAlgorithm.TraceDown(node, new List<SCADAUpdateModel>(), true, true, retVal);
+                        EnergizationAlgorithm.TraceDown(node, new List<UIUpdateModel>(), true, true, retVal);
                     }
                 }
             }

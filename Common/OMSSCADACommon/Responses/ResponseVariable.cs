@@ -10,6 +10,6 @@ namespace OMSSCADACommon.Responses
     {
         public string Id { get; set; }
 
-        public ResponseType VariableType { get; set; }
+        public ResponseVarType VariableType { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DMSCommon.Model;
+﻿using DMSCommon;
+using DMSCommon.Model;
 using DMSContract;
 using IMSContract;
 using IncidentManagementSystem.Service;
@@ -279,19 +280,19 @@ namespace DMSService
                                 ElementStateReport elementStateReport = new ElementStateReport() { MrID = sw.MRID, Time = DateTime.UtcNow, State = 0 };
                                 IMSCommunicationClient.InvokeWithRetry(client => client.Channel.AddElementStateReport(elementStateReport));
 
-                                List<SCADAUpdateModel> networkChange = new List<SCADAUpdateModel>();
+                                List<UIUpdateModel> networkChange = new List<UIUpdateModel>();
                                 if (EnergizationAlgorithm.TraceUp((Node)DMSService.Instance.Tree.Data[sw.End1], DMSService.Instance.Tree))
                                 {
-                                    networkChange.Add(new SCADAUpdateModel(sw.ElementGID, true, OMSSCADACommon.States.CLOSED));
+                                    networkChange.Add(new UIUpdateModel(sw.ElementGID, true, OMSSCADACommon.States.CLOSED));
                                     sw.Marker = true;
                                     Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
                                     n.Marker = true;
-                                    networkChange.Add(new SCADAUpdateModel(n.ElementGID, true));
+                                    networkChange.Add(new UIUpdateModel(n.ElementGID, true));
                                     networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, true, false, DMSService.Instance.Tree);
                                 }
                                 else
                                 {
-                                    networkChange.Add(new SCADAUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.CLOSED));
+                                    networkChange.Add(new UIUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.CLOSED));
                                 }
 
                                 Publisher publisher1 = new Publisher();

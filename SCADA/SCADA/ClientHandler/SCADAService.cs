@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Text;
-using System.Threading.Tasks;
 using TransactionManagerContract;
 
 namespace SCADA.ClientHandler
@@ -25,6 +23,7 @@ namespace SCADA.ClientHandler
             binding.OpenTimeout = new TimeSpan(1, 0, 0, 0);
             binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
             binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
+            binding.MaxReceivedMessageSize = Int32.MaxValue;
 
             hosts = new List<ServiceHost>();
 
@@ -47,13 +46,6 @@ namespace SCADA.ClientHandler
             transactionServiceHost.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
 
             hosts.Add(transactionServiceHost);
-
-            // u nekom trenutku na debug mi je puklo, kontam da cu ovo dodati negde
-            //binding.CloseTimeout = new TimeSpan(1, 0, 0, 0);
-            //binding.OpenTimeout = new TimeSpan(1, 0, 0, 0);
-            //binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
-            //binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
-
         }
 
         public void Start()
@@ -72,7 +64,6 @@ namespace SCADA.ClientHandler
 
                 message = string.Format("The WCF service {0} is ready.", host.Description.Name);
                 Console.WriteLine(message);
-                //CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
 
                 message = "Endpoints:";
                 Console.WriteLine(message);
@@ -84,11 +75,11 @@ namespace SCADA.ClientHandler
 
                 Console.WriteLine("\n");
             }
-
         }
 
         public void Dispose()
         {
+            // to do: test this
             foreach(var host in hosts)
             {
                 host.Close();

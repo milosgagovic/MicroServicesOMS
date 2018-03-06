@@ -4,6 +4,7 @@ using SCADA.CommunicationAndControlling.SecondaryDataProcessing;
 using SCADA.RealtimeDatabase;
 using SCADA.RealtimeDatabase.Catalogs;
 using SCADA.RealtimeDatabase.Model;
+using ScadaCloud;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,19 +22,18 @@ namespace SCADA.ConfigurationParser
 
         public ScadaModelParser(string basePath = "")
         {
-            this.basePath = basePath == "" ? Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName : basePath;
+           // this.basePath = basePath == "" ? Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName : basePath;
             dbContext = new DBContext();
         }
 
         public bool DeserializeScadaModel(string deserializationSource = "ScadaModel.xml")
         {
-            // to do: ime ove promenljive imas u sveski
-            // obrnula logiku za configuration runnig, PROMENITI
-            Database.IsConfigurationRunning = false; // OVO JE BILO SPORNO KASNIJE?
+            // to do
+            Database.IsConfigurationFinished = false;
 
             string message = string.Empty;
             string configurationName = deserializationSource;
-            string source = Path.Combine(basePath, configurationName);
+          //  string source = Path.Combine(basePath, configurationName);
 
             if (Database.Instance.RTUs.Count != 0)
                 Database.Instance.RTUs.Clear();
@@ -43,58 +43,70 @@ namespace SCADA.ConfigurationParser
 
             try
             {
-                XElement xdocument = XElement.Load(source);
+              //  XElement xdocument = XElement.Load(source);
 
                 // access RTUS, DIGITALS, ANALOGS, COUNTERS from ScadaModel root
-                IEnumerable<XElement> elements = xdocument.Elements();
+             //   IEnumerable<XElement> elements = xdocument.Elements();
 
-                var rtus = xdocument.Element("RTUS").Elements("RTU").ToList();
-                var digitals = (from dig in xdocument.Element("Digitals").Elements("Digital")
-                                orderby (int)dig.Element("RelativeAddress")
-                                select dig).ToList();
+                //var rtus = xdocument.Element("RTUS").Elements("RTU").ToList();
+                //var digitals = (from dig in xdocument.Element("Digitals").Elements("Digital")
+                //                orderby (int)dig.Element("RelativeAddress")
+                //                select dig).ToList();
 
-                var analogs = (from dig in xdocument.Element("Analogs").Elements("Analog")
-                               orderby (int)dig.Element("RelativeAddress")
-                               select dig).ToList();
+                //var analogs = (from dig in xdocument.Element("Analogs").Elements("Analog")
+                //               orderby (int)dig.Element("RelativeAddress")
+                //               select dig).ToList();
 
-                var counters = (from dig in xdocument.Element("Counters").Elements("Counter")
-                                orderby (int)dig.Element("RelativeAddress")
-                                select dig).ToList();
+                //var counters = (from dig in xdocument.Element("Counters").Elements("Counter")
+                //                orderby (int)dig.Element("RelativeAddress")
+                //                select dig).ToList();
+
+                List<ScadaCloud.Model.RTU> rtus = new List<ScadaCloud.Model.RTU>();
+                List<ScadaCloud.Model.Digital> digitals = new List<ScadaCloud.Model.Digital>();
+                List<ScadaCloud.Model.Analog> analogs = new List<ScadaCloud.Model.Analog>();
+
+                using (ScadaContextDB ctx = new ScadaContextDB())
+                {
+                    rtus = ctx.RTUs.ToList();
+                    digitals = ctx.Digirals.ToList();
+                    analogs = ctx.Analogs.ToList();
+                }
+
                 // parsing RTUS
                 if (rtus.Count != 0)
                 {
                     foreach (var rtu in rtus)
                     {
                         RTU newRtu;
-                        string uniqueName = (string)rtu.Element("Name");
+                        string uniqueName = (string)rtu.Name;
 
                         // if RTU with that name does not already exist?
                         if (!dbContext.Database.RTUs.ContainsKey(uniqueName))
                         {
-                            byte address = (byte)(int)rtu.Element("Address");
+                            byte address = (byte)(int)rtu.Address;
 
-                            bool freeSpaceForDigitals = (bool)rtu.Element("FreeSpaceForDigitals");
-                            bool freeSpaceForAnalogs = (bool)rtu.Element("FreeSpaceForAnalogs");
+                            bool freeSpaceForDigitals = (bool)rtu.FreeSpaceForDigitals;
+                            bool freeSpaceForAnalogs = (bool)rtu.FreeSpaceForAnalogs;
 
-                            string stringProtocol = (string)rtu.Element("Protocol");
-                            IndustryProtocols protocol = (IndustryProtocols)Enum.Parse(typeof(IndustryProtocols), stringProtocol);
 
-                            int digOutStartAddr = (int)rtu.Element("DigOutStartAddr");
-                            int digInStartAddr = (int)rtu.Element("DigInStartAddr");
-                            int anaInStartAddr = (int)rtu.Element("AnaInStartAddr");
-                            int anaOutStartAddr = (int)rtu.Element("AnaOutStartAddr");
-                            int counterStartAddr = (int)rtu.Element("CounterStartAddr");
+                            IndustryProtocols protocol = IndustryProtocols.ModbusTCP;
 
-                            int digOutCount = (int)rtu.Element("DigOutCount");
-                            int digInCount = (int)rtu.Element("DigInCount");
-                            int anaInCount = (int)rtu.Element("AnaInCount");
-                            int anaOutCount = (int)rtu.Element("AnaOutCount");
-                            int counterCount = (int)rtu.Element("CounterCount");
+                            int digOutStartAddr = (int)rtu.DigOutStartAddr;
+                            int digInStartAddr = (int)rtu.DigInStartAddr;
+                            int anaInStartAddr = (int)rtu.AnaInStartAddr;
+                            int anaOutStartAddr = (int)rtu.AnaOutStartAddr;
+                            int counterStartAddr = (int)rtu.CounterStartAddr;
 
-                            ushort anaInRawMin = (ushort)(int)rtu.Element("AnaInRawMin");
-                            ushort anaInRawMax = (ushort)(int)rtu.Element("AnaInRawMax");
-                            ushort anaOutRawMin = (ushort)(int)rtu.Element("AnaOutRawMin");
-                            ushort anaOutRawMax = (ushort)(int)rtu.Element("AnaOutRawMax");
+                            int digOutCount = (int)rtu.NoDigOut;
+                            int digInCount = (int)rtu.NoDigIn;
+                            int anaInCount = (int)rtu.NoAnaIn;
+                            int anaOutCount = (int)rtu.NoAnaOut;
+                            int counterCount = (int)rtu.NoCnt;
+
+                            ushort anaInRawMin = (ushort)(int)rtu.AnaInRawMin;
+                            ushort anaInRawMax = (ushort)(int)rtu.AnaInRawMax;
+                            ushort anaOutRawMin = (ushort)(int)rtu.AnaOutRawMin;
+                            ushort anaOutRawMax = (ushort)(int)rtu.AnaOutRawMax;
 
                             if (digOutCount != digInCount)
                             {
@@ -117,11 +129,11 @@ namespace SCADA.ConfigurationParser
                                 AnaOutStartAddr = anaOutStartAddr,
                                 CounterStartAddr = counterStartAddr,
 
-                                DigOutCount = digOutCount,
-                                DigInCount = digInCount,
-                                AnaInCount = anaInCount,
-                                AnaOutCount = anaOutCount,
-                                CounterCount = counterCount,
+                                NoDigOut = digOutCount,
+                                NoDigIn = digInCount,
+                                NoAnaIn = anaInCount,
+                                NoAnaOut = anaOutCount,
+                                NoCnt = counterCount,
 
                                 AnaInRawMin = anaInRawMin,
                                 AnaInRawMax = anaInRawMax,
@@ -129,11 +141,43 @@ namespace SCADA.ConfigurationParser
                                 AnaOutRawMax = anaOutRawMax
                             };
 
+                            //using (ScadaContextDB ctx = new ScadaContextDB())
+                            //{
+                            //    ctx.RTUs.Add(new ScadaCloud.Model.RTU
+                            //    {
+                            //        Name = uniqueName,
+                            //        Address = address,
+                            //        FreeSpaceForDigitals = freeSpaceForDigitals,
+                            //        FreeSpaceForAnalogs = freeSpaceForAnalogs,
+                            //        Protocol = protocol,
+
+                            //        DigOutStartAddr = digOutStartAddr,
+                            //        DigInStartAddr = digInStartAddr,
+                            //        AnaInStartAddr = anaInStartAddr,
+                            //        AnaOutStartAddr = anaOutStartAddr,
+                            //        CounterStartAddr = counterStartAddr,
+
+                            //        NoDigOut = digOutCount,
+                            //        NoDigIn = digInCount,
+                            //        NoAnaIn = anaInCount,
+                            //        NoAnaOut = anaOutCount,
+                            //        NoCnt = counterCount,
+
+                            //        AnaInRawMin = anaInRawMin,
+                            //        AnaInRawMax = anaInRawMax,
+                            //        AnaOutRawMin = anaOutRawMin,
+                            //        AnaOutRawMax = anaOutRawMax
+
+                            //    });
+                            //    ctx.SaveChanges();
+
+                            //}
+
                             dbContext.AddRTU(newRtu);
                         }
                         else
                         {
-                            // to do: bacati exception
+                            // to do: bacati exception mozda
                             message = string.Format("Invalid config: There is multiple RTUs with Name={0}!", uniqueName);
                             Console.WriteLine(message);
                             return false;
@@ -152,7 +196,7 @@ namespace SCADA.ConfigurationParser
                 {
                     foreach (var d in digitals)
                     {
-                        string procContr = (string)d.Element("ProcContrName");
+                        string procContr = (string)d.ProcContrName;
 
                         // does RTU exists?
                         RTU associatedRtu;
@@ -163,7 +207,7 @@ namespace SCADA.ConfigurationParser
                             // SETTING ProcContrName
                             newDigital.ProcContrName = procContr;
 
-                            string uniqueName = (string)d.Element("Name");
+                            string uniqueName = (string)d.Name;
 
                             // variable with that name does not exists in db?
                             if (!dbContext.Database.ProcessVariablesName.ContainsKey(uniqueName))
@@ -172,62 +216,44 @@ namespace SCADA.ConfigurationParser
                                 newDigital.Name = uniqueName;
 
                                 // SETTING State                             
-                                string stringCurrentState = (string)d.Element("State");
+                                string stringCurrentState = (string)d.State;
                                 States stateValue = (States)Enum.Parse(typeof(States), stringCurrentState);
                                 newDigital.State = stateValue;
 
                                 // SETTING Command parameter - for initializing Simulator with last command
-                                string lastCommandString = (string)d.Element("Command");
+                                string lastCommandString = (string)d.Command;
                                 CommandTypes command = (CommandTypes)Enum.Parse(typeof(CommandTypes), lastCommandString);
 
                                 // SETTING Class
-                                string digDevClass = (string)d.Element("Class");
-                                DigitalDeviceClasses devClass = (DigitalDeviceClasses)Enum.Parse(typeof(DigitalDeviceClasses), digDevClass);
+
+                                DigitalDeviceClasses devClass = DigitalDeviceClasses.SWITCH;
                                 newDigital.Class = devClass;
 
                                 // SETTING RelativeAddress
-                                ushort relativeAddress = (ushort)(int)d.Element("RelativeAddress");
+                                ushort relativeAddress = (ushort)(int)d.RelativeAddress;
                                 newDigital.RelativeAddress = relativeAddress;
 
-                                var hasCommands = d.Element("ValidCommands");
-                                if (hasCommands.HasElements)
-                                {
-                                    var validCommands = hasCommands.Elements("Command").ToList();
+                                // SETTING ValidCommands
+                                newDigital.ValidCommands.Add(CommandTypes.OPEN);
+                                newDigital.ValidCommands.Add(CommandTypes.CLOSE);
 
-                                    // SETTING ValidCommands
-                                    foreach (var xElementCommand in validCommands)
-                                    {
-                                        string stringCommand = (string)xElementCommand;
-                                        CommandTypes validCommand = (CommandTypes)Enum.Parse(typeof(CommandTypes), stringCommand);
-                                        newDigital.ValidCommands.Add(validCommand);
-                                    }
-                                }
-                                else
-                                {
-                                    message = string.Format("Invalid config: Variable = {0} does not contain commands.", uniqueName);
-                                    Console.WriteLine(message);
-                                    return false;
-                                }
+                               
+                                newDigital.ValidStates.Add(States.CLOSED);
+                                newDigital.ValidStates.Add(States.OPENED);
 
-                                var hasStates = d.Element("ValidStates");
-                                if (hasStates.HasElements)
-                                {
-                                    var validStates = hasStates.Elements("State").ToList();
 
-                                    // SETTING ValidStates
-                                    foreach (var xElementState in validStates)
-                                    {
-                                        string stringState = (string)xElementState;
-                                        States state = (States)Enum.Parse(typeof(States), stringState);
-                                        newDigital.ValidStates.Add(state);
-                                    }
-                                }
-                                else
-                                {
-                                    message = string.Format("Invalid config: Variable = {0} does not contain states.", uniqueName);
-                                    Console.WriteLine(message);
-                                    return false;
-                                }
+                                //using (ScadaContextDB ctx = new ScadaContextDB())
+                                //{
+                                //    ctx.Digirals.Add(new ScadaCloud.Model.Digital
+                                //    {
+                                //        Name = uniqueName,
+                                //        RelativeAddress = relativeAddress,
+                                //        ProcContrName = procContr,
+                                //        State = stringCurrentState,
+                                //        Command = lastCommandString
+                                //    });
+                                //    ctx.SaveChanges();
+                                //}
 
                                 ushort calculatedRelativeAddres;
                                 if (associatedRtu.TryMap(newDigital, out calculatedRelativeAddres))
@@ -243,7 +269,7 @@ namespace SCADA.ConfigurationParser
                                     {
                                         message = string.Format("Invalid config: Variable = {0} RelativeAddress = {1} is not valid.", uniqueName, relativeAddress);
                                         Console.WriteLine(message);
-                                        return false;
+                                        continue;
                                     }
                                 }
 
@@ -252,7 +278,7 @@ namespace SCADA.ConfigurationParser
                             {
                                 message = string.Format("Invalid config: Name = {0} is not unique. Variable already exists", uniqueName);
                                 Console.WriteLine(message);
-                                return false;
+                                continue;
                             }
 
                         }
@@ -270,7 +296,7 @@ namespace SCADA.ConfigurationParser
                 {
                     foreach (var a in analogs)
                     {
-                        string procContr = (string)a.Element("ProcContrName");
+                        string procContr = (string)a.ProcContrName;
 
                         // does RTU exists?
                         RTU associatedRtu;
@@ -281,7 +307,7 @@ namespace SCADA.ConfigurationParser
                             // SETTING ProcContrName
                             newAnalog.ProcContrName = procContr;
 
-                            string uniqueName = (string)a.Element("Name");
+                            string uniqueName = (string)a.Name;
 
                             // variable with that name does not exists in db?
                             if (!dbContext.Database.ProcessVariablesName.ContainsKey(uniqueName))
@@ -290,38 +316,57 @@ namespace SCADA.ConfigurationParser
                                 newAnalog.Name = uniqueName;
 
                                 // SETTING NumOfRegisters
-                                ushort numOfReg = (ushort)(int)a.Element("NumOfRegisters");
+                                ushort numOfReg = (ushort)(int)a.NumOfRegisters;
                                 newAnalog.NumOfRegisters = numOfReg;
 
                                 // SETTING AcqValue
-                                ushort acqValue = (ushort)(float)a.Element("AcqValue");
+                                ushort acqValue = (ushort)(float)a.AcqValue;
                                 newAnalog.AcqValue = acqValue;
 
                                 // SETTING CommValue
-                                ushort commValue = (ushort)(float)a.Element("CommValue");
+                                ushort commValue = (ushort)(float)a.CommValue;
                                 newAnalog.CommValue = commValue;
 
-                                // SETTING MaxValue
-                                float maxValue = (float)a.Element("MaxValue");
-                                newAnalog.MaxValue = maxValue;
-
                                 // SETTING MinValue
-                                float minValue = (float)a.Element("MinValue");
+                                float minValue = (float)a.MinValue;
                                 newAnalog.MinValue = minValue;
 
+                                // SETTING MaxValue
+                                float maxValue = (float)a.MaxValue;
+                                newAnalog.MaxValue = maxValue;
+
                                 // SETTING UnitSymbol                             
-                                string stringUnitSymbol = (string)a.Element("UnitSymbol");
+                                string stringUnitSymbol = (string)a.UnitSymbol;
                                 UnitSymbol unitSymbolValue = (UnitSymbol)Enum.Parse(typeof(UnitSymbol), stringUnitSymbol, true);
                                 newAnalog.UnitSymbol = unitSymbolValue;
 
                                 // SETTING RelativeAddress
-                                ushort relativeAddress = (ushort)(int)a.Element("RelativeAddress");
+                                ushort relativeAddress = (ushort)(int)a.RelativeAddress;
                                 newAnalog.RelativeAddress = relativeAddress;
 
                                 // svejedno je uzeli AnaInRawMin ili AnaOutRawMin -> isti su trenutni, 
                                 // sve dok imamo samo Analog.cs a ne AnaIn.cs + AnaOut.cs (dok je kao za digital)
                                 newAnalog.RawBandLow = associatedRtu.AnaInRawMin;
                                 newAnalog.RawBandHigh = associatedRtu.AnaInRawMax;
+
+                                //using (ScadaContextDB ctx = new ScadaContextDB())
+                                //{
+                                //    ctx.Analogs.Add(new ScadaCloud.Model.Analog
+                                //    {
+                                //        Name = uniqueName,
+                                //        NumOfRegisters = numOfReg,
+                                //        AcqValue = acqValue,
+                                //        CommValue = commValue,
+                                //        MaxValue = maxValue,
+                                //        MinValue = minValue,
+                                //        ProcContrName = procContr,
+                                //        RelativeAddress = relativeAddress,
+                                //        UnitSymbol = stringUnitSymbol
+
+                                //    });
+                                //    ctx.SaveChanges();
+
+                                //}
 
                                 // SETTING RawAcqValue and RawCommValue
                                 AnalogProcessor.EGUToRawValue(newAnalog);
@@ -362,10 +407,10 @@ namespace SCADA.ConfigurationParser
                 }
 
                 // to do:
-                if (counters.Count != 0)
-                {
+                //if (counters.Count != 0)
+                //{
 
-                }
+                //}
 
                 Console.WriteLine("Configuration passed successfully.");
             }
@@ -386,126 +431,185 @@ namespace SCADA.ConfigurationParser
                 return false;
             }
 
-            Database.IsConfigurationRunning = true;
+            Database.IsConfigurationFinished = true;
             return true;
         }
 
         public void SerializeScadaModel(string serializationTarget = "ScadaModel.xml")
         {
-            string target = Path.Combine(basePath, serializationTarget);
+            //string target = Path.Combine(basePath, serializationTarget);
 
-            XElement scadaModel = new XElement("ScadaModel");
+            //XElement scadaModel = new XElement("ScadaModel");
 
-            XElement rtus = new XElement("RTUS");
-            XElement digitals = new XElement("Digitals");
-            XElement analogs = new XElement("Analogs");
-            XElement counters = new XElement("Counters");
+            //XElement rtus = new XElement("RTUS");
+            //XElement digitals = new XElement("Digitals");
+            //XElement analogs = new XElement("Analogs");
+            //XElement counters = new XElement("Counters");
 
             var rtusSnapshot = dbContext.Database.RTUs.ToArray();
-            foreach (var rtu in rtusSnapshot)
+            using (ScadaContextDB ctx = new ScadaContextDB())
             {
-                XElement rtuEl = new XElement(
-                     "RTU",
-                     new XElement("Address", rtu.Value.Address),
-                     new XElement("Name", rtu.Value.Name),
-                     new XElement("FreeSpaceForDigitals", rtu.Value.FreeSpaceForDigitals),
-                     new XElement("FreeSpaceForAnalogs", rtu.Value.FreeSpaceForAnalogs),
-                     new XElement("Protocol", Enum.GetName(typeof(IndustryProtocols), rtu.Value.Protocol)),
-                     new XElement("DigOutStartAddr", rtu.Value.DigOutStartAddr),
-                     new XElement("DigInStartAddr", rtu.Value.DigInStartAddr),
-                     new XElement("AnaOutStartAddr", rtu.Value.AnaOutStartAddr),
-                     new XElement("AnaInStartAddr", rtu.Value.AnaInStartAddr),
-                     new XElement("CounterStartAddr", rtu.Value.CounterStartAddr),
-                     new XElement("DigOutCount", rtu.Value.DigOutCount),
-                     new XElement("DigInCount", rtu.Value.DigInCount),
-                     new XElement("AnaInCount", rtu.Value.AnaInCount),
-                     new XElement("AnaOutCount", rtu.Value.AnaOutCount),
-                     new XElement("CounterCount", rtu.Value.CounterCount),
-                     new XElement("AnaInRawMin", rtu.Value.AnaInRawMin),
-                     new XElement("AnaInRawMax", rtu.Value.AnaInRawMax),
-                     new XElement("AnaOutRawMin", rtu.Value.AnaOutRawMin),
-                     new XElement("AnaOutRawMax", rtu.Value.AnaOutRawMax)
-                     );
+                foreach (var rtu in rtusSnapshot)
+                {
+                    #region xml
+                    //XElement rtuEl = new XElement(
+                    //     "RTU",
+                    //     new XElement("Address", rtu.Value.Address),
+                    //     new XElement("Name", rtu.Value.Name),
+                    //     new XElement("FreeSpaceForDigitals", rtu.Value.FreeSpaceForDigitals),
+                    //     new XElement("FreeSpaceForAnalogs", rtu.Value.FreeSpaceForAnalogs),
+                    //     new XElement("Protocol", Enum.GetName(typeof(IndustryProtocols), rtu.Value.Protocol)),
+                    //     new XElement("DigOutStartAddr", rtu.Value.DigOutStartAddr),
+                    //     new XElement("DigInStartAddr", rtu.Value.DigInStartAddr),
+                    //     new XElement("AnaOutStartAddr", rtu.Value.AnaOutStartAddr),
+                    //     new XElement("AnaInStartAddr", rtu.Value.AnaInStartAddr),
+                    //     new XElement("CounterStartAddr", rtu.Value.CounterStartAddr),
+                    //     new XElement("NoDigOut", rtu.Value.NoDigOut),
+                    //     new XElement("NoDigIn", rtu.Value.NoDigIn),
+                    //     new XElement("NoAnaIn", rtu.Value.NoAnaIn),
+                    //     new XElement("NoAnaOut", rtu.Value.NoAnaOut),
+                    //     new XElement("NoCnt", rtu.Value.NoCnt),
+                    //     new XElement("AnaInRawMin", rtu.Value.AnaInRawMin),
+                    //     new XElement("AnaInRawMax", rtu.Value.AnaInRawMax),
+                    //     new XElement("AnaOutRawMin", rtu.Value.AnaOutRawMin),
+                    //     new XElement("AnaOutRawMax", rtu.Value.AnaOutRawMax)
+                    //     );
+                    #endregion
+                    if (ctx.RTUs.FirstOrDefault(x => x.Name == rtu.Value.Name) == null)
+                    {
+                        ctx.RTUs.Add(new ScadaCloud.Model.RTU
+                        {
+                            Name = rtu.Value.Name,
+                            Address = rtu.Value.Address,
+                            FreeSpaceForDigitals = rtu.Value.FreeSpaceForDigitals,
+                            FreeSpaceForAnalogs = rtu.Value.FreeSpaceForAnalogs,
+                            Protocol = rtu.Value.Protocol,
 
-                rtus.Add(rtuEl);
+                            DigOutStartAddr = rtu.Value.DigOutStartAddr,
+                            DigInStartAddr = rtu.Value.DigInStartAddr,
+                            AnaInStartAddr = rtu.Value.AnaInStartAddr,
+                            AnaOutStartAddr = rtu.Value.AnaOutStartAddr,
+                            CounterStartAddr = rtu.Value.CounterStartAddr,
+
+                            NoDigOut = rtu.Value.NoDigOut,
+                            NoDigIn = rtu.Value.NoDigIn,
+                            NoAnaIn = rtu.Value.NoAnaIn,
+                            NoAnaOut = rtu.Value.NoAnaOut,
+                            NoCnt = rtu.Value.NoCnt,
+
+                            AnaInRawMin = rtu.Value.AnaInRawMin,
+                            AnaInRawMax = rtu.Value.AnaInRawMax,
+                            AnaOutRawMin = rtu.Value.AnaOutRawMin,
+                            AnaOutRawMax = rtu.Value.AnaOutRawMax
+                        });
+                    }
+                    //rtus.Add(rtuEl);
+                }
+                ctx.SaveChanges();
             }
 
             var pvsSnapshot = dbContext.Database.ProcessVariablesName.ToArray().OrderBy(pv => pv.Value.RelativeAddress);
-            foreach (var pv in pvsSnapshot)
+            using (ScadaContextDB ctx = new ScadaContextDB())
             {
-                switch (pv.Value.Type)
+
+                foreach (var pv in pvsSnapshot)
                 {
-                    case VariableTypes.DIGITAL:
+                    switch (pv.Value.Type)
+                    {
+                        case VariableTypes.DIGITAL:
+                            Digital dig = pv.Value as Digital;
+                            #region xml
+                            //XElement validCommands = new XElement("ValidCommands");
+                            //XElement validStates = new XElement("ValidStates");
 
-                        Digital dig = pv.Value as Digital;
+                            //foreach (var state in dig.ValidStates)
+                            //{
+                            //    validStates.Add(new XElement("State", Enum.GetName(typeof(States), state)));
+                            //}
 
-                        XElement validCommands = new XElement("ValidCommands");
-                        XElement validStates = new XElement("ValidStates");
+                            //foreach (var command in dig.ValidCommands)
+                            //{
+                            //    validCommands.Add(new XElement("Command", Enum.GetName(typeof(CommandTypes), command)));
+                            //}
 
-                        foreach (var state in dig.ValidStates)
-                        {
-                            validStates.Add(new XElement("State", Enum.GetName(typeof(States), state)));
-                        }
+                            //XElement digEl = new XElement(
+                            //    "Digital",
+                            //        new XElement("Name", dig.Name),
+                            //        new XElement("State", dig.State),
+                            //        new XElement("Command", dig.Command),
+                            //        new XElement("ProcContrName", dig.ProcContrName),
+                            //        new XElement("RelativeAddress", dig.RelativeAddress),
+                            //        new XElement("Class", Enum.GetName(typeof(DigitalDeviceClasses), dig.Class)),
+                            //        validCommands,
+                            //        validStates
+                            //    );
+                            #endregion
+                            if (ctx.Digirals.FirstOrDefault(x => x.Name == dig.Name) == null)
+                            {
+                                ctx.Digirals.Add(new ScadaCloud.Model.Digital
+                                {
+                                    Name = dig.Name,
+                                    RelativeAddress = dig.RelativeAddress,
+                                    ProcContrName = dig.ProcContrName,
+                                    State = dig.State.ToString(),
+                                    Command = dig.Command.ToString()
+                                });
+                            }
+                            // digitals.Add(digEl);
+                            break;
 
-                        foreach (var command in dig.ValidCommands)
-                        {
-                            validCommands.Add(new XElement("Command", Enum.GetName(typeof(CommandTypes), command)));
-                        }
+                        case VariableTypes.ANALOG:
+                            Analog analog = pv.Value as Analog;
+                            #region xml
+                            //XElement anEl = new XElement(
+                            //    "Analog",
+                            //        new XElement("Name", analog.Name),
+                            //        new XElement("NumOfRegisters", analog.NumOfRegisters),
+                            //        new XElement("AcqValue", analog.AcqValue),
+                            //        new XElement("CommValue", analog.CommValue),
+                            //        new XElement("MaxValue", analog.MaxValue),
+                            //        new XElement("MinValue", analog.MinValue),
+                            //        new XElement("ProcContrName", analog.ProcContrName),
+                            //        new XElement("RelativeAddress", analog.RelativeAddress),
+                            //        new XElement("UnitSymbol", Enum.GetName(typeof(UnitSymbol), analog.UnitSymbol))
+                            //    );
 
-                        XElement digEl = new XElement(
-                            "Digital",
-                                new XElement("Name", dig.Name),
-                                new XElement("State", dig.State),
-                                new XElement("Command", dig.Command),
-                                new XElement("ProcContrName", dig.ProcContrName),
-                                new XElement("RelativeAddress", dig.RelativeAddress),
-                                new XElement("Class", Enum.GetName(typeof(DigitalDeviceClasses), dig.Class)),
-                                validCommands,
-                                validStates
-                            );
-
-                        digitals.Add(digEl);
-
-                        break;
-
-                    case VariableTypes.ANALOG:
-                        Analog analog = pv.Value as Analog;
-
-                        XElement anEl = new XElement(
-                            "Analog",
-                                new XElement("Name", analog.Name),
-                                new XElement("NumOfRegisters", analog.NumOfRegisters),
-                                new XElement("AcqValue", analog.AcqValue),
-                                new XElement("CommValue", analog.CommValue),
-                                new XElement("MaxValue", analog.MaxValue),
-                                new XElement("MinValue", analog.MinValue),
-                                new XElement("ProcContrName", analog.ProcContrName),
-                                new XElement("RelativeAddress", analog.RelativeAddress),
-                                new XElement("UnitSymbol", Enum.GetName(typeof(UnitSymbol), analog.UnitSymbol))
-                            );
-
-                        analogs.Add(anEl);
-
-                        break;
-
+                            //analogs.Add(anEl);
+                            #endregion
+                            if (ctx.Analogs.FirstOrDefault(x => x.Name == analog.Name) == null)
+                            {
+                                ctx.Analogs.Add(new ScadaCloud.Model.Analog
+                                {
+                                    Name = analog.Name,
+                                    NumOfRegisters = analog.NumOfRegisters,
+                                    AcqValue = analog.AcqValue,
+                                    CommValue = analog.CommValue,
+                                    MaxValue = analog.MaxValue,
+                                    MinValue = analog.MinValue,
+                                    ProcContrName = analog.ProcContrName,
+                                    RelativeAddress = analog.RelativeAddress,
+                                    UnitSymbol = analog.UnitSymbol.ToString()
+                                });
+                            }
+                            break;
+                    }
+                }
+                //scadaModel.Add(rtus);
+                //scadaModel.Add(digitals);
+                //scadaModel.Add(analogs);
+                //scadaModel.Add(counters);
+                //var xdocument = new XDocument(scadaModel);
+                try
+                {
+                    //xdocument.Save(target);
+                    ctx.SaveChanges();
+                    Console.WriteLine("Serializing ScadaModel succeed.");
+                }
+                catch (Exception)
+                {
+                    throw;
                 }
             }
-
-            scadaModel.Add(rtus);
-            scadaModel.Add(digitals);
-            scadaModel.Add(analogs);
-            scadaModel.Add(counters);
-
-            var xdocument = new XDocument(scadaModel);
-            try
-            {
-                xdocument.Save(target);
-                Console.WriteLine("Serializing ScadaModel succeed.");
-            }
-            catch (Exception)
-            {
-                throw;
-            }            
         }
 
         public void SwapConfigs(string config1, string config2)

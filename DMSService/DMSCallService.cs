@@ -19,6 +19,7 @@ using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using IncidentManagementSystem.Service;
 using System.Threading.Tasks;
+using DMSCommon;
 
 namespace DMSService
 {
@@ -87,7 +88,7 @@ namespace DMSService
                             Console.WriteLine(mp.GetBodyAsText());
                             Pronaci ec na osnovu MRID_ja
                             */
-                            SCADAUpdateModel call = TryGetConsumer(mp.GetBodyAsText());
+                            UIUpdateModel call = TryGetConsumer(mp.GetBodyAsText());
                             if (call.Gid > 0)
                             {
                                 SendMailMessageToClient(message, true);
@@ -210,7 +211,7 @@ namespace DMSService
                             _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.AddElementStateReport(elementStateReport));
                             pub.PublishUIBreaker(true, (long)incidentBreaker);
 
-                            List<SCADAUpdateModel> networkChange = new List<SCADAUpdateModel>();
+                            List<UIUpdateModel> networkChange = new List<UIUpdateModel>();
                             Switch sw;
                             try
                             {
@@ -223,14 +224,14 @@ namespace DMSService
                             sw.Marker = false;
                             sw.State = SwitchState.Open;
                             sw.Incident = true;
-                            networkChange.Add(new SCADAUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.OPENED));
+                            networkChange.Add(new UIUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.OPENED));
                             Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
                             n.Marker = false;
-                            networkChange.Add(new SCADAUpdateModel(n.ElementGID, false));
+                            networkChange.Add(new UIUpdateModel(n.ElementGID, false));
                             networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSService.Instance.Tree);
 
                             Source s = (Source)DMSService.Instance.Tree.Data[DMSService.Instance.Tree.Roots[0]];
-                            networkChange.Add(new SCADAUpdateModel(s.ElementGID, true));
+                            networkChange.Add(new UIUpdateModel(s.ElementGID, true));
 
 
                             List<long> gids = new List<long>();
@@ -311,9 +312,9 @@ namespace DMSService
             }
         }
 
-        private SCADAUpdateModel TryGetConsumer(string mrid)
+        private UIUpdateModel TryGetConsumer(string mrid)
         {
-            SCADAUpdateModel consumer = new SCADAUpdateModel();
+            UIUpdateModel consumer = new UIUpdateModel();
             string s = Regex.Match(mrid.ToUpper().Trim(), @"\d+").Value;
             if (mrid.Contains("ec_") || mrid.Contains("EC_"))
             {
@@ -321,7 +322,7 @@ namespace DMSService
                 {
                     if (rd.GetProperty(ModelCode.IDOBJ_MRID).AsString() == "EC_" + s)
                     {
-                        consumer = new SCADAUpdateModel(rd.Id, false);
+                        consumer = new UIUpdateModel(rd.Id, false);
                         return consumer;
                     }
                 }
@@ -332,7 +333,7 @@ namespace DMSService
                 {
                     if (rd.GetProperty(ModelCode.IDOBJ_MRID).AsString() == "EC_" + s)
                     {
-                        consumer = new SCADAUpdateModel(rd.Id, false);
+                        consumer = new UIUpdateModel(rd.Id, false);
                         return consumer;
                     }
                 }

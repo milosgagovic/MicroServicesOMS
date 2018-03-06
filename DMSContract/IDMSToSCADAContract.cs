@@ -1,9 +1,5 @@
 ﻿using OMSSCADACommon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 
 namespace DMSContract
 {
@@ -11,6 +7,9 @@ namespace DMSContract
     public interface IDMSToSCADAContract
     {
         [OperationContract]
-        void ChangeOnSCADA(string mrID, States state);
+        void ChangeOnSCADADigital(string mrID, States state);
+
+        [OperationContract]
+        void ChangeOnSCADAAnalog(string mrID, float value);
     }
 }
