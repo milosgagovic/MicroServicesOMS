@@ -36,7 +36,8 @@ namespace SCADA.RealtimeDatabase
             }
         }
 
-        public static bool IsConfigurationRunning
+        // to do: fix this
+        public static bool IsConfigurationFinished
         {
             get
             {

@@ -1,10 +1,9 @@
-﻿using DMSCommon.Model;
-using IMSContract;
+﻿using IMSContract;
 using PubSubContract;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
+using DMSCommon;
 
 namespace PubSubscribeService.Services
 {
@@ -14,18 +13,29 @@ namespace PubSubscribeService.Services
         {
         }
 
-        public void Publish(List<SCADAUpdateModel> deltaUpdate)
+        public void PublishDigitalUpdate(List<UIUpdateModel> deltaUpdateDigital)
         {
             foreach (IPublishing subscriber in PubSubscribeDB.Subscribers)
             {
-                PublishThreadData threadObj = new PublishThreadData(subscriber, deltaUpdate);
+                PublishThreadData threadObj = new PublishThreadData(subscriber, deltaUpdateDigital, true);
 
-                Thread thread = new Thread(threadObj.PublishDelta);
+                Thread thread = new Thread(threadObj.PublishDigitalDelta);
                 thread.Start();
             }
         }
-       
-        public void PublishCrewUpdate(SCADAUpdateModel update)
+
+        public void PublishAnalogUpdate(List<UIUpdateModel> deltaUpdateAnalog)
+        {
+            foreach (IPublishing subscriber in PubSubscribeDB.Subscribers)
+            {
+                PublishThreadData threadObj = new PublishThreadData(subscriber, deltaUpdateAnalog, false);
+
+                Thread thread = new Thread(threadObj.PublishAnalogDelta);
+                thread.Start();
+            }
+        }
+
+        public void PublishCrewUpdate(UIUpdateModel update)
         {
             foreach (IPublishing subscriber in PubSubscribeDB.Subscribers)
             {
@@ -46,11 +56,12 @@ namespace PubSubscribeService.Services
                 thread.Start();
             }
         }
-        public void PublishCallIncident(SCADAUpdateModel call)
+
+        public void PublishCallIncident(UIUpdateModel call)
         {
             foreach (IPublishing subscriber in PubSubscribeDB.Subscribers)
             {
-                PublishThreadData threadObj = new PublishThreadData(subscriber, call,true);
+                PublishThreadData threadObj = new PublishThreadData(subscriber, call, true);
 
                 Thread thread = new Thread(threadObj.PublishCallIncidentDelta);
                 thread.Start();
@@ -73,33 +84,46 @@ namespace PubSubscribeService.Services
     {
         private IPublishing subscriber;
 
-        private List<SCADAUpdateModel> deltaUpdate;
-        private SCADAUpdateModel crewUpdate;
+        private List<UIUpdateModel> digitalDeltaUpdate;
+        private List<UIUpdateModel> analogDeltaUpdate;
+        private UIUpdateModel crewUpdate;
         private IncidentReport report;
-        private SCADAUpdateModel call;
+        private UIUpdateModel call;
         private bool Isincident;
         private long incidentBreaker;
 
-        public PublishThreadData(IPublishing subscriber, List<SCADAUpdateModel> deltaUpdate)
+        // for publishing digital, and analog delta
+        public PublishThreadData(IPublishing subscriber, List<UIUpdateModel> deltaUpdate, bool isDigital)
         {
             this.subscriber = subscriber;
-            this.deltaUpdate = deltaUpdate;
+            if (isDigital)
+                this.digitalDeltaUpdate = deltaUpdate;
+            else
+                this.analogDeltaUpdate = deltaUpdate;
         }
-        public PublishThreadData(IPublishing subscriber, SCADAUpdateModel update)
+
+        // for publishing crew update
+        public PublishThreadData(IPublishing subscriber, UIUpdateModel update)
         {
             this.subscriber = subscriber;
             this.crewUpdate = update;
         }
+
+        // for publishing incident
         public PublishThreadData(IPublishing subscriber, IncidentReport report)
         {
             this.subscriber = subscriber;
             this.report = report;
         }
-        public PublishThreadData(IPublishing subscriber, SCADAUpdateModel call,bool isCall)
+
+        // for publishing call incident
+        public PublishThreadData(IPublishing subscriber, UIUpdateModel call, bool isCall)
         {
             this.subscriber = subscriber;
             this.call = call;
         }
+
+        // for publishing ui breakers
         public PublishThreadData(IPublishing subscriber, bool IsIncident, long incidentBreaker)
         {
             this.subscriber = subscriber;
@@ -120,35 +144,60 @@ namespace PubSubscribeService.Services
             }
         }
 
-        public List<SCADAUpdateModel> DeltaUpdate
+        public List<UIUpdateModel> DigitalDeltaUpdate
         {
             get
             {
-                return deltaUpdate;
+                return digitalDeltaUpdate;
             }
 
             set
             {
-                deltaUpdate = value;
+                digitalDeltaUpdate = value;
             }
-        }     
-        public SCADAUpdateModel CrewUpdate { get => crewUpdate; set => crewUpdate = value; }
+        }
+        public List<UIUpdateModel> AnalogDeltaUpdate
+        {
+            get
+            {
+                return analogDeltaUpdate;
+            }
+
+            set
+            {
+                analogDeltaUpdate = value;
+            }
+        }
+        public UIUpdateModel CrewUpdate { get => crewUpdate; set => crewUpdate = value; }
         public IncidentReport Report { get => report; set => report = value; }
-        public SCADAUpdateModel Call { get => call; set => call = value; }
+        public UIUpdateModel Call { get => call; set => call = value; }
         public bool IsIncident { get => Isincident; set => Isincident = value; }
         public long IncidentBreaker { get => incidentBreaker; set => incidentBreaker = value; }
 
-        public void PublishDelta()
+        public void PublishDigitalDelta()
         {
             try
             {
-                subscriber.Publish(DeltaUpdate);
+                subscriber.PublishDigitalUpdate(DigitalDeltaUpdate);
             }
             catch (Exception e)
             {
                 PubSubscribeDB.RemoveSubsriber(subscriber);
             }
         }
+
+        public void PublishAnalogDelta()
+        {
+            try
+            {
+                subscriber.PublishAnalogUpdate(AnalogDeltaUpdate);
+            }
+            catch (Exception e)
+            {
+                PubSubscribeDB.RemoveSubsriber(subscriber);
+            }
+        }
+
         public void PublishCrewDelta()
         {
             try
@@ -160,6 +209,7 @@ namespace PubSubscribeService.Services
                 PubSubscribeDB.RemoveSubsriber(subscriber);
             }
         }
+
         public void PublishIncidentDelta()
         {
             try
@@ -171,6 +221,7 @@ namespace PubSubscribeService.Services
                 PubSubscribeDB.RemoveSubsriber(subscriber);
             }
         }
+
         public void PublishCallIncidentDelta()
         {
             try
@@ -187,7 +238,7 @@ namespace PubSubscribeService.Services
         {
             try
             {
-                subscriber.PublishUIBreakers(IsIncident,IncidentBreaker);
+                subscriber.PublishUIBreakers(IsIncident, IncidentBreaker);
             }
             catch (Exception e)
             {

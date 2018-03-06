@@ -16,6 +16,7 @@ namespace FTN.Common
         public NMSAdoNet()
             : base("Server=tcp:nsmdb.database.windows.net,1433;Initial Catalog=NMS;Persist Security Info=False;User ID=milos.gagovic;Password=Nmsbaza1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")
         {
+           
         }
 
         public NMSAdoNet(string conn):base(conn)

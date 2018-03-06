@@ -1,4 +1,5 @@
-﻿using DMSCommon.Model;
+﻿using DMSCommon;
+using DMSCommon.Model;
 using FTN.Common;
 using IMSContract;
 using Microsoft.ServiceFabric.Services.Client;
@@ -26,17 +27,17 @@ namespace PubSubscribe
             CreateProxy();
         }
 
-        public void PublishUpdate(List<SCADAUpdateModel> update)
+        public void PublishUpdate(List<UIUpdateModel> update)
         {
             try
             {
-                proxyToCloud.InvokeWithRetry(client => client.Channel.Publish(update));
+                proxyToCloud.InvokeWithRetry(client => client.Channel.PublishDigitalUpdate(update));
             }
             catch { }
         }
 
         // not used
-        public void PublishCrew(SCADAUpdateModel update)
+        public void PublishCrew(UIUpdateModel update)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace PubSubscribe
             catch { }
         }
 
-        public void PublishCallIncident(SCADAUpdateModel call)
+        public void PublishCallIncident(UIUpdateModel call)
         {
             try
             {
@@ -73,6 +74,14 @@ namespace PubSubscribe
             try
             {
                 proxyToCloud.InvokeWithRetry(c => c.Channel.PublishUIBreakers(isIncident, incidentBreaker));
+            }
+            catch { }
+        }
+        public void PublishUpdateAnalog(List<UIUpdateModel> update)
+        {
+            try
+            {
+                proxy.PublishAnalogUpdate(update);
             }
             catch { }
         }

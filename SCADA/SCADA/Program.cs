@@ -1,96 +1,73 @@
 ﻿using SCADA.ClientHandler;
-using SCADA.RealtimeDatabase;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SCADA.CommunicationAndControlling;
-using SCADA.CommunicationAndControlling.SecondaryDataProcessing;
 
 namespace SCADA
 {
     public class Program
     {
-        static void Main(string[] args)
+       public static void Main(string[] args)
         {
             Console.Title = "SCADA";
 
-            // ako je druga platforma npr. x86 nije dobra putanja!
+            // to do: srediti kasnije, staviti fajlove u neki resource folder ili slicno   
+            // ako je druga platforma npr. x86 mozda nije dobra putanja!            
 
-            string acqComConfigPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, "ScadaModel.xml");
             string pcConfig = "RtuConfiguration.xml";
-            string fullPcConfig = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, "RtuConfiguration.xml");
-            string basePath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
+            string scadaConfig = "ScadaModel.xml";
+            //string basePath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
+            //string acqComConfigPath = Path.Combine(basePath, scadaConfig);
 
-            // ovo dole ipak ne funkcionise ako stavis x64 ...videti sta sa ovom konfiguracijom
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken;
+            Task requestsConsumer, answersConsumer, acqRequestsProducer;
 
-            //if (IntPtr.Size == 8)
-            //{
-            //    Console.WriteLine("size==8");
-            //    // 64 bit machine
-            //    acqComConfigPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, "ScadaModel.xml");
-            //    pcConfig = "RtuConfiguration.xml";
-            //    fullPcConfig = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, "RtuConfiguration.xml");
-            //    basePath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
-            //}
-            //else if (IntPtr.Size == 4)
-            //{
-            //    Console.WriteLine("size==4");
-            //    // 32 bit machine
-            //    acqComConfigPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName, "ScadaModel.xml");
-            //    pcConfig = "RtuConfiguration.xml";
-            //    fullPcConfig = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName, "RtuConfiguration.xml");
-            //    basePath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-            //}
-            //else
-            //{
-            //    Console.WriteLine("aaaa");
-            //}
+            PCCommunicationEngine PCCommEng = new PCCommunicationEngine();
 
-            // to do: use cancellation tokens and TPL
 
-            PCCommunicationEngine PCCommEng;
+
             while (true)
             {
-                PCCommEng = new PCCommunicationEngine();
-
-                if (!PCCommEng.Configure(basePath, pcConfig))
+                if (!PCCommEng.ConfigureEngine("", pcConfig))
                 {
                     Console.WriteLine("\nStart the simulator then press any key to continue the application.\n");
-                    Console.ReadKey();
+                    Thread.Sleep(5000);
                     continue;
                 }
                 break;
             }
 
 
-            CommAcqEngine AcqEngine = new CommAcqEngine();
-            if (AcqEngine.Configure(acqComConfigPath))
+            CommandingAcquisitionEngine AcqEngine = new CommandingAcquisitionEngine();
+            if (AcqEngine.ConfigureEngine(""))
             {
-                // stavlja zahteve za icijalno komandovanje u red 
                 AcqEngine.InitializeSimulator();
+                cancellationToken = cancellationTokenSource.Token;
 
-                // uzimanje zahteva iz reda, i slanje zahteva MDBU-u. dobijanje MDB odgovora i stavljanje u red
-                Thread processingRequestsFromQueue = new Thread(PCCommEng.ProcessRequestsFromQueue);
+                // to do: for IO bound operation you <await an operation which returns a task inside of an async method>
+                // await yields control to the caller of the method thet performed await
 
-                // uzimanje odgovora iz reda
-                Thread processingAnswersFromQueue = new Thread(AcqEngine.ProcessPCAnwers);
+                TimeSpan consumeReqTime = TimeSpan.FromMilliseconds(10000); // it should be at least twice than acquisition timeout
+                requestsConsumer = Task.Factory.StartNew(() => PCCommEng.ProcessRequestsFromQueue(consumeReqTime, cancellationToken),
+                   TaskCreationOptions.LongRunning);
 
-                // stavljanje zahteva za akviziju u red
-                Thread producingAcquisitonRequests = new Thread(AcqEngine.StartAcquisition);
-
-                processingRequestsFromQueue.Start();
-                processingAnswersFromQueue.Start();
+                TimeSpan consumeAnswTime = TimeSpan.FromMilliseconds(10000);
+                answersConsumer = Task.Factory.StartNew(() => AcqEngine.ProcessPCAnwers(consumeReqTime, cancellationToken),
+                   TaskCreationOptions.LongRunning);
 
                 // give simulator some time, and when everything is ready start acquisition
                 Thread.Sleep(1000);
-                producingAcquisitonRequests.Start();
+
+                acqRequestsProducer = Task.Factory.StartNew(() => AcqEngine.Acquisition());
 
                 try
                 {
                     Console.WriteLine("\n....");
-                    SCADAService ss = new SCADAService();
-                    ss.Start();
+                  //  SCADAService ss = new SCADAService();
+                 //   ss.Start();
                 }
                 catch (Exception ex)
                 {
@@ -100,18 +77,26 @@ namespace SCADA
                     Console.ReadLine();
                     return;
                 }
+
             }
             else
             {
                 Console.WriteLine("Configuration of scada failed.");
             }
 
-            Console.WriteLine("Press <Enter> to stop the service.");
+            //Console.WriteLine("Press <Enter> to stop the service.");
+            ////Console.ReadKey();
+            //if (cancellationToken.CanBeCanceled)
+            //{
+            //    // ako nisu bili ni pokrenuti, vrednost taskova je ovde null..
+            //    cancellationTokenSource.Cancel();
+            //}
 
-            Console.ReadKey();
-
-            AcqEngine.Stop();
-            PCCommEng.Stop();
+            //// to do:
+            //// wait tasks
+            //AcqEngine.Stop();
+            //PCCommEng.Stop();
         }
+
     }
 }

@@ -126,8 +126,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SCADAClient.cs" />
     <Compile Include="ServicecFabricClients\ServiceFabricDMSClient.cs" />
+    <Compile Include="ServicecFabricClients\ServiceFabricSCADAClient.cs" />
     <Compile Include="ServicecFabricClients\SubscriberServiceCloud.cs" />
     <Compile Include="ServicecFabricClients\WCFDMSTransactionClient.cs" />
+    <Compile Include="ServicecFabricClients\WCFSCADATransactionClient.cs" />
     <Compile Include="TransactionCallback.cs" />
     <Compile Include="TransactionManager.cs" />
     <Compile Include="TransactionManagerService.cs" />

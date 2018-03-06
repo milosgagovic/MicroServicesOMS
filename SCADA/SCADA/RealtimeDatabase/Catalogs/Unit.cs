@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace SCADA.RealtimeDatabase.Catalogs
 {
     /// only subset of UnitSymbol.cs from Common 
@@ -38,10 +33,11 @@ namespace SCADA.RealtimeDatabase.Catalogs
         /// volt-ampere-reactive hours  reactive energy, charge capacitors and inductos and does no work
         /// </summary>
         VArh = 5,
-        V = 6
 
+        V = 6
     }
 
+    // to do: use it in future implementations
     public enum Multiplier
     {
         noMultiplier, // -> default, 10^0 

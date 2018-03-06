@@ -1,5 +1,4 @@
 ﻿using OMSSCADACommon;
-using SCADA.RealtimeDatabase.Catalogs;
 using SCADA.RealtimeDatabase.Model;
 using System;
 
@@ -35,15 +34,18 @@ namespace SCADA.CommunicationAndControlling.SecondaryDataProcessing
             return retVal;
         }
 
+
         public static bool CheckCommandExecution()
         {
+            // napravis polje komanda izdata, i ako je setovano, kada sledeci put dobijes tu promenljivu  natragu akviziciji, proveris da
+            // li stanje odgovara izdatoj komandi
             throw new NotImplementedException();
         }
 
 
         /// <summary>
         /// Calculates a possibly command, in dependence of digital properties,
-        /// return true if should command to Sim.
+        /// return true if should command to Simulator.
         /// </summary>
         /// <param name="digital"></param>
         /// <param name="command"></param>

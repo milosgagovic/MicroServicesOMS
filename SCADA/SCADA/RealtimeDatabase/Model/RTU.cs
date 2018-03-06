@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 
 namespace SCADA.RealtimeDatabase.Model
@@ -10,32 +11,42 @@ namespace SCADA.RealtimeDatabase.Model
     {
         private ConcurrentDictionary<ushort, string> PVsAddressAndNames = null;
         private DBContext dbContext = null;
-
+        [Key]
+        public int Id { get; set; }
         public IndustryProtocols Protocol { get; set; }
 
-        // (Modbus slave address), value in range 1 - 247 (0 - broadcast)
+        /// <summary>
+        /// Identification of end device.
+        /// </summary>
+        /// <remarks>In case of Modbus - value in range 1 - 247 (0 - broadcast)</remarks>
         public Byte Address { get; set; }
 
+        /// <summary>
+        /// Unique Name (e.g. RTU-1)
+        /// </summary>
         public string Name { get; set; }
 
         public bool FreeSpaceForDigitals { get; set; }
         public bool FreeSpaceForAnalogs { get; set; }
+        // to do: add "free space" for counters...
 
-        // controller pI/O starting Addresses
+        /* Controller pI/O starting Addresses. These are values of the second collumn of 
+        the RtuCfg.txt file, and they are also in ScadaModel.xml under the corresponding names. */
         public int DigOutStartAddr { get; set; }
         public int DigInStartAddr { get; set; }
         public int AnaInStartAddr { get; set; }
         public int AnaOutStartAddr { get; set; }
         public int CounterStartAddr { get; set; }
 
-        // number of pI/O
-        public int DigOutCount { get; set; }
-        public int DigInCount { get; set; }
-        public int AnaInCount { get; set; }
-        public int AnaOutCount { get; set; }
-        public int CounterCount { get; set; }
+        // number of pI/O (max number of process variables of certain type)
+        public int NoDigOut { get; set; }
+        public int NoDigIn { get; set; }
+        public int NoAnaIn { get; set; }
+        public int NoAnaOut { get; set; }
+        public int NoCnt { get; set; }
 
-        // dovoljno nam je samo jedno za sada, posto analog posmatramo da ima isti broj ulaza i izlaza, ali da kasnije nekad moze da se prosiri...
+        // currently, we use only AnaInRawMin and AnaInRawMax, cause we suppose same values for Out registers. 
+        // to do: fix everything in future implementations :) 
         // raw band limits
         public ushort AnaInRawMin { get; set; }
         public ushort AnaInRawMax { get; set; }
@@ -76,12 +87,16 @@ namespace SCADA.RealtimeDatabase.Model
             MappedAnalog = 0;
             MappedCounter = 0;
 
-            digitalInAddresses = new List<int>(DigInCount);
-            analogInAddresses = new List<int>(AnaInCount);
-            digitalOutAddresses = new List<int>(DigOutCount);
-            analogOutAddresses = new List<int>(AnaOutCount);
-            counterAddresses = new List<int>(CounterCount);
+            digitalInAddresses = new List<int>(NoDigIn);
+            analogInAddresses = new List<int>(NoAnaIn);
+            digitalOutAddresses = new List<int>(NoDigOut);
+            analogOutAddresses = new List<int>(NoAnaOut);
+            counterAddresses = new List<int>(NoCnt);
         }
+
+        // trenutno se podrazumeva da modbus NE ocekuje offset broj registra
+        // nekad u buducnosti napraviti da bude moguce i sa offsetom, odnosno
+        // da iz ako je npr. f-on code za read coils, simualtor zna koja je adresa pocetna tog bloka registara...
 
         public int GetAcqAddress(ProcessVariable variable)
         {
@@ -190,7 +205,7 @@ namespace SCADA.RealtimeDatabase.Model
                         var nextAddress = currentAcqAddress + quantity;
 
                         // error, out of range. impossible to insert next variable of same type
-                        if (nextAddress >= DigInStartAddr + DigInCount)
+                        if (nextAddress >= DigInStartAddr + NoDigIn)
                         {
                             FreeSpaceForDigitals = false;
                             break;
@@ -253,7 +268,7 @@ namespace SCADA.RealtimeDatabase.Model
                         var nextAddress = currentAcqAddress + analog.NumOfRegisters;
 
                         // error, out of range. impossible to insert next variable of same type
-                        if (nextAddress >= AnaInStartAddr + AnaInCount)
+                        if (nextAddress >= AnaInStartAddr + NoAnaIn)
                         {
                             FreeSpaceForAnalogs = false;
                             break;
@@ -334,7 +349,7 @@ namespace SCADA.RealtimeDatabase.Model
                         var nextAddress = currentCommAddress + quantity;
 
                         // error, out of range. impossible to insert next variable of same type
-                        if (nextAddress >= DigOutStartAddr + DigInCount)
+                        if (nextAddress >= DigOutStartAddr + NoDigIn)
                         {
                             FreeSpaceForDigitals = false;
                             break;
@@ -395,7 +410,7 @@ namespace SCADA.RealtimeDatabase.Model
                         var nextAddress = currentCommAddress + analog.NumOfRegisters;
 
                         // error, out of range. impossible to insert next variable of same type
-                        if (nextAddress >= AnaOutStartAddr + AnaInCount)
+                        if (nextAddress >= AnaOutStartAddr + NoAnaIn)
                         {
                             FreeSpaceForAnalogs = false;
                             break;
@@ -475,8 +490,9 @@ namespace SCADA.RealtimeDatabase.Model
             return isSuccessfull;
         }
 
-
+        // to do:
         // ova funkcija nepovratno menja vrednost mappedDig, mappedAn...
+
         /// <summary>
         /// Check if it is possible to map new variable, calculates RelativeAddress for 
         /// new variable, based on previously mapped variables.
@@ -498,9 +514,10 @@ namespace SCADA.RealtimeDatabase.Model
                     int desiredDigIn = (ushort)(Math.Floor((Math.Log(digital.ValidStates.Count, 2))));
                     int desiredDigOut = (ushort)(Math.Floor((Math.Log(digital.ValidCommands.Count, 2))));
 
+                    // to do: test
                     // mozda ovde treba < a ne <=
-                    if (MappedDig + desiredDigIn <= DigInCount &&
-                        MappedDig + desiredDigOut <= DigOutCount)
+                    if (MappedDig + desiredDigIn <= NoDigIn &&
+                        MappedDig + desiredDigOut <= NoDigOut)
                     //if (digitalInAddresses.Count + desiredDigIn <= DigInCount &&
                     //digitalOutAddresses.Count + desiredDigOut <= DigOutCount)
                     {
@@ -516,8 +533,8 @@ namespace SCADA.RealtimeDatabase.Model
                     int desiredAnOut = analog.NumOfRegisters;
 
                     // mozda ovde treba < a ne <=
-                    if (MappedAnalog + desiredAnIn <= AnaInCount &&
-                        MappedAnalog + desiredAnOut <= AnaOutCount)
+                    if (MappedAnalog + desiredAnIn <= NoAnaIn &&
+                        MappedAnalog + desiredAnOut <= NoAnaOut)
                     //if (analogInAddresses.Count + desiredAnIn <= AnaInCount &&
                     //analogOutAddresses.Count + desiredAnOut <= AnaOutCount)
                     {

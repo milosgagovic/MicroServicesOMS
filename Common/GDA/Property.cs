@@ -64,6 +64,8 @@ namespace FTN.Common
         [ForeignKey("ResourceDescription")]
         public int ResourceDescription_Id { get; set; }
         public virtual ResourceDescription ResourceDescription { get; set; }
+
+       
         public Property()
 		{
 		}

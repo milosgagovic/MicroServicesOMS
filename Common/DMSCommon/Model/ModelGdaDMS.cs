@@ -1,8 +1,11 @@
 ﻿using FTN.Common;
 using FTN.ServiceContracts;
+using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 
 namespace DMSCommon.Model
@@ -11,6 +14,26 @@ namespace DMSCommon.Model
     {
 
         private ModelResourcesDesc modelResourcesDesc = new ModelResourcesDesc();
+        private NetworkGDAServiceFabric proxyToNMServiceFabric = null;
+        private NetworkGDAServiceFabric ProxyToNMServiceFabric
+        {
+            get
+            {
+                if (proxyToNMServiceFabric == null)
+                {
+                    IServicePartitionResolver partitionResolverToNMS = ServicePartitionResolver.GetDefault();
+                    var wcfClientFactoryToNMS = new WcfCommunicationClientFactory<INetworkModelGDAContract>
+                        (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToNMS);
+                    proxyToNMServiceFabric = new NetworkGDAServiceFabric(
+                                    wcfClientFactoryToNMS,
+                                    new Uri("fabric:/ServiceFabricOMS/NMStatelessService"),
+                                    ServicePartitionKey.Singleton,
+                                    listenerName: "NMServiceEndpoint");
+                }
+
+                return proxyToNMServiceFabric;
+            }
+        }
 
         private NetworkModelGDAProxy gdaQueryProxy = null;
         private NetworkModelGDAProxy GdaQueryProxy
@@ -48,7 +71,7 @@ namespace DMSCommon.Model
                 short type = ModelCodeHelper.ExtractTypeFromGlobalId(globalId);
                 List<ModelCode> properties = modelResourcesDesc.GetAllPropertyIds((DMSType)type);
 
-                rd = GdaQueryProxy.GetValues(globalId, properties);
+                rd = ProxyToNMServiceFabric.InvokeWithRetry(c => c.Channel.GetValues(globalId, properties));
 
                 message = "Getting values method successfully finished.";
                // Console.WriteLine(message);
@@ -126,12 +149,12 @@ namespace DMSCommon.Model
 
                 List<ModelCode> properties = modelResourcesDesc.GetAllPropertyIds(modelCode);
 
-                iteratorId = GdaQueryProxy.GetExtentValues(modelCode, properties);
-                resourcesLeft = GdaQueryProxy.IteratorResourcesLeft(iteratorId);
+                iteratorId = ProxyToNMServiceFabric.InvokeWithRetry(c => c.Channel.GetExtentValues(modelCode, properties));
+                resourcesLeft = ProxyToNMServiceFabric.InvokeWithRetry(c => c.Channel.IteratorResourcesLeft(iteratorId));
 
                 while (resourcesLeft > 0)
                 {
-                    List<ResourceDescription> rds = GdaQueryProxy.IteratorNext(numberOfResources, iteratorId);
+                    List<ResourceDescription> rds = ProxyToNMServiceFabric.InvokeWithRetry(c => c.Channel.IteratorNext(numberOfResources, iteratorId));
 
                     for (int i = 0; i < rds.Count; i++)
                     {
@@ -141,10 +164,10 @@ namespace DMSCommon.Model
                         resourceDescriptions.Add(rd);
                     }
 
-                    resourcesLeft = GdaQueryProxy.IteratorResourcesLeft(iteratorId);
+                    resourcesLeft = ProxyToNMServiceFabric.InvokeWithRetry(c => c.Channel.IteratorResourcesLeft(iteratorId));
                 }
 
-                GdaQueryProxy.IteratorClose(iteratorId);
+                ProxyToNMServiceFabric.InvokeWithRetry(c => c.Channel.IteratorClose(iteratorId));
 
                 message = "Getting extent values method successfully finished.";
                // Console.WriteLine(message);

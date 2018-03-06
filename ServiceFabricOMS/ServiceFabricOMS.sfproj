@@ -36,6 +36,8 @@
     <ProjectReference Include="..\IMStatelessService\IMStatelessService.csproj" />
     <ProjectReference Include="..\NMStatelessService\NMStatelessService.csproj" />
     <ProjectReference Include="..\PubSubStatelessService\PubSubStatelessService.csproj" />
+    <ProjectReference Include="..\ScadaStateless\ScadaStateless.csproj" />
+    <ProjectReference Include="..\TMStatelessService\TMStatelessService.csproj" />
     <ProjectReference Include="..\TMStatefulService\TMStatefulService.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

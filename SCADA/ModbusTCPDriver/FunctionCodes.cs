@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ModbusTCPDriver
 {
     // u modbus registarskoj mapi su 4 tipa registara -> input discrete, coils, input registers, holding registers

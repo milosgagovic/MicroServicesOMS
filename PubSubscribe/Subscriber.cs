@@ -1,23 +1,19 @@
-﻿using DMSCommon.Model;
-using FTN.Common;
+﻿using DMSCommon;
 using IMSContract;
-using Microsoft.ServiceFabric.Services.Client;
-using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using PubSubContract;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace PubSubscribe
 {
-    public delegate void PublishUpdateEvent(List<SCADAUpdateModel> update);
-    public delegate void PublishCrewEvent(SCADAUpdateModel update);
+    public delegate void PublishDigitalUpdateEvent(List<UIUpdateModel> update);
+    public delegate void PublishAnalogUpdateEvent(List<UIUpdateModel> update);
+    public delegate void PublishCrewEvent(UIUpdateModel update);
     public delegate void PublishReportIncident(IncidentReport report);
-    public delegate void PublishCallIncident(SCADAUpdateModel call);
-    public delegate void PublishUIBreakers(bool IsIncident,long incidentBreaker);
+    public delegate void PublishCallIncident(UIUpdateModel call);
+    public delegate void PublishUIBreakers(bool IsIncident, long incidentBreaker);
 
     /// <summary>
     /// Client for Subscribing service
@@ -25,8 +21,9 @@ namespace PubSubscribe
     public class Subscriber : IPublishing
     {
         ISubscription subscriptionProxy = null;
-       
-        public event PublishUpdateEvent publishUpdateEvent;
+
+        public event PublishDigitalUpdateEvent publishDigitalUpdateEvent;
+        public event PublishAnalogUpdateEvent publishAnalogUpdateEvent;
         public event PublishCrewEvent publishCrewEvent;
         public event PublishReportIncident publishIncident;
         public event PublishCallIncident publishCall;
@@ -41,12 +38,16 @@ namespace PubSubscribe
         {
             try
             {  //***git
-                NetTcpBinding netTcpbinding = new NetTcpBinding();
+                NetTcpBinding binding = new NetTcpBinding();
+                binding.CloseTimeout = TimeSpan.FromMinutes(10);
+                binding.OpenTimeout = TimeSpan.FromMinutes(10);
+                binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
+                binding.SendTimeout = TimeSpan.FromMinutes(10);
+                binding.MaxReceivedMessageSize = Int32.MaxValue;
                 EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:4080/SubscriptionService");
                 InstanceContext callback = new InstanceContext(this);
-                DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, netTcpbinding, endpointAddress);
+                DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, binding, endpointAddress);
                 subscriptionProxy = channelFactory.CreateChannel();
-
             }
             catch (Exception e)
             {
@@ -59,7 +60,6 @@ namespace PubSubscribe
         {
             try
             {
-                // proxyToCloud.InvokeWithRetry(client => client.Channel.Subscribe());
                 subscriptionProxy.Subscribe();
             }
             catch (Exception e)
@@ -74,7 +74,6 @@ namespace PubSubscribe
         {
             try
             {
-                //     proxyToCloud.InvokeWithRetry(client => client.Channel.UnSubscribe());
                 subscriptionProxy.UnSubscribe();
             }
             catch (Exception e)
@@ -84,12 +83,17 @@ namespace PubSubscribe
             }
         }
 
-        public void Publish(List<SCADAUpdateModel> update)
+        public void PublishDigitalUpdate(List<UIUpdateModel> update)
         {
-            publishUpdateEvent?.Invoke(update);
+            publishDigitalUpdateEvent?.Invoke(update);
         }
 
-        public void PublishCrewUpdate(SCADAUpdateModel update)
+        public void PublishAnalogUpdate(List<UIUpdateModel> update)
+        {
+            publishAnalogUpdateEvent?.Invoke(update);
+        }
+
+        public void PublishCrewUpdate(UIUpdateModel update)
         {
             publishCrewEvent?.Invoke(update);
         }
@@ -98,7 +102,8 @@ namespace PubSubscribe
         {
             publishIncident?.Invoke(report);
         }
-        public void PublishCallIncident(SCADAUpdateModel call)
+
+        public void PublishCallIncident(UIUpdateModel call)
         {
             publishCall?.Invoke(call);
         }

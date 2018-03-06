@@ -1,49 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PCCommon;
 
 namespace ModbusTCPDriver
 {
     public class ModbusApplicationHeader
-    {
-        // initialized by the client, copied by the server from request to the response
-        // Identification of a MODBUS request/response transaction
-
-        // fiksiramo na 0
+    {       
+        /// <summary>
+        /// Identification of a MODBUS request/response transaction
+        /// </summary>
+        /// <remarks>Fixed to 0. Initialized by the client, copied by the server from request to the response</remarks>
         public ushort TransactionId
         {
-            //get { return TransactionId; }
-            //set
-            //{
-            //    byte[] transId = BitConverter.GetBytes(value);
-            //    Array.Reverse(transId);
-            //    value = Convert.ToUInt16(transId);
-            //}
             get; set;
         }
 
-        // initialized by the client, copied by the server from request to the response
-        // 0 = ModbuTCP protocol
+        /// <summary>
+        /// 0 = ModbuTCP protocol
+        /// </summary>
+        /// <remarks>Initialized by the client, copied by the server from request to the response</remarks>
         public ushort ProtocolId
         {
             get; set;
         }
 
-        // initialized by the client (request), initialized by the server (response)
-        // number of following bytes
-        // broj bajtova iza zaglavlja -> bez adrese uracunate
+        /// <summary>
+        /// Number of bytes in the message to follow
+        /// </summary>
+        /// <remarks>Initialized by the client (request), initialized by the server (response)</remarks>
         public ushort Length
         {
             get; set;
         }
 
-        // initialized by the client (request), copied by the server from request to the response
-        // identification of a remote slave
+        /// <summary>
+        /// Identification of a remote slave unit.
+        /// </summary>
+        /// <remarks>Initialized by the client (request), copied by the server from request to the response</remarks>
         public Byte DeviceAddress { get; set; }
 
+        /// <summary>
+        /// Converting ModbusApplicationHeader properties to appropriate byte array, for sending over the communication channel.
+        /// </summary>
+        /// <returns></returns>
         public byte[] getByteHeader()
         {
             byte[] transId = BitConverter.GetBytes(TransactionId);
@@ -68,6 +65,11 @@ namespace ModbusTCPDriver
             return byteHeader;
         }
 
+        /// <summary>
+        /// Converting byte array to properties of ModbusApplicationHeader, after receiving through the communication channel.
+        /// </summary>
+        /// <param name="bHeader"></param>
+        /// <returns></returns>
         public ModbusApplicationHeader getObjectHeader(byte[] bHeader)
         {     
             // transaction Id

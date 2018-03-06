@@ -12,6 +12,7 @@ using OMSSCADACommon;
 using OMSSCADACommon.Commands;
 using OMSSCADACommon.Responses;
 using PubSubContract;
+using SCADAContracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace TransactionManager
         SubscriberServiceCloud proxyToSubscriberServiceCloud;
         WCFDMSTransactionClient _WCFDMSTransactionClient;
         WCFDMSTransactionClient _WCFNMSTransactionClient;
+        WCFSCADATransactionClient _WCFSCADATransactionClient;
         ModelGDATMS gdaTMS;
         long instanceID = 0;
 
@@ -56,6 +58,36 @@ namespace TransactionManager
                 return scadaClient;
             }
             set { scadaClient = value; }
+        }
+
+        private ServiceFabricSCADAClient _scadaServiceFabricClient;
+        private ServiceFabricSCADAClient _SCADAServiceFabricClient
+        {
+            get
+            {
+                if (_scadaServiceFabricClient == null)
+                {
+                    NetTcpBinding binding = new NetTcpBinding();
+                    // Create a partition resolver
+                    IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
+                    // create a  WcfCommunicationClientFactory object.
+                    var wcfClientFactory = new WcfCommunicationClientFactory<ISCADAContract>
+                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+
+                    //
+                    // Create a client for communicating with the ICalculator service that has been created with the
+                    // Singleton partition scheme.
+                    //
+                    _scadaServiceFabricClient = new ServiceFabricSCADAClient(
+                                    wcfClientFactory,
+                                    new Uri("fabric:/ServiceFabricOMS/ScadaStateless"),
+                                    ServicePartitionKey.Singleton,
+                                    listenerName: "ScadaInvoker");
+
+                }
+                return _scadaServiceFabricClient;
+            }
+            set { _scadaServiceFabricClient = value; }
         }
 
         public List<WCFDMSTransactionClient> TransactionProxys { get => transactionProxys; set => transactionProxys = value; }
@@ -92,6 +124,7 @@ namespace TransactionManager
 
             CallBackTransactionNMS = new TransactionCallback();
             CallBackTransactionDMS = new TransactionCallback();
+            CallBackTransactionSCADA = new TransactionCallback();
 
 
             ///
@@ -160,6 +193,32 @@ namespace TransactionManager
 
             TransactionProxys.Add(_WCFNMSTransactionClient);
 
+
+            NetTcpBinding bindingScada = new NetTcpBinding();
+            // Create a partition resolver
+            IServicePartitionResolver partitionResolverScada = ServicePartitionResolver.GetDefault();
+
+            //create calllback
+            // duplex channel for DMS transaction
+            //  TransactionCallback CallBackTransactionDMS2 = new TransactionCallback();
+            // create a  WcfCommunicationClientFactory object.
+            var wcfClientFactoryScada = new WcfCommunicationClientFactory<ITransactionSCADA>
+                (clientBinding: bindingScada, servicePartitionResolver: partitionResolverScada, callback: CallBackTransactionSCADA);
+
+            //
+            // Create a client for communicating with the ICalculator service that has been created with the
+            // Singleton partition scheme.
+            //
+            _WCFSCADATransactionClient = new WCFSCADATransactionClient(
+                            wcfClientFactoryScada,
+                            new Uri("fabric:/ServiceFabricOMS/ScadaStateless"),
+                            ServicePartitionKey.Singleton,
+                            listenerName: "ScadaTransactionService");
+
+            TransactionCallbacks.Add(CallBackTransactionSCADA);
+
+
+
             IServicePartitionResolver partitionResolverToDMS = ServicePartitionResolver.GetDefault();
             var wcfClientFactoryToDMS = new WcfCommunicationClientFactory<IDMSContract>
                 (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToDMS);
@@ -193,6 +252,7 @@ namespace TransactionManager
                             listenerName: "SubscriptionService");
 
 
+
         }
 
         #region 2PC methods
@@ -205,6 +265,8 @@ namespace TransactionManager
             {
                 svc.InvokeWithRetry(client => client.Channel.Enlist());
             }
+            _WCFSCADATransactionClient.InvokeWithRetry(c => c.Channel.Enlist());
+
 
             //            ProxyTransactionSCADA.Enlist();
 
@@ -231,10 +293,14 @@ namespace TransactionManager
             //    c.InvokeWithRetry(x => x.Channel.Prepare(delta));
             //}
             Delta fixedGuidDelta = gdaTMS.GetFixedDelta(delta);
+            ScadaDelta scadaDelta = GetDeltaForSCADA(delta);
 
             _WCFNMSTransactionClient.InvokeWithRetry(client => client.Channel.Prepare(delta));
 
             _WCFDMSTransactionClient.InvokeWithRetry(client => client.Channel.Prepare(fixedGuidDelta));
+
+            _WCFSCADATransactionClient.InvokeWithRetry(c => c.Channel.Prepare(scadaDelta));
+
 
             //  proxyTransactionNMS.Prepare(delta);
             // ScadaDelta scadaDelta = GetDeltaForSCADA(delta);
@@ -250,16 +316,16 @@ namespace TransactionManager
             else
             {
                 // tek nakon sto prodje prepere na nms i dms onda se pise u bazu
-               
-
                 while (true)
                 {
-                    if (TransactionCallbacks.Where(k => k.AnswerForPrepare == TransactionAnswer.Unanswered).Count() > 0)
+                    if (TransactionCallbacks.Where(k => k.AnswerForPrepare == TransactionAnswer.Unanswered).Count() > 0 &&
+                        CallBackTransactionSCADA.AnswerForPrepare == TransactionAnswer.Unanswered)
                     {
                         Thread.Sleep(1000);
                         continue;
                     }
-                    else if (TransactionCallbacks.Where(u => u.AnswerForPrepare == TransactionAnswer.Unprepared).Count() > 0)
+                    else if (TransactionCallbacks.Where(u => u.AnswerForPrepare == TransactionAnswer.Unprepared).Count() > 0 ||
+                        CallBackTransactionSCADA.AnswerForPrepare == TransactionAnswer.Unprepared)
                     {
                         Rollback();
                         break;
@@ -305,7 +371,7 @@ namespace TransactionManager
             {
                 c.InvokeWithRetry(x => x.Channel.Commit());
             }
-
+            _WCFSCADATransactionClient.InvokeWithRetry(c => c.Channel.Commit());
             //   ProxyTransactionSCADA.Commit();
         }
 
@@ -316,6 +382,7 @@ namespace TransactionManager
             {
                 c.InvokeWithRetry(x => x.Channel.Rollback());
             }
+            _WCFSCADATransactionClient.InvokeWithRetry(c => c.Channel.Rollback());
             //foreach (ITransaction svc in TransactionProxys)
             //{
             //    svc.Rollback();
@@ -394,7 +461,97 @@ namespace TransactionManager
 
             int GraphDeep = proxyToDMS.InvokeWithRetry(client => client.Channel.GetNetworkDepth());
 
+
+            //try
+            //{
+            Command c = MappingEngineTransactionManager.Instance.MappCommand(TypeOfSCADACommand.ReadAll, "", 0, 0);
+            #region ping
+            //    //bool isScadaAvailable = false;
+            //    //do
+            //    //{
+            //    //    Console.WriteLine("scada not available");
+            //    //    try
+            //    //    {
+            //    //        if (ScadaClient.State == CommunicationState.Created)
+            //    //        {
+            //    //            ScadaClient.Open();
+            //    //        }
+
+            //    //        isScadaAvailable = ScadaClient.Ping();
+            //    //    }
+            //    //    catch (Exception e)
+            //    //    {
+            //    //        //Console.WriteLine(e);
+            //    //        Console.WriteLine("InitializeNetwork() -> SCADA is not available yet.");
+            //    //        if (ScadaClient.State == CommunicationState.Faulted)
+            //    //            ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
+            //    //    }
+            //    //    Thread.Sleep(500);
+            //    //} while (!isScadaAvailable);
+
+
+
+            //    do
+            //    {
+            //        try
+            //        {
+            //            if (ScadaClient.State == CommunicationState.Created)
+            //            {
+            //                ScadaClient.Open();
+            //            }
+
+            //            if (ScadaClient.Ping())
+            //                break;
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            //Console.WriteLine(e);
+            //            Console.WriteLine("GetNetwork() -> SCADA is not available yet.");
+            //            if (ScadaClient.State == CommunicationState.Faulted)
+            //                ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
+            //        }
+            //        Thread.Sleep(500);
+            //    } while (true);
+            //    Console.WriteLine("GetNetwork() -> SCADA is available.");
+
+
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //}
+
+            //bool isImsAvailable = false;
+            //do
+            //{
+            //    try
+            //    {
+            //        if (IMSClient.State == CommunicationState.Created)
+            //        {
+            //            IMSClient.Open();
+            //        }
+
+            //        isImsAvailable = IMSClient.Ping();
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        //Console.WriteLine(e);
+            //        Console.WriteLine("GetNetwork() -> IMS is not available yet.");
+            //        if (IMSClient.State == CommunicationState.Faulted)
+            //            IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"));
+            //    }
+            //    Thread.Sleep(2000);
+            //} while (!isImsAvailable);
+
+            // var crews = IMSClient.GetCrews();
+            #endregion
+
+            Response r = _SCADAServiceFabricClient.InvokeWithRetry(s => s.Channel.ExecuteCommand(c));
+            descMeas = MappingEngineTransactionManager.Instance.MappResult(r);
+
+
           
+
             var crews = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
             var incidentReports = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllReports());
 
@@ -409,12 +566,16 @@ namespace TransactionManager
                 Command c = MappingEngineTransactionManager.Instance.MappCommand(command, mrid, commandtype, value);
 
                 // to do: ping
-                Response r = scadaClient.ExecuteCommand(c);
+
+                //Response r = ScadaClient.ExecuteCommand(c);
                 //Response r = SCADAClientInstance.ExecuteCommand(c);
+                Response t = _SCADAServiceFabricClient.InvokeWithRetry(s => s.Channel.ExecuteCommand(c));
 
             }
             catch (Exception e)
-            { }
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void SendCrew(IncidentReport report)
@@ -460,7 +621,7 @@ namespace TransactionManager
                     string type = rd.GetProperty(ModelCode.MEASUREMENT_TYPE).ToString();
                     if (type == "Analog")
                     {
-                        element.Type = DeviceTypes.ANALOG;                       
+                        element.Type = DeviceTypes.ANALOG;
                         element.UnitSymbol = ((UnitSymbol)rd.GetProperty(ModelCode.MEASUREMENT_UNITSYMB).AsEnum()).ToString();
                         element.WorkPoint = rd.GetProperty(ModelCode.ANALOG_NORMVAL).AsFloat();
                     }

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace SCADA.RealtimeDatabase.Model
-{
+{   
+    // to do: use it in future implementations, when there is application control procedure
     public class Object : ProcessVariable
     {
     }

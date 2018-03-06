@@ -2,12 +2,14 @@
 <ProcessControllers>
 	<ProcessController>
 		<DeviceAddress>1</DeviceAddress>
+		<TransportHandler>TCP</TransportHandler>
 		<HostName>localhost</HostName>
 		<HostPort>4021</HostPort>
 		<Name>RTU-1</Name>
 	</ProcessController>
 	<ProcessController>
 		<DeviceAddress>2</DeviceAddress>
+		<TransportHandler>TCP</TransportHandler>
 		<HostName>localhost</HostName>
 		<HostPort>4022</HostPort>
 		<Name>RTU-2</Name>

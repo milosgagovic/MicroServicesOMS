@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using OMSSCADACommon;
 using TransactionManagerContract;
 using SCADA.RealtimeDatabase;
@@ -10,8 +8,8 @@ using SCADA.ConfigurationParser;
 
 namespace SCADA.ClientHandler
 {
-    //[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     //[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Reentrant)]
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class SCADATransactionService : ITransactionSCADA
     {
         private static string modifiedConfigFile = "NewScadaModel.xml";
@@ -25,7 +23,7 @@ namespace SCADA.ClientHandler
         }
 
         /// <summary>
-        /// Check if there is ANY free space in controller; at this point we do not know if delta will contain 1 or 10 measurements
+        /// Check if there is ANY free space in controller; at this point we do not know if delta will contain 1 or 10 measurements (analog or/and digital)
         /// so we only check if is it possible to add minimal memory occupying element
         /// </summary>
         public void Enlist()
@@ -69,6 +67,8 @@ namespace SCADA.ClientHandler
                 {
                     ScadaModelParser parser = new ScadaModelParser();
 
+                    // to do:
+                    // mozda ove serijaliyacije da budu taskovi_
                     // novu konfiguraciju cuvamo u fajlu
                     parser.SerializeScadaModel(modifiedConfigFile);
 
@@ -103,13 +103,15 @@ namespace SCADA.ClientHandler
             ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
 
             ScadaModelParser parser = new ScadaModelParser();
-            parser.SwapConfigs(currentConfigFile, modifiedConfigFile);
+
+            // to do check this
+            //parser.SwapConfigs(currentConfigFile, modifiedConfigFile);
 
             callback.CallbackCommit("Commited on SCADA");          
         }
 
         /// <summary>
-        /// Returning to old config file, initialize database again (deserializng from file)
+        /// Returning to old config file, initialize database again (deserializing from file)
         /// </summary>
         public void Rollback()
         {

@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
@@ -53,7 +54,7 @@
     <Compile Include="Responses\CounterVariable.cs" />
     <Compile Include="Responses\DigitalVariable.cs" />
     <Compile Include="Responses\Response.cs" />
-    <Compile Include="Responses\ResponseType.cs" />
+    <Compile Include="Responses\ResponseVarType.cs" />
     <Compile Include="Responses\ResponseVariable.cs" />
     <Compile Include="ResultMessage.cs" />
     <Compile Include="ICommandReceiver.cs" />
@@ -64,4 +65,8 @@
     <Compile Include="States.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

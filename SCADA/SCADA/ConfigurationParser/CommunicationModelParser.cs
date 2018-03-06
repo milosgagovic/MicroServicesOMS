@@ -1,4 +1,6 @@
 ﻿using PCCommon;
+using ScadaCloud;
+using ScadaCloud.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +19,7 @@ namespace SCADA.ConfigurationParser
         public CommunicationModelParser(string basePath = "")
         {
             processControllers = new Dictionary<string, ProcessController>();
-            this.basePath = basePath == "" ? Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName : basePath;
+            //this.basePath = basePath == "" ? Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName : basePath;
         }
 
         public bool DeserializeCommunicationModel(string deserializationSource = "RtuConfiguration.xml")
@@ -26,32 +28,40 @@ namespace SCADA.ConfigurationParser
 
             try
             {
-                XElement xdocument = XElement.Load(Path.Combine(basePath, deserializationSource));
-                IEnumerable<XElement> elements = xdocument.Elements();
+               // XElement xdocument = XElement.Load(Path.Combine(basePath, deserializationSource));
+              //  IEnumerable<XElement> elements = xdocument.Elements();
 
-                var pcs = xdocument.Elements("ProcessController").ToList();
+                List<ProcessControlers> pcs = new List<ProcessControlers>();
+
+                using (ScadaContextDB ctx = new ScadaContextDB())
+                {
+                    pcs = ctx.ProcesControlers.ToList();
+                }
 
                 if (pcs.Count != 0)
                 {
                     foreach (var pc in pcs)
                     {
                         ProcessController newPc;
-                        string uniqueName = (string)pc.Element("Name");
+                        string uniqueName = (string)pc.Name;
                         if (!processControllers.ContainsKey(uniqueName))
                         {
-                            int devAddr = (int)pc.Element("DeviceAddress");
-                            string hostName = (string)pc.Element("HostName");
-                            short hostPort = (short)pc.Element("HostPort");
 
+                            TransportHandler transport = TransportHandler.TCP;
+
+                            int devAddr = (int)pc.DeviceAddress;
+                            string hostName = (string)pc.HostName;
+                            short hostPort = (short)pc.HostPort;
                             newPc = new ProcessController()
                             {
                                 Name = uniqueName,
                                 DeviceAddress = devAddr,
+                                TransportHandler = transport,
                                 HostName = hostName,
                                 HostPort = hostPort
                             };
 
-                            // !!! samo zato sto ne koristimo druge, a ne radi dok se ne pokrenus vi konfigurisani
+                            // !!! samo zato sto trenutno ne koristimo druge, a ne radi dok se ne pokrenu svi procitani iz konfiguracije
                             if (newPc.Name.Equals("RTU-1"))
                             {
                                 processControllers.Add(newPc.Name, newPc);

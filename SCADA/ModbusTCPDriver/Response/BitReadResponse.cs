@@ -15,7 +15,8 @@ namespace ModbusTCPDriver
 
             byte[] help = new byte[bResponse.Length - 2];
             Buffer.BlockCopy(bResponse, 2, help, 0, bResponse.Length - 2);
-            BitValues = new BitArray(help);          
+            BitValues = new BitArray(help);
+
             return this;
         }
     }
