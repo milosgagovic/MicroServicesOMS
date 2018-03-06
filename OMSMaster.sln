@@ -109,6 +109,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScadaCloud", "ScadaCloud\ScadaCloud.csproj", "{38C2AF62-BAE2-4EE9-B0FF-58A12F1713F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScadaStateless", "ScadaStateless\ScadaStateless.csproj", "{3902EFCE-0FA7-4862-9A3B-2442FE34F4A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMStatefulService", "TMStatefulService\TMStatefulService.csproj", "{67660010-87B5-4697-B7D5-6422657D5B40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -540,6 +541,14 @@ Global
 		{3902EFCE-0FA7-4862-9A3B-2442FE34F4A5}.Release|x64.ActiveCfg = Release|x64
 		{3902EFCE-0FA7-4862-9A3B-2442FE34F4A5}.Release|x64.Build.0 = Release|x64
 		{3902EFCE-0FA7-4862-9A3B-2442FE34F4A5}.Release|x86.ActiveCfg = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|x64.ActiveCfg = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|x64.Build.0 = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Debug|x86.ActiveCfg = Debug|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|Any CPU.ActiveCfg = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|x64.ActiveCfg = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|x64.Build.0 = Release|x64
+		{67660010-87B5-4697-B7D5-6422657D5B40}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

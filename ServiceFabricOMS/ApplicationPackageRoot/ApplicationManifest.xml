@@ -2,9 +2,11 @@
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ServiceFabricOMSType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="ScadaStateless_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="TMStatefulService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="TMStatefulService_PartitionCount" DefaultValue="1" />
+    <Parameter Name="TMStatefulService_TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="PubSubStatelessService_InstanceCount" DefaultValue="-1" />
     <Parameter Name="NMStatelessService_InstanceCount" DefaultValue="1" />
-    <Parameter Name="TMStatelessService_InstanceCount" DefaultValue="1" />
     <Parameter Name="DMStatelessService_InstanceCount" DefaultValue="1" />
     <Parameter Name="IMStatelessService_InstanceCount" DefaultValue="1" />
   </Parameters>
@@ -17,14 +19,15 @@
   </ServiceManifestImport>
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="PubSubStatelessServicePkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="TMStatefulServicePkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="PubSubStatelessServicePkg" ServiceManifestVersion="1.0.0" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="NMStatelessServicePkg" ServiceManifestVersion="1.0.0" />
-    <ConfigOverrides />
-  </ServiceManifestImport>
-  <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="TMStatelessServicePkg" ServiceManifestVersion="1.0.0" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <ServiceManifestImport>
@@ -45,6 +48,10 @@
       <StatelessService ServiceTypeName="ScadaStatelessType" InstanceCount="[ScadaStateless_InstanceCount]">
         <SingletonPartition />
       </StatelessService>
+    <Service Name="TMStatefulService" ServicePackageActivationMode="ExclusiveProcess">
+      <StatefulService ServiceTypeName="TMStatefulServiceType" TargetReplicaSetSize="[TMStatefulService_TargetReplicaSetSize]" MinReplicaSetSize="[TMStatefulService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[TMStatefulService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
     </Service>
     <Service Name="PubSubStatelessService" ServicePackageActivationMode="ExclusiveProcess">
       <StatelessService ServiceTypeName="PubSubStatelessServiceType" InstanceCount="[PubSubStatelessService_InstanceCount]">
@@ -53,11 +60,6 @@
     </Service>
     <Service Name="NMStatelessService" ServicePackageActivationMode="ExclusiveProcess">
       <StatelessService ServiceTypeName="NMStatelessServiceType" InstanceCount="[NMStatelessService_InstanceCount]">
-        <SingletonPartition />
-      </StatelessService>
-    </Service>
-    <Service Name="TMStatelessService" ServicePackageActivationMode="ExclusiveProcess">
-      <StatelessService ServiceTypeName="TMStatelessServiceType" InstanceCount="[TMStatelessService_InstanceCount]">
         <SingletonPartition />
       </StatelessService>
     </Service>
