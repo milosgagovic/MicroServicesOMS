@@ -14,7 +14,7 @@ namespace FTN.Common
         // If you wish to target a different database and/or database provider, modify the 'NMSAdoNet' 
         // connection string in the application configuration file.
         public NMSAdoNet()
-            : base("Server=tcp:nsmdb.database.windows.net,1433;Initial Catalog=NMS;Persist Security Info=False;User ID=milos.gagovic;Password=Nmsbaza1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")
+            : base("NMSAdoNet")
         {
            
         }

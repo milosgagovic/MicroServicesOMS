@@ -173,6 +173,10 @@
       <Project>{a7f86ca6-39f1-4b61-bf71-c01e327fa861}</Project>
       <Name>OMSSCADACommon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\ScadaDBClassLib\ScadaDBClassLib.csproj">
+      <Project>{1adf349b-64e9-43a2-b23d-8132cce6daec}</Project>
+      <Name>ScadaDBClassLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DMSContract\DMSContract.csproj">
       <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>
       <Name>DMSContract</Name>
@@ -184,10 +188,6 @@
     <ProjectReference Include="..\..\PCCommon\PCCommon.csproj">
       <Project>{5bc05be9-6f8a-428d-83e7-c406d6736401}</Project>
       <Name>PCCommon</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ScadaCloud\ScadaCloud.csproj">
-      <Project>{38C2AF62-BAE2-4EE9-B0FF-58A12F1713F1}</Project>
-      <Name>ScadaCloud</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ServiceContracts\SCADAContracts\SCADAContracts.csproj">
       <Project>{91FA4DB9-E3E0-4A3C-B0AB-29DCEC746770}</Project>

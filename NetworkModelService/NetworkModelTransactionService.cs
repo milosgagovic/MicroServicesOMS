@@ -72,6 +72,7 @@ namespace FTN.Services.NetworkModelService
                 if (updateResult.Result == ResultType.Succeeded)
                 {
                     callback.CallbackPrepare(true);
+                    PushDataToDatabase(delta);
                 }
                 else
                 {
@@ -97,6 +98,7 @@ namespace FTN.Services.NetworkModelService
                 ResourceIterator.NetworkModel = GenericDataAccess.NewNetworkModel;
             }
 
+
             ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
             callback.CallbackCommit("Uspjesno je prosao commit na NMS-u");
         }
@@ -109,6 +111,33 @@ namespace FTN.Services.NetworkModelService
             ResourceIterator.NetworkModel = GenericDataAccess.OldNetworkModel;
             ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
             callback.CallbackRollback("Something went wrong on NMS");
+        }
+
+        private void PushDataToDatabase(Delta delta)
+        {
+            using (NMSAdoNet ctx = new NMSAdoNet())
+            {
+                foreach (ResourceDescription rd in delta.InsertOperations)
+                {
+                    ctx.ResourceDescription.Add(rd);
+                    foreach (Property item in rd.Properties)
+                    {
+                        ctx.PropertyValue.Add(item.PropertyValue);
+                        ctx.Property.Add(item);
+                    }
+                    ctx.SaveChanges();
+                }
+                foreach (ResourceDescription rd in delta.UpdateOperations)
+                {
+                    List<Property> propForRD = ctx.Property.Where(x => x.ResourceDescription_Id == rd.IdDb).ToList();
+                    propForRD.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
+                    ctx.SaveChanges();
+                }
+
+                foreach (ResourceDescription rd in delta.DeleteOperations)
+                {
+                }
+            }
         }
     }
 }

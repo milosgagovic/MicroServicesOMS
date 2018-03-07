@@ -970,9 +970,9 @@ namespace FTN.Services.NetworkModelService
             {
                 if (!IsNetworkInitialize)
                 {
-                    using (NMSAdoNet ctx = new NMSAdoNet("Server=tcp:nsmdb.database.windows.net,1433;Initial Catalog=NMS;Persist Security Info=False;User ID=milos.gagovic;Password=Nmsbaza1; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30; "))
+                    using (NMSAdoNet ctx = new NMSAdoNet())
                     {
-                        List<PropertyValue> propValues = (List<PropertyValue>)ctx.PropertyValue.ToList();
+                            List<PropertyValue> propValues = (List<PropertyValue>)ctx.PropertyValue.ToList();
                         List<Property> properties = ctx.Property.ToList();
                        // properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
                         if (properties.Count > 0)

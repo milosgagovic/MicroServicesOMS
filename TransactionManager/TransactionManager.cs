@@ -318,7 +318,7 @@ namespace TransactionManager
                 // tek nakon sto prodje prepere na nms i dms onda se pise u bazu
                 while (true)
                 {
-                    if (TransactionCallbacks.Where(k => k.AnswerForPrepare == TransactionAnswer.Unanswered).Count() > 0 &&
+                    if (TransactionCallbacks.Where(k => k.AnswerForPrepare == TransactionAnswer.Unanswered).Count() > 0 ||
                         CallBackTransactionSCADA.AnswerForPrepare == TransactionAnswer.Unanswered)
                     {
                         Thread.Sleep(1000);
@@ -330,7 +330,7 @@ namespace TransactionManager
                         Rollback();
                         break;
                     }
-                    PushDataToDatabase(fixedGuidDelta);
+                   // PushDataToDatabase(fixedGuidDelta);
                     Commit();
                     break;
                 }

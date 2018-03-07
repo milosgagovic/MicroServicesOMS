@@ -1,6 +1,5 @@
 ﻿using PCCommon;
-using ScadaCloud;
-using ScadaCloud.Model;
+using ScadaDBClassLib.ModelData;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,9 +32,9 @@ namespace SCADA.ConfigurationParser
 
                 List<ProcessControlers> pcs = new List<ProcessControlers>();
 
-                using (ScadaContextDB ctx = new ScadaContextDB())
+                using (ScadaDBClassLib.ScadaCtxcs ctx = new ScadaDBClassLib.ScadaCtxcs())
                 {
-                    pcs = ctx.ProcesControlers.ToList();
+                    pcs = ctx.ProcessControlers.ToList();
                 }
 
                 if (pcs.Count != 0)

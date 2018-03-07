@@ -4,7 +4,6 @@ using SCADA.CommunicationAndControlling.SecondaryDataProcessing;
 using SCADA.RealtimeDatabase;
 using SCADA.RealtimeDatabase.Catalogs;
 using SCADA.RealtimeDatabase.Model;
-using ScadaCloud;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,14 +60,14 @@ namespace SCADA.ConfigurationParser
                 //                orderby (int)dig.Element("RelativeAddress")
                 //                select dig).ToList();
 
-                List<ScadaCloud.Model.RTU> rtus = new List<ScadaCloud.Model.RTU>();
-                List<ScadaCloud.Model.Digital> digitals = new List<ScadaCloud.Model.Digital>();
-                List<ScadaCloud.Model.Analog> analogs = new List<ScadaCloud.Model.Analog>();
+                List<ScadaDBClassLib.ModelData.RTU> rtus = new List<ScadaDBClassLib.ModelData.RTU>();
+                List<ScadaDBClassLib.ModelData.Digital> digitals = new List<ScadaDBClassLib.ModelData.Digital>();
+                List<ScadaDBClassLib.ModelData.Analog> analogs = new List<ScadaDBClassLib.ModelData.Analog>();
 
-                using (ScadaContextDB ctx = new ScadaContextDB())
+                using (ScadaDBClassLib.ScadaCtxcs ctx = new ScadaDBClassLib.ScadaCtxcs())
                 {
                     rtus = ctx.RTUs.ToList();
-                    digitals = ctx.Digirals.ToList();
+                    digitals = ctx.Digitals.ToList();
                     analogs = ctx.Analogs.ToList();
                 }
 
@@ -447,7 +446,7 @@ namespace SCADA.ConfigurationParser
             //XElement counters = new XElement("Counters");
 
             var rtusSnapshot = dbContext.Database.RTUs.ToArray();
-            using (ScadaContextDB ctx = new ScadaContextDB())
+            using (ScadaDBClassLib.ScadaCtxcs ctx = new ScadaDBClassLib.ScadaCtxcs())
             {
                 foreach (var rtu in rtusSnapshot)
                 {
@@ -477,7 +476,7 @@ namespace SCADA.ConfigurationParser
                     #endregion
                     if (ctx.RTUs.FirstOrDefault(x => x.Name == rtu.Value.Name) == null)
                     {
-                        ctx.RTUs.Add(new ScadaCloud.Model.RTU
+                        ctx.RTUs.Add(new ScadaDBClassLib.ModelData.RTU
                         {
                             Name = rtu.Value.Name,
                             Address = rtu.Value.Address,
@@ -509,7 +508,7 @@ namespace SCADA.ConfigurationParser
             }
 
             var pvsSnapshot = dbContext.Database.ProcessVariablesName.ToArray().OrderBy(pv => pv.Value.RelativeAddress);
-            using (ScadaContextDB ctx = new ScadaContextDB())
+            using (ScadaDBClassLib.ScadaCtxcs ctx = new ScadaDBClassLib.ScadaCtxcs())
             {
 
                 foreach (var pv in pvsSnapshot)
@@ -544,9 +543,9 @@ namespace SCADA.ConfigurationParser
                             //        validStates
                             //    );
                             #endregion
-                            if (ctx.Digirals.FirstOrDefault(x => x.Name == dig.Name) == null)
+                            if (ctx.Digitals.FirstOrDefault(x => x.Name == dig.Name) == null)
                             {
-                                ctx.Digirals.Add(new ScadaCloud.Model.Digital
+                                ctx.Digitals.Add(new ScadaDBClassLib.ModelData.Digital
                                 {
                                     Name = dig.Name,
                                     RelativeAddress = dig.RelativeAddress,
@@ -578,7 +577,7 @@ namespace SCADA.ConfigurationParser
                             #endregion
                             if (ctx.Analogs.FirstOrDefault(x => x.Name == analog.Name) == null)
                             {
-                                ctx.Analogs.Add(new ScadaCloud.Model.Analog
+                                ctx.Analogs.Add(new ScadaDBClassLib.ModelData.Analog
                                 {
                                     Name = analog.Name,
                                     NumOfRegisters = analog.NumOfRegisters,
