@@ -18,7 +18,7 @@
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource DarkColor}"/>
         <Grid Grid.Row="1" Background="{StaticResource DarkColor}"/>
         <Grid Grid.Row="1" Grid.Column="1" Background="Transparent">
-            <Expander Header="Sources" Foreground="Black" FontWeight="DemiBold" IsExpanded="True" Margin="15, 15, 15, 15">
+            <Expander Header="Sources" Foreground="Black" FontWeight="DemiBold" IsExpanded="True" Margin="15, 15, 15, 15" Style="{StaticResource ExpanderStyle}">
                 <StackPanel Margin="25, 5, 15, 15">
                     <ItemsControl ItemsSource="{Binding NetworkMapsBySourceButton}">
                     </ItemsControl>

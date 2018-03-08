@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:cim="http://iec.ch/TC57/2010/CIM-schema-cim15#"
+	xmlns:ftn="http://www.ftnydro.com/CIM15/2010/extension#">	
+	
+	<cim:ConnectivityNodeContainer rdf:ID="CNC_1">
+		<cim:IdentifiedObject.mRID>CNC_1</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNodeContainer_1</cim:IdentifiedObject.name>
+	</cim:ConnectivityNodeContainer>
+	
+	<cim:ConnectivityNode rdf:ID="CN_5">
+		<cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#CNC_1"/>
+		<cim:IdentifiedObject.mRID>CN_5</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNode_5</cim:IdentifiedObject.name>
+	</cim:ConnectivityNode>
+	
+	<cim:ConnectivityNode rdf:ID="CN_9">
+		<cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#CNC_1"/>
+		<cim:IdentifiedObject.mRID>CN_9</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ConnectivityNode_9</cim:IdentifiedObject.name>
+	</cim:ConnectivityNode>
+	
+	<cim:Terminal rdf:ID="TERM_10">
+		<cim:Terminal.ConductingEquipment rdf:resource="#ACLS_2"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_5"/>
+		<cim:IdentifiedObject.mRID>TERM_10</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_10</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_11">
+		<cim:Terminal.ConductingEquipment rdf:resource="#EC_2"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_9"/>
+		<cim:IdentifiedObject.mRID>TERM_11</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_11</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_22">
+		<cim:Terminal.ConductingEquipment rdf:resource="#BR_5"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_9"/>
+		<cim:IdentifiedObject.mRID>TERM_22</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_22</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:Terminal rdf:ID="TERM_23">
+		<cim:Terminal.ConductingEquipment rdf:resource="#BR_5"/>
+		<cim:Terminal.ConnectivityNode rdf:resource="#CN_5"/>
+		<cim:IdentifiedObject.mRID>TERM_23</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Terminal_23</cim:IdentifiedObject.name>
+	</cim:Terminal>
+	
+	<cim:ACLineSegment rdf:ID="ACLS_2">
+		<cim:Conductor.length></cim:Conductor.length>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>ACLS_2</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>ACLineSegment_2</cim:IdentifiedObject.name>
+	</cim:ACLineSegment>
+	
+	<cim:Breaker rdf:ID="BR_5">
+		<cim:Switch.normalOpen>false</cim:Switch.normalOpen>
+		<cim:Switch.switchOnCount></cim:Switch.switchOnCount>
+		<cim:Switch.switchOnDate></cim:Switch.switchOnDate>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>BR_5</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>Breaker_5</cim:IdentifiedObject.name>
+	</cim:Breaker>
+		
+	<cim:EnergyConsumer rdf:ID="EC_2">
+		<cim:EnergyConsumer.pfixed></cim:EnergyConsumer.pfixed>
+		<cim:EnergyConsumer.qfixed></cim:EnergyConsumer.qfixed>
+		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
+		<cim:IdentifiedObject.mRID>EC_2</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>EnergyConsumer_2</cim:IdentifiedObject.name>
+	</cim:EnergyConsumer>
+	
+	<cim:Discrete rdf:ID="MEAS_D_5">
+		<cim:Discrete.maxValue>1</cim:Discrete.maxValue>
+		<cim:Discrete.minValue>0</cim:Discrete.minValue>
+		<cim:Discrete.normalValue>1</cim:Discrete.normalValue>
+		<cim:Discrete.validCommands>
+		Open Close
+		</cim:Discrete.validCommands>
+		<cim:Discrete.validStates>
+		Opened Closed
+		</cim:Discrete.validStates>
+		<cim:Measurement.direction>ReadWrite</cim:Measurement.direction>
+		<cim:Measurement.measurementType>Discrete</cim:Measurement.measurementType>
+		<cim:Measurement.PowerSystemResource rdf:resource="#BR_5"/>
+		<cim:Measurement.unitSymbol>none</cim:Measurement.unitSymbol>
+		<cim:IdentifiedObject.mRID>MEAS_D_5</cim:IdentifiedObject.mRID>
+		<cim:IdentifiedObject.name>DiscreteMeasurement_5</cim:IdentifiedObject.name>
+	</cim:Discrete>
+
+</rdf:RDF>

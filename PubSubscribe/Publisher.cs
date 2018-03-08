@@ -77,11 +77,12 @@ namespace PubSubscribe
             }
             catch { }
         }
+
         public void PublishUpdateAnalog(List<UIUpdateModel> update)
         {
             try
             {
-                proxy.PublishAnalogUpdate(update);
+                proxyToCloud.InvokeWithRetry(c => c.Channel.PublishAnalogUpdate(update));
             }
             catch { }
         }

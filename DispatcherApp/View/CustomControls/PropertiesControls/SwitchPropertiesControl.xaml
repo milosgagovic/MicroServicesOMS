@@ -20,7 +20,7 @@
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource DarkColor}"/>
         <Grid Grid.Row="1" Grid.RowSpan="3" Background="{StaticResource DarkColor}"/>
         <Grid Grid.Row="1" Grid.Column="1" Background="Transparent">
-            <Expander Header="General" IsExpanded="True">
+            <Expander Header="General" IsExpanded="True" Style="{StaticResource ExpanderStyle}">
                 <Grid Margin="20, 0, 10, 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -35,29 +35,29 @@
                     </Grid.RowDefinitions>
                     <Label>Type:
                     </Label>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Breaker" Padding="5, 2, 0, 0" Background="#393535" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Breaker" Padding="5, 2, 0, 0" Background="#393535" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="1">GID:
                     </Label>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.GID}" Padding="5, 2, 0, 0" Background="#393535" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.GID}" Padding="5, 2, 0, 0" Background="#393535" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="2">mRID:
                     </Label>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentProperty.MRID}" Padding="5, 2, 0, 0" Background="#393535" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentProperty.MRID}" Padding="5, 2, 0, 0" Background="#393535" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="3">Name:
                     </Label>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentProperty.Name}" Padding="5, 2, 0, 0" Background="#393535" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentProperty.Name}" Padding="5, 2, 0, 0" Background="#393535" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="4">Is Energized:
                     </Label>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentProperty.IsEnergized}" Padding="5, 2, 0, 0" Background="#393535" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentProperty.IsEnergized}" Padding="5, 2, 0, 0" Background="#393535" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                 </Grid>
             </Expander>
         </Grid>
         <Grid Grid.Row="2" Grid.Column="1" Background="Transparent">
-            <Expander Header="Measurements" IsExpanded="True">
+            <Expander Header="Measurements" IsExpanded="True" Style="{StaticResource ExpanderStyle}">
                 <Grid Margin="20, 0, 10, 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -75,7 +75,7 @@
                     </TextBlock>-->
                     <Label Grid.Row="0">State:
                     </Label>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CurrentProperty.State}" Background="#393535" Foreground="White" Padding="5, 2, 0, 0" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CurrentProperty.State}" Background="#393535" Foreground="LightGray" Padding="5, 2, 0, 0" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <ComboBox Style="{StaticResource VoidwalkerDarkComboBox}" Grid.Row="3" Margin="5, 5, 10, 0" ItemsSource="{Binding CurrentProperty.ValidCommands }" IsEnabled="{Binding CurrentProperty.CanCommand }" SelectedIndex="{Binding CommandIndex}"/>
                     <Button Style="{StaticResource ButtonStyle}" Grid.Row="3" Grid.Column="1" Width="Auto" Margin="30, 5, 30, 0" IsEnabled="{Binding CurrentProperty.CanCommand }" Command="{Binding ExecuteSwitchCommand}" CommandParameter="{Binding CurrentProperty.Measurements[0].MRID}">Execute

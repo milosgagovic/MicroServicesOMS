@@ -19,7 +19,7 @@
         <Grid Background="{StaticResource DarkColor}" Grid.ColumnSpan="2"/>
         <Grid Background="{StaticResource DarkColor}" Grid.RowSpan="3"/>
         <Grid  Grid.Row="1" Grid.Column="1" Background="Transparent">
-            <Expander Header="General" IsExpanded="True">
+            <Expander Header="General" IsExpanded="True" Style="{StaticResource ExpanderStyle}">
                 <Grid Margin="20, 0, 10, 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -35,33 +35,33 @@
                     </Grid.RowDefinitions>
                     <Label>Type:
                     </Label>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Energy Consumer" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Energy Consumer" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="1">GID:
                     </Label>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.GID}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.GID}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="2">mRID:
                     </Label>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentProperty.MRID}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentProperty.MRID}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="3">Name:
                     </Label>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentProperty.Name}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentProperty.Name}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="4">Is Energized:
                     </Label>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentProperty.IsEnergized}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentProperty.IsEnergized}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="5">Active power (kW):
                     </Label>
-                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentProperty.Pfixed}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentProperty.Pfixed}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                 </Grid>
             </Expander>
         </Grid>
         <Grid  Grid.Row="2" Grid.Column="1" Background="Transparent">
-            <Expander Header="Measurements" IsExpanded="True">
+            <Expander Header="Measurements" IsExpanded="True" Style="{StaticResource ExpanderStyle}">
                 <Grid Margin="20, 0, 10, 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -74,13 +74,13 @@
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0">Measurement Type:
                     </Label>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="Power consumption" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="Power consumption" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
                     <Label Grid.Row="1">Value:
                     </Label>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.Measurements[0].Value}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.Measurements[0].Value}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </TextBlock>
-                    <Label Grid.Row="1" Grid.Column="2" Content="{Binding CurrentProperty.Measurements[0].UnitSymbol}" Padding="5, 2, 2, 0" Background="{DynamicResource DarkColor}" Foreground="White" Margin="0, 2, 2, 2">
+                    <Label Grid.Row="1" Grid.Column="2" Content="{Binding CurrentProperty.Measurements[0].UnitSymbol}" Padding="5, 2, 2, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
                     </Label>
                 </Grid>
             </Expander>

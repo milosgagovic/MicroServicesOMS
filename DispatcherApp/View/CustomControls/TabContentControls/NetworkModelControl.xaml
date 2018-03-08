@@ -36,7 +36,7 @@
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
         <StackPanel HorizontalAlignment="left" Orientation="Horizontal" Margin="15, 0, 0, 0">
-            <Slider Name="SizeSlider" Minimum="1" Maximum="10" Value="2" VerticalAlignment="Center" HorizontalAlignment="Right" Width="200" Margin="3, 0, 3, 0">
+            <Slider Name="SizeSlider" Style="{StaticResource ResourceKey=Horizontal_Slider}" Minimum="1" Maximum="10" Value="2" VerticalAlignment="Center" HorizontalAlignment="Right" Width="200" Margin="3, 8, 3, 0">
             </Slider>
         </StackPanel>
         <Border Grid.Row="1" BorderBrush="{StaticResource MediumColor}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20, 20, 20, 20">

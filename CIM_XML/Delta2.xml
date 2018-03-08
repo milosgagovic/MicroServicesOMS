@@ -62,10 +62,10 @@
 		<cim:Discrete.minValue>0</cim:Discrete.minValue>
 		<cim:Discrete.normalValue>1</cim:Discrete.normalValue>
 		<cim:Discrete.validStates>
-		
+		Opened Closed
 		</cim:Discrete.validStates>
 		<cim:Discrete.validCommands>
-			Open Close
+		Open Close
 		</cim:Discrete.validCommands>
 		<cim:Measurement.direction>ReadWrite</cim:Measurement.direction>
 		<cim:Measurement.measurementType></cim:Measurement.measurementType>

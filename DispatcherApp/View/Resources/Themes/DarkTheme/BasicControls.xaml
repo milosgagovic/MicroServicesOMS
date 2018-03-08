@@ -1413,4 +1413,244 @@
         </Setter>
     </Style>
 
+    <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="Focusable" Value="false" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border  BorderThickness="1" BorderBrush="Gray" Height="10" Background="{StaticResource DarkColor}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SliderThumb" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border CornerRadius="2" Height="15" Width="15" Background="{StaticResource DarkestColor}" BorderThickness="1" BorderBrush="Gray"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="Slider"  TargetType="Slider">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Track Grid.Row="1" x:Name="PART_Track"   >
+                <Track.DecreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource SliderRepeatButton}"  Command="Slider.DecreaseLarge" />
+                </Track.DecreaseRepeatButton>
+                <Track.Thumb>
+                    <Thumb Style="{StaticResource SliderThumb}"  />
+                </Track.Thumb>
+                <Track.IncreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
+                </Track.IncreaseRepeatButton>
+            </Track>
+        </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="Horizontal_Slider" TargetType="Slider">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="MinHeight" Value="21" />
+                <Setter Property="MinWidth" Value="104" />
+                <Setter Property="Template" Value="{StaticResource Slider}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <ControlTemplate x:Key="ExpanderToggleButton"
+                 TargetType="{x:Type ToggleButton}">
+        <Border x:Name="Border"
+                Width="15"
+                Height="15"
+          CornerRadius="2"
+          BorderThickness="0"
+          Background="{StaticResource DarkColor}"
+          BorderBrush="{StaticResource DarkColor}">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CheckStates">
+                    <VisualState x:Name="Checked">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                           Storyboard.TargetName="CollapsedArrow">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                      Value="{x:Static Visibility.Hidden}" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                           Storyboard.TargetName="ExpandededArrow">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                      Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Unchecked" />
+                    <VisualState x:Name="Indeterminate" />
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid>
+                <Path x:Name="CollapsedArrow"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Data="M 0 0 L 4 4 L 8 0 Z">
+                    <Path.Fill>
+                        <SolidColorBrush Color="Gray" />
+                    </Path.Fill>
+                </Path>
+                <Path x:Name="ExpandededArrow"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="Collapsed"
+            Data="M 0 4 L 4 0 L 8 4 Z">
+                    <Path.Fill>
+                        <SolidColorBrush Color="Gray" />
+                    </Path.Fill>
+                </Path>
+            </Grid>
+        </Border>
+    </ControlTemplate>
+
+    <Style TargetType="{x:Type Expander}" x:Key="ExpanderStyle">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Expander}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition x:Name="ContentRow"
+                           Height="0" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Border"
+                  Grid.Row="0"
+                  BorderThickness="1"
+                  CornerRadius="2,2,0,0"
+                  TextBlock.FontWeight="DemiBold"
+                  TextBlock.FontSize="13">
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Border.BorderBrush>
+                            <Border.Background>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Border.Background>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ToggleButton OverridesDefaultStyle="True"
+                            Template="{StaticResource ExpanderToggleButton}"
+                            IsChecked="{Binding IsExpanded, Mode=TwoWay, 
+                  RelativeSource={RelativeSource TemplatedParent}}">
+                                    <ToggleButton.Background>
+                                        <SolidColorBrush Color="Transparent"/>
+                                    </ToggleButton.Background>
+                                </ToggleButton>
+                                <ContentPresenter Grid.Column="1"
+                                Margin="4"
+                                ContentSource="Header"
+                                RecognizesAccessKey="True" />
+                            </Grid>
+                        </Border>
+                        <Border x:Name="Content"
+                  Grid.Row="1"
+                  BorderThickness="1,0,1,1"
+                  CornerRadius="0,0,2,2">
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="Transparent" />
+                            </Border.BorderBrush>
+                            <Border.Background>
+                                <SolidColorBrush Color="Transparent" />
+                            </Border.Background>
+                            <ContentPresenter Margin="4" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded"
+                   Value="True">
+                            <Setter TargetName="ContentRow"
+                    Property="Height"
+                    Value="Auto" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="MenuItemHeaderTemplate"
+                 TargetType="{x:Type MenuItem}">
+        <Border x:Name="Border">
+            <Grid>
+                <ContentPresenter Margin="6,3,6,3"
+                        ContentSource="Header"
+                        RecognizesAccessKey="True" />
+                <Popup x:Name="Popup"
+             Placement="Bottom"
+             IsOpen="{TemplateBinding IsSubmenuOpen}"
+             AllowsTransparency="True"
+             Focusable="False"
+             PopupAnimation="Fade">
+                    <Border x:Name="SubmenuBorder"
+                SnapsToDevicePixels="True"
+                BorderThickness="1"
+                Background="{StaticResource DarkestColor}"
+                BorderBrush="Gray"
+                TextBlock.Foreground="LightGray">
+                        <StackPanel IsItemsHost="True"
+                        KeyboardNavigation.DirectionalNavigation="Cycle" />
+                    </Border>
+                </Popup>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsSuspendingPopupAnimation"
+             Value="true">
+                <Setter TargetName="Popup"
+              Property="PopupAnimation"
+              Value="None" />
+            </Trigger>
+            <Trigger Property="IsHighlighted"
+             Value="true">
+                <Setter TargetName="Border"
+              Property="BorderBrush"
+              Value="Transparent" />
+                <Setter Property="Background"
+              TargetName="Border">
+                    <Setter.Value>
+                        <SolidColorBrush Color="DarkGray"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger SourceName="Popup"
+             Property="AllowsTransparency"
+             Value="True">
+                <Setter TargetName="SubmenuBorder"
+              Property="Padding"
+              Value="0,0,0,3" />
+            </Trigger>
+            <Trigger Property="IsEnabled"
+             Value="False">
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{StaticResource DisabledForegroundColor}" />
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
 </ResourceDictionary>

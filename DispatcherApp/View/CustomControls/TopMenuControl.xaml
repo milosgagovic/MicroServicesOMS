@@ -10,16 +10,16 @@
             <Menu Background="{StaticResource DarkestColor}" Foreground="White">
                 <!--<MenuItem Header="File" Margin="0, 2, 0, 2"/>
                 <MenuItem Header="Edit" Margin="0, 2, 0, 2"/>-->
-                <MenuItem Header="View" Margin="0, 2, 0, 2">
-                    <MenuItem Header="Network Explorer" Foreground="Black" 
+                <MenuItem Header="View" Margin="0, 2, 0, 2" Template="{StaticResource ResourceKey=MenuItemHeaderTemplate}">
+                    <MenuItem Header="Network Explorer" Foreground="White" 
                          Command="{Binding OpenControlCommand}" CommandParameter="Network Explorer"/>
-                    <MenuItem Header="Properties" Foreground="Black"
+                    <MenuItem Header="Properties" Foreground="White"
                               Command="{Binding OpenControlCommand}" CommandParameter="Properties"/>
-                    <MenuItem Header="Incident Explorer" Foreground="Black"
+                    <MenuItem Header="Incident Explorer" Foreground="White"
                               Command="{Binding OpenControlCommand}" CommandParameter="Incident Explorer"/>
-                    <MenuItem Header="Report Explorer" Foreground="Black"
+                    <MenuItem Header="Report Explorer" Foreground="White"
                               Command="{Binding OpenControlCommand}" CommandParameter="Report Explorer"/>
-                    <MenuItem Header="Output" Foreground="Black"
+                    <MenuItem Header="Output" Foreground="White"
                               Command="{Binding OpenControlCommand}" CommandParameter="Output"/>
                 </MenuItem>
             </Menu>

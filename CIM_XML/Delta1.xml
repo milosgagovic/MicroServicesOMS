@@ -30,7 +30,7 @@
 	</cim:Breaker>
 	
 	<cim:EnergyConsumer rdf:ID="EC_30">
-		<cim:EnergyConsumer.pfixed></cim:EnergyConsumer.pfixed>
+		<cim:EnergyConsumer.pfixed>46.28</cim:EnergyConsumer.pfixed>
 		<cim:EnergyConsumer.qfixed></cim:EnergyConsumer.qfixed>
 		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
 		<cim:IdentifiedObject.mRID>EC_30</cim:IdentifiedObject.mRID>
@@ -38,7 +38,7 @@
 	</cim:EnergyConsumer>
 	
 	<cim:EnergyConsumer rdf:ID="EC_23">
-		<cim:EnergyConsumer.pfixed></cim:EnergyConsumer.pfixed>
+		<cim:EnergyConsumer.pfixed>29.01</cim:EnergyConsumer.pfixed>
 		<cim:EnergyConsumer.qfixed></cim:EnergyConsumer.qfixed>
 		<cim:Equipment.normallyInService>true</cim:Equipment.normallyInService>
 		<cim:IdentifiedObject.mRID>EC_23</cim:IdentifiedObject.mRID>
