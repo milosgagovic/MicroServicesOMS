@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Fabric;
 using System.Globalization;
-using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,22 +26,19 @@ namespace IMStatelessService
         /// Optional override to create listeners (e.g., TCP, HTTP) for this service replica to handle client or user requests.
         /// </summary>
         /// <returns>A collection of listeners.</returns>
-        //protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
-        //{
-        //    return new ServiceInstanceListener[0];
-        //}
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
-        {            //yield return new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context));   
+        {            
+            //yield return new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context));   
             return new List<ServiceInstanceListener>()
             {
                 // Name parametar ServiceInstanceListener konstruktora moze biti bilo sta (ne mora biti isti kao name za endpoint)
                 // samo ne sme biti prazan string - verovatno je to default 
-                // tako da ako se koristi jedan listener moze kao prethodno sa yield ... ili kao lista koja vraca jedan ServiceInstanceListener
+                // tako da ako se koristi jedan listener moze kao prethodno sa yield, ili kao lista koja vraca jedan ServiceInstanceListener
                 // ako se koristi vise Listenera onda se mora setovati Name parametar
                 new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context), "IMServiceEndpoint"),
-              //  new ServiceInstanceListener(context => this.CreateWcfHiCommunicationListener(context), "WCFHiServiceEndpoint")
             };
         }
+
         private ICommunicationListener CreateWcfCommunicationListener(StatelessServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
@@ -51,31 +47,20 @@ namespace IMStatelessService
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
+            string listeningAddress = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/IIMSContract", scheme, host, port);
 
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.MaxValue;
-            //binding.CloseTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.FromSeconds(5);
-            binding.CloseTimeout = TimeSpan.FromSeconds(5);
-            binding.MaxConnections = int.MaxValue;
-            binding.MaxReceivedMessageSize = 1024 * 1024;
-            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
-            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
-            //var binding = WcfUtility.CreateTcpListenerBinding();
-            string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/IIMSContract", scheme, host, port);
+            var binding = CreateListenBinding();
 
             var listener = new WcfCommunicationListener<IIMSContract>(
                 serviceContext: context,
                 wcfServiceObject: new IMSService(),
                 listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                address: new EndpointAddress(listeningAddress)
             );
-
 
             return listener;
         }
+
         /// <summary>
         /// This is the main entry point for your service instance.
         /// </summary>
@@ -91,10 +76,28 @@ namespace IMStatelessService
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
+                //ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

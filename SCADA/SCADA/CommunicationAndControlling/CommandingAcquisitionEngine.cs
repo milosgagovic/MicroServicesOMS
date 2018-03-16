@@ -44,7 +44,7 @@ namespace SCADA.CommunicationAndControlling
         public bool ConfigureEngine(string configPath)
         {
             ScadaModelParser parser = new ScadaModelParser();
-            return parser.DeserializeScadaModel();
+            return parser.LoadScadaModel();
         }
 
         /// <summary>
@@ -485,9 +485,11 @@ namespace SCADA.CommunicationAndControlling
                                                                 target.State = target.ValidStates[isOpened ? 1 : 0];
                                                                 Console.WriteLine(" CHANGE! Digital variable {0}, state: {1}", target.Name, target.State);
 
+                                                                NetTcpBinding binding = CreateClientBinding();
+
                                                                 IServicePartitionResolver partitionResolverToDMS = ServicePartitionResolver.GetDefault();
                                                                 var wcfClientFactoryToDMS = new WcfCommunicationClientFactory<IDMSToSCADAContract>
-                                                                    (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToDMS);
+                                                                    (clientBinding: binding, servicePartitionResolver: partitionResolverToDMS);
 
                                                                 DmsClientSF dMSClient = new DmsClientSF(
                                                                     wcfClientFactoryToDMS,
@@ -495,10 +497,11 @@ namespace SCADA.CommunicationAndControlling
                                                                     ServicePartitionKey.Singleton,
                                                                     listenerName: "DMSServiceForSCADA"
                                                                     );
+
                                                                 dMSClient.InvokeWithRetry(c => c.Channel.ChangeOnSCADADigital(target.Name, target.State));
                                                             }
                                                         }
-                                                        catch(Exception e)
+                                                        catch (Exception e)
                                                         {
                                                             Console.WriteLine("Digital variable {0}, state: INVALID", target.Name);
                                                         }
@@ -507,7 +510,7 @@ namespace SCADA.CommunicationAndControlling
                                                 if (isChange)
                                                 {
                                                     ScadaModelParser parser = new ScadaModelParser();
-                                                    parser.SerializeScadaModel();
+                                                    parser.SaveScadaModel();
                                                 }
 
                                             }
@@ -544,9 +547,11 @@ namespace SCADA.CommunicationAndControlling
                                                                 Console.WriteLine(" CHANGE! Analog variable {0}, AcqValue: {1}", target.Name, target.AcqValue);
 
                                                                 //to do: propagacija analogih promena(ako se secate Pavlica je prvo rekao da nam to ne treba da samo jednom zakucamo vrednost na pocetku) xD
+                                                                NetTcpBinding binding = CreateClientBinding();
+
                                                                 IServicePartitionResolver partitionResolverToDMS = ServicePartitionResolver.GetDefault();
                                                                 var wcfClientFactoryToDMS = new WcfCommunicationClientFactory<IDMSToSCADAContract>
-                                                                    (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToDMS);
+                                                                    (clientBinding: binding, servicePartitionResolver: partitionResolverToDMS);
 
                                                                 DmsClientSF dMSClient = new DmsClientSF(
                                                                     wcfClientFactoryToDMS,
@@ -566,7 +571,7 @@ namespace SCADA.CommunicationAndControlling
                                                 if (isChange)
                                                 {
                                                     ScadaModelParser parser = new ScadaModelParser();
-                                                    parser.SerializeScadaModel();
+                                                    parser.SaveScadaModel();
                                                 }
                                             }
 
@@ -594,7 +599,7 @@ namespace SCADA.CommunicationAndControlling
         {
             // isShutdown = true;
             ScadaModelParser parser = new ScadaModelParser();
-            parser.SerializeScadaModel();
+            parser.SaveScadaModel();
         }
 
         private void OnAnalogAddedEvent(object sender, EventArgs e)
@@ -646,6 +651,26 @@ namespace SCADA.CommunicationAndControlling
                 }
             }
             Console.WriteLine("OnAnalogEventAdded finished");
+        }
+
+        private NetTcpBinding CreateClientBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
 
         #region Command Receiver methods

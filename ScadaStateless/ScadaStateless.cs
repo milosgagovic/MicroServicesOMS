@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Fabric;
 using System.Globalization;
-using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using DMSService;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -42,27 +40,19 @@ namespace ScadaStateless
                 new ServiceInstanceListener(context => this.CreateWcfCommunicationListenerTransaction(context), "ScadaTransactionService")
             };
         }
+
         private ICommunicationListener CreateWcfCommunicationListener(StatelessServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
-            // ServiceManifest fajl
+            // ServiceManifest file
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("ScadaInvoker");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
-            //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/SCADAService", scheme, host, port);
 
+            var binding = CreateListenBinding();
+            
             var listener = new WcfCommunicationListener<ISCADAContract>(
                 serviceContext: context,
                 wcfServiceObject: new Invoker(),
@@ -70,32 +60,21 @@ namespace ScadaStateless
                 address: new EndpointAddress(uri)
             );
 
-
             return listener;
         }
-
 
         private ICommunicationListener CreateWcfCommunicationListenerTransaction(StatelessServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
-            // ServiceManifest fajl
+            // ServiceManifest file
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("ScadaTransactionService");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
-            //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/SCADATransactionService", scheme, host, port);
 
+            var binding = CreateListenBinding();
+           
             var listener = new WcfCommunicationListener<ITransactionSCADA>(
                 serviceContext: context,
                 wcfServiceObject: new SCADATransactionService(),
@@ -103,10 +82,8 @@ namespace ScadaStateless
                 address: new EndpointAddress(uri)
             );
 
-
             return listener;
         }
-
 
         /// <summary>
         /// This is the main entry point for your service instance.
@@ -127,6 +104,26 @@ namespace ScadaStateless
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

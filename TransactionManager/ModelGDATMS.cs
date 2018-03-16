@@ -22,8 +22,10 @@ namespace TransactionManager
                 if (proxyToNMServiceFabric == null)
                 {
                     IServicePartitionResolver partitionResolverToNMS = ServicePartitionResolver.GetDefault();
+                    NetTcpBinding binding = CreateClientBinding();
+
                     var wcfClientFactoryToNMS = new WcfCommunicationClientFactory<INetworkModelGDAContract>
-                        (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToNMS);
+                        (clientBinding: binding, servicePartitionResolver: partitionResolverToNMS);
                     proxyToNMServiceFabric = new NetworkGDAServiceFabric(
                                     wcfClientFactoryToNMS,
                                     new Uri("fabric:/ServiceFabricOMS/NMStatelessService"),
@@ -46,7 +48,7 @@ namespace TransactionManager
                     gdaQueryProxy = null;
                 }
 
-                gdaQueryProxy = new NetworkModelGDAProxy("NetworkModelGDAEndpoint"); 
+                gdaQueryProxy = new NetworkModelGDAProxy("NetworkModelGDAEndpoint");
                 gdaQueryProxy.Open();
 
                 return gdaQueryProxy;
@@ -139,7 +141,7 @@ namespace TransactionManager
         public List<long> GetRelatedValues(long sourceGlobalId, Association association)
         {
             string message = "Getting related values method started.";
-           // Console.WriteLine(message);
+            // Console.WriteLine(message);
             CommonTrace.WriteTrace(CommonTrace.TraceError, message);
 
             List<long> resultIds = new List<long>();
@@ -676,6 +678,26 @@ namespace TransactionManager
         #endregion GDAUpdate Service
 
         #endregion Test Methods
+
+        private NetTcpBinding CreateClientBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
+        }
 
         public void Dispose()
         {

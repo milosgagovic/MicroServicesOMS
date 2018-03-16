@@ -67,7 +67,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\MainModelClass.cs" />
     <Compile Include="Model\Measurements\AnalogMeasurement.cs" />
     <Compile Include="Model\Measurements\DigitalMeasurement.cs" />
     <Compile Include="Model\Properties\ACLineSegmentProperties.cs" />

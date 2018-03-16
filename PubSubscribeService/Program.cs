@@ -41,15 +41,7 @@ namespace PubSubscribeService
         private static void HostPublishService()
         {
             publishServiceHost = new ServiceHost(typeof(PublishingService));
-            NetTcpBinding tcpBindingPublish = new NetTcpBinding();
-            tcpBindingPublish.SendTimeout = TimeSpan.MaxValue;
-            tcpBindingPublish.ReceiveTimeout = TimeSpan.MaxValue;
-            tcpBindingPublish.OpenTimeout = TimeSpan.MaxValue;
-            tcpBindingPublish.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            tcpBindingPublish.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding tcpBindingPublish = CreateListenBinding();
             publishServiceHost.AddServiceEndpoint(typeof(IPublishing), tcpBindingPublish, "net.tcp://localhost:7001/Pub");
             publishServiceHost.Open();
         }
@@ -57,18 +49,30 @@ namespace PubSubscribeService
         private static void HostSubscribeService()
         {
             subscribeServiceHost = new ServiceHost(typeof(SubscriptionService));
-            NetTcpBinding tcpBindingSubscribe = new NetTcpBinding();
-            tcpBindingSubscribe.SendTimeout = TimeSpan.MaxValue;
-            tcpBindingSubscribe.ReceiveTimeout = TimeSpan.MaxValue;
-            tcpBindingSubscribe.OpenTimeout = TimeSpan.MaxValue;
-            tcpBindingSubscribe.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            tcpBindingSubscribe.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding tcpBindingSubscribe = CreateListenBinding();
 
             subscribeServiceHost.AddServiceEndpoint(typeof(ISubscription), tcpBindingSubscribe, "net.tcp://localhost:7002/Sub");
             subscribeServiceHost.Open();
+        }
+
+        private static NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

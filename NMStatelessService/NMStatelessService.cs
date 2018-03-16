@@ -28,10 +28,6 @@ namespace NMStatelessService
         /// Optional override to create listeners (e.g., TCP, HTTP) for this service replica to handle client or user requests.
         /// </summary>
         /// <returns>A collection of listeners.</returns>
-        //protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
-        //{
-        //    return new ServiceInstanceListener[0];
-        //}
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
             //yield return new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context));
@@ -42,30 +38,21 @@ namespace NMStatelessService
                 // tako da ako se koristi jedan listener moze kao prethodno sa yield ... ili kao lista koja vraca jedan ServiceInstanceListener
                 // ako se koristi vise Listenera onda se mora setovati Name parametar
                 new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context), "NMServiceEndpoint"),
-                new ServiceInstanceListener(context => this.CreateWcfHiCommunicationListener(context), "NMTransactionServiceEndpoint")
+                new ServiceInstanceListener(context => this.CreateWcfTransactionCommunicationListener(context), "NMTransactionServiceEndpoint")
             };
         }
 
         private ICommunicationListener CreateWcfCommunicationListener(StatelessServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
-            // ServiceManifest fajl
+            // ServiceManifest file
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("NMServiceEndpoint");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
-            //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/INetworkModelGDAContract/{3}", scheme, host, port, pathSufix);
+
+            var binding = CreateListenBinding();
 
             var listener = new WcfCommunicationListener<INetworkModelGDAContract>(
                 serviceContext: context,
@@ -74,30 +61,20 @@ namespace NMStatelessService
                 address: new EndpointAddress(uri)
             );
 
-
             return listener;
         }
 
-        private ICommunicationListener CreateWcfHiCommunicationListener(StatelessServiceContext context)
+        private ICommunicationListener CreateWcfTransactionCommunicationListener(StatelessServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
-            // ServiceManifest fajl
+            // ServiceManifest file
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("NMTransactionServiceEndpoint");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
-            //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/ITransaction/{3}", scheme, host, port, pathSufix);
+
+            var binding = CreateListenBinding();            
             NetworkModelTransactionService networkModelTransactionService = new NetworkModelTransactionService();
             var listener = new WcfCommunicationListener<ITransaction>(
              serviceContext: context,
@@ -108,6 +85,7 @@ namespace NMStatelessService
 
             return listener;
         }
+       
         /// <summary>
         /// This is the main entry point for your service instance.
         /// </summary>
@@ -127,6 +105,26 @@ namespace NMStatelessService
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

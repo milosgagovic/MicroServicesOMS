@@ -53,7 +53,8 @@ namespace TransactionManager
             {
                 if (scadaClient == null)
                 {
-                    scadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
+                    scadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"), CreateClientBinding());
+                    //scadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"));
                 }
                 return scadaClient;
             }
@@ -67,15 +68,7 @@ namespace TransactionManager
             {
                 if (_scadaServiceFabricClient == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.SendTimeout = TimeSpan.MaxValue;
-                    binding.ReceiveTimeout = TimeSpan.MaxValue;
-                    binding.OpenTimeout = TimeSpan.MaxValue;
-                    binding.CloseTimeout = TimeSpan.MaxValue;
-                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-                    //MaxConnections = int.MaxValue,
-                    binding.MaxReceivedMessageSize = 1024 * 1024;
+                    NetTcpBinding binding = CreateClientBinding();
 
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
@@ -135,44 +128,22 @@ namespace TransactionManager
             CallBackTransactionDMS = new TransactionCallback();
             CallBackTransactionSCADA = new TransactionCallback();
 
-
-            ///
-            NetTcpBinding binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding binding = CreateClientBinding();
+            
             // Create a partition resolver
             IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactory = new WcfCommunicationClientFactory<IIMSContract>
                 (clientBinding: binding, servicePartitionResolver: partitionResolver);
 
-            //
-            // Create a client for communicating with the ICalculator service that has been created with the
-            // Singleton partition scheme.
-            //
+
             IMSCommunicationClient = new IMServiceFabricClient(
                             wcfClientFactory,
                             new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
                             ServicePartitionKey.Singleton);
 
-
-
             ///
-            NetTcpBinding binding2 = new NetTcpBinding();
-            binding2.SendTimeout = TimeSpan.MaxValue;
-            binding2.ReceiveTimeout = TimeSpan.MaxValue;
-            binding2.OpenTimeout = TimeSpan.MaxValue;
-            binding2.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding binding2 = CreateClientBinding();
             // Create a partition resolver
             IServicePartitionResolver partitionResolver2 = ServicePartitionResolver.GetDefault();
 
@@ -183,10 +154,6 @@ namespace TransactionManager
             var wcfClientFactory2 = new WcfCommunicationClientFactory<ITransaction>
                 (clientBinding: binding2, servicePartitionResolver: partitionResolver2, callback: CallBackTransactionDMS);
 
-            //
-            // Create a client for communicating with the ICalculator service that has been created with the
-            // Singleton partition scheme.
-            //
             _WCFDMSTransactionClient = new WCFDMSTransactionClient(
                             wcfClientFactory2,
                             new Uri("fabric:/ServiceFabricOMS/DMStatelessService"),
@@ -197,15 +164,7 @@ namespace TransactionManager
             TransactionCallbacks.Add(CallBackTransactionDMS);
 
 
-            NetTcpBinding binding3 = new NetTcpBinding();
-            binding3.SendTimeout = TimeSpan.MaxValue;
-            binding3.ReceiveTimeout = TimeSpan.MaxValue;
-            binding3.OpenTimeout = TimeSpan.MaxValue;
-            binding3.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding binding3 = CreateClientBinding();
             // Create a partition resolver
             IServicePartitionResolver partitionResolver3 = ServicePartitionResolver.GetDefault();
 
@@ -214,10 +173,6 @@ namespace TransactionManager
             var wcfClientFactory3 = new WcfCommunicationClientFactory<ITransaction>
                 (clientBinding: binding3, servicePartitionResolver: partitionResolver3, callback: CallBackTransactionNMS);
 
-            //
-            // Create a client for communicating with the ICalculator service that has been created with the
-            // Singleton partition scheme.
-            //
             _WCFNMSTransactionClient = new WCFDMSTransactionClient(
                             wcfClientFactory3,
                             new Uri("fabric:/ServiceFabricOMS/NMStatelessService"),
@@ -227,15 +182,7 @@ namespace TransactionManager
             TransactionProxys.Add(_WCFNMSTransactionClient);
 
 
-            NetTcpBinding bindingScada = new NetTcpBinding();
-            bindingScada.SendTimeout = TimeSpan.MaxValue;
-            bindingScada.ReceiveTimeout = TimeSpan.MaxValue;
-            bindingScada.OpenTimeout = TimeSpan.MaxValue;
-            bindingScada.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            bindingScada.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding bindingScada = CreateClientBinding();
             // Create a partition resolver
             IServicePartitionResolver partitionResolverScada = ServicePartitionResolver.GetDefault();
 
@@ -245,11 +192,7 @@ namespace TransactionManager
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactoryScada = new WcfCommunicationClientFactory<ITransactionSCADA>
                 (clientBinding: bindingScada, servicePartitionResolver: partitionResolverScada, callback: CallBackTransactionSCADA);
-
-            //
-            // Create a client for communicating with the ICalculator service that has been created with the
-            // Singleton partition scheme.
-            //
+        
             _WCFSCADATransactionClient = new WCFSCADATransactionClient(
                             wcfClientFactoryScada,
                             new Uri("fabric:/ServiceFabricOMS/ScadaStateless"),
@@ -257,8 +200,6 @@ namespace TransactionManager
                             listenerName: "ScadaTransactionService");
 
             TransactionCallbacks.Add(CallBackTransactionSCADA);
-
-
 
             IServicePartitionResolver partitionResolverToDMS = ServicePartitionResolver.GetDefault();
             var wcfClientFactoryToDMS = new WcfCommunicationClientFactory<IDMSContract>
@@ -270,16 +211,7 @@ namespace TransactionManager
                             listenerName: "DMSDispatcherService");
 
 
-
-            NetTcpBinding binding4 = new NetTcpBinding();
-            binding4.SendTimeout = TimeSpan.MaxValue;
-            binding4.ReceiveTimeout = TimeSpan.MaxValue;
-            binding4.OpenTimeout = TimeSpan.MaxValue;
-            binding4.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding4.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding binding4 = CreateClientBinding();
             // Create a partition resolver
             IServicePartitionResolver partitionResolver4 = ServicePartitionResolver.GetDefault();
 
@@ -290,18 +222,12 @@ namespace TransactionManager
             var wcfClientFactory4 = new WcfCommunicationClientFactory<ISubscription>
                 (clientBinding: binding4, servicePartitionResolver: partitionResolver4);
 
-            //
-            // Create a client for communicating with the ICalculator service that has been created with the
-            // Singleton partition scheme.
-            //
+
             proxyToSubscriberServiceCloud = new SubscriberServiceCloud(
                             wcfClientFactory4,
                             new Uri("fabric:/ServiceFabricOMS/PubSubStatelessService"),
                             ServicePartitionKey.Singleton,
                             listenerName: "SubscriptionService");
-
-
-
         }
 
         #region 2PC methods
@@ -379,7 +305,7 @@ namespace TransactionManager
                         Rollback();
                         break;
                     }
-                   // PushDataToDatabase(fixedGuidDelta);
+                    // PushDataToDatabase(fixedGuidDelta);
                     Commit();
                     break;
                 }
@@ -486,11 +412,11 @@ namespace TransactionManager
 
             CloudAppendBlob appendBlob = cloudBlobContainer.GetAppendBlobReference("logfile");
 
-            if(!appendBlob.Exists())
+            if (!appendBlob.Exists())
             {
                 appendBlob.CreateOrReplace();
             }
-           
+
             appendBlob.AppendText(string.Format("TransactionManager, GetNetwork(), instanceID: {0}, Time: {1}{2}", this.instanceID, DateTime.Now, Environment.NewLine));
             cloudBlobContainer.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
             List<Element> listOfDMSElement = proxyToDMS.InvokeWithRetry(client => client.Channel.GetAllElements());
@@ -499,7 +425,7 @@ namespace TransactionManager
 
             List<ResourceDescription> resourceDescriptionFromNMS = new List<ResourceDescription>();
             List<ResourceDescription> descMeas = new List<ResourceDescription>();
-           
+
             gdaTMS.GetExtentValues(ModelCode.BREAKER).ForEach(u => resourceDescriptionFromNMS.Add(u));
             gdaTMS.GetExtentValues(ModelCode.CONNECTNODE).ForEach(u => resourceDescriptionFromNMS.Add(u));
             gdaTMS.GetExtentValues(ModelCode.ENERGCONSUMER).ForEach(u => resourceDescriptionFromNMS.Add(u));
@@ -599,7 +525,7 @@ namespace TransactionManager
             descMeas = MappingEngineTransactionManager.Instance.MappResult(r);
 
 
-          
+
 
             var crews = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetCrews());
             var incidentReports = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetAllReports());
@@ -813,5 +739,25 @@ namespace TransactionManager
         }
 
         #endregion
+
+        private NetTcpBinding CreateClientBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
+        }
     }
 }

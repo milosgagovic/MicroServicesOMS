@@ -37,7 +37,8 @@ namespace TMStatefulService
         //}
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
-        {            //yield return new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context));   
+        {            
+            //yield return new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context));   
             return new List<ServiceReplicaListener>()
             {
                 // Name parametar ServiceInstanceListener konstruktora moze biti bilo sta (ne mora biti isti kao name za endpoint)
@@ -45,14 +46,13 @@ namespace TMStatefulService
                 // tako da ako se koristi jedan listener moze kao prethodno sa yield ... ili kao lista koja vraca jedan ServiceInstanceListener
                 // ako se koristi vise Listenera onda se mora setovati Name parametar
                 new ServiceReplicaListener(context => this.CreateWcfCommunicationListener(context), "TMServiceEndpoint"),
-              //  new ServiceInstanceListener(context => this.CreateWcfHiCommunicationListener(context), "WCFHiServiceEndpoint")
             };
         }
 
         private ICommunicationListener CreateWcfCommunicationListener(StatefulServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
-            // ServiceManifest fajl
+            // ServiceManifest file
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("TMServiceEndpoint");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();

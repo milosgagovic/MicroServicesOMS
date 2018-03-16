@@ -27,12 +27,9 @@ namespace PubSubStatelessService
         /// Optional override to create listeners (e.g., TCP, HTTP) for this service replica to handle client or user requests.
         /// </summary>
         /// <returns>A collection of listeners.</returns>
-        //protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
-        //{
-        //    return new ServiceInstanceListener[0];
-        //}
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
-        {            //yield return new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context));   
+        {           
+            //yield return new ServiceInstanceListener(context => this.CreateWcfCommunicationListener(context));   
             return new List<ServiceInstanceListener>()
             {
                 // Name parametar ServiceInstanceListener konstruktora moze biti bilo sta (ne mora biti isti kao name za endpoint)
@@ -46,22 +43,15 @@ namespace PubSubStatelessService
         private ICommunicationListener CreateWcfCommunicationListener(StatelessServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
-            // ServiceManifest fajl
+            // ServiceManifest file
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("PublishingServiceEndpoint");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-			binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-           // binding.OpenTimeout = TimeSpan.FromMinutes(5);
-           // binding.CloseTimeout = TimeSpan.FromMinutes(5);
-			//MaxConnections = int.MaxValue,
-			//MaxReceivedMessageSize = 1024 * 1024
-            //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/PubSubServiceEndpoint", scheme, host, port);
 
+            var binding = CreateListenBinding();
+            
             var listener = new WcfCommunicationListener<IPublishing>(
                 serviceContext: context,
                 wcfServiceObject: new PublishingService(),
@@ -69,36 +59,27 @@ namespace PubSubStatelessService
                 address: new EndpointAddress(uri)
             );
 
-
             return listener;
         }
 
         private ICommunicationListener CreateSubscriptionServiceCommunicationListener(StatelessServiceContext context)
         {
             string host = context.NodeContext.IPAddressOrFQDN;
-            // ServiceManifest fajl
+            // ServiceManifest file
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("SubscriptionServiceEndpoint");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-			binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-           // binding.OpenTimeout = TimeSpan.FromMinutes(5);
-           // binding.CloseTimeout = TimeSpan.FromMinutes(5);
-			//MaxConnections = int.MaxValue,
-			//MaxReceivedMessageSize = 1024 * 1024
-            //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/SubscriptionService", scheme, host, port);
 
+            var binding = CreateListenBinding();
+           
             var listener = new WcfCommunicationListener<ISubscription>(
                 serviceContext: context,
                 wcfServiceObject: new SubscriptionService(),
                 listenerBinding: binding,
                 address: new EndpointAddress(uri)
             );
-
 
             return listener;
         }
@@ -121,6 +102,26 @@ namespace PubSubStatelessService
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

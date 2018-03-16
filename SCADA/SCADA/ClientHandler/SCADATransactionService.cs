@@ -70,7 +70,7 @@ namespace SCADA.ClientHandler
                     // to do:
                     // mozda ove serijaliyacije da budu taskovi_
                     // novu konfiguraciju cuvamo u fajlu
-                    parser.SerializeScadaModel(modifiedConfigFile);
+                    parser.SaveScadaModel(modifiedConfigFile);
 
                     Console.WriteLine("Prepare true");
                     callback.CallbackPrepare(true);
@@ -78,7 +78,7 @@ namespace SCADA.ClientHandler
                 catch (Exception ex)
                 {
                     ScadaModelParser parser = new ScadaModelParser();
-                    parser.DeserializeScadaModel(); // returning to old state (state was previosuly changed in apply delta)
+                    parser.LoadScadaModel(); // returning to old state (state was previosuly changed in apply delta)
 
                     Console.WriteLine(ex.Message);
                     Console.WriteLine("1Prepare false");
@@ -88,7 +88,7 @@ namespace SCADA.ClientHandler
             else
             {
                 ScadaModelParser parser = new ScadaModelParser();
-                parser.DeserializeScadaModel(); // returning to old state (state was previosuly changed in apply delta)
+                parser.LoadScadaModel(); // returning to old state (state was previosuly changed in apply delta)
                 Console.WriteLine("2Prepare false");
                 callback.CallbackPrepare(false);
             }
@@ -120,7 +120,7 @@ namespace SCADA.ClientHandler
 
             ScadaModelParser parser = new ScadaModelParser();
             //parser.SwapConfigs(newConfigFile, currentConfigFile);
-            parser.DeserializeScadaModel(); // returning to old state (changed in apply delta)
+            parser.LoadScadaModel(); // returning to old state (changed in apply delta)
 
             callback.CallbackRollback("Something went wrong on SCADA");
         }

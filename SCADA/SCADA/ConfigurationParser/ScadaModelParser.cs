@@ -25,7 +25,7 @@ namespace SCADA.ConfigurationParser
             dbContext = new DBContext();
         }
 
-        public bool DeserializeScadaModel(string deserializationSource = "ScadaModel.xml")
+        public bool LoadScadaModel(string deserializationSource = "ScadaModel.xml")
         {
             // to do
             Database.IsConfigurationFinished = false;
@@ -434,7 +434,7 @@ namespace SCADA.ConfigurationParser
             return true;
         }
 
-        public void SerializeScadaModel(string serializationTarget = "ScadaModel.xml")
+        public void SaveScadaModel(string serializationTarget = "ScadaModel.xml")
         {
             //string target = Path.Combine(basePath, serializationTarget);
 

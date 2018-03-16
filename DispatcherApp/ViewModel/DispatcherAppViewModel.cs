@@ -147,17 +147,10 @@ namespace DispatcherApp.ViewModel
             subscriber.publishCall += GetCallFromConsumers;
             subscriber.publiesBreakers += SearchForIncident;
 
-            NetTcpBinding binding = new NetTcpBinding();
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.MaxReceivedMessageSize = Int32.MaxValue;
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
+            NetTcpBinding binding = CreateClientBinding();
 
-
-            ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
+            //for azure change!
+            ChannelFactory <IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
                new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
             //ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
             //    new EndpointAddress("net.tcp://omsmsc.westeurope.cloudapp.azure.com:7090/TMServiceEndpoint"));
@@ -2025,6 +2018,26 @@ namespace DispatcherApp.ViewModel
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
+
+        private NetTcpBinding CreateClientBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
+        }
         #endregion
 
         #region Publish methods
@@ -2034,19 +2047,13 @@ namespace DispatcherApp.ViewModel
             {
                 if (update.ElementAt(0).IsElementAdded == true)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.CloseTimeout = TimeSpan.MaxValue;
-                    binding.OpenTimeout = TimeSpan.MaxValue;
-                    binding.ReceiveTimeout = TimeSpan.MaxValue;
-                    binding.SendTimeout = TimeSpan.MaxValue;
-                    binding.MaxReceivedMessageSize = Int32.MaxValue;
-                    //MaxConnections = int.MaxValue,
-                    binding.MaxReceivedMessageSize = 1024 * 1024;
+                    NetTcpBinding binding = CreateClientBinding();
 
-                    /* ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-                new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint")); */
+                    // for azure change!
                     ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-                new EndpointAddress("net.tcp://omsmsc.westeurope.cloudapp.azure.com:7090/TMServiceEndpoint"));
+               new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
+                //    ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
+                //new EndpointAddress("net.tcp://omsmsc.westeurope.cloudapp.azure.com:7090/TMServiceEndpoint"));
 				
                     
                     ProxyToTransactionManager = factoryToTMS.CreateChannel();

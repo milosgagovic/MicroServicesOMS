@@ -1,9 +1,7 @@
 namespace ScadaCloud
 {
     using ScadaCloud.Model;
-    using System;
     using System.Data.Entity;
-    using System.Linq;
 
     public class ScadaContextDB : DbContext
     {
@@ -28,6 +26,4 @@ namespace ScadaCloud
 
         // public virtual DbSet<MyEntity> MyEntities { get; set; }
     }
-
-   
 }

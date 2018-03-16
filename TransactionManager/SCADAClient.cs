@@ -26,9 +26,19 @@ namespace TransactionManager
 
     public class SCADAClient : ClientBase<ISCADAContract>, ISCADAContract
     {
-        public SCADAClient(string endpointName) : base(new NetTcpBinding(), new EndpointAddress(endpointName))
+        public SCADAClient(string endpointName, NetTcpBinding binding) : base(binding, new EndpointAddress(endpointName))
         {
 
+        }
+
+        public SCADAClient(EndpointAddress address, NetTcpBinding binding) : base(binding, address)
+        {
+
+        }
+
+        public SCADAClient(string endpointName) : base(new NetTcpBinding(), new EndpointAddress(endpointName))
+        {
+           
         }
 
         public SCADAClient(EndpointAddress address) : base(new NetTcpBinding(), address)
@@ -46,5 +56,4 @@ namespace TransactionManager
             return Channel.Ping();
         }
     }
-
 }

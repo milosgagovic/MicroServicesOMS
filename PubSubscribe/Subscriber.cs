@@ -38,15 +38,8 @@ namespace PubSubscribe
         {
             try
             {  //***git
-                NetTcpBinding binding = new NetTcpBinding();
-                binding.SendTimeout = TimeSpan.MaxValue;
-                binding.ReceiveTimeout = TimeSpan.MaxValue;
-                binding.OpenTimeout = TimeSpan.MaxValue;
-                binding.CloseTimeout = TimeSpan.MaxValue;
-                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-                //MaxConnections = int.MaxValue,
-                binding.MaxReceivedMessageSize = 1024 * 1024;
+                NetTcpBinding binding = CreateListenBinding();
+                //EndpointAddress endpointAddress = new EndpointAddress("net.tcp://omsmsc.westeurope.cloudapp.azure.com::4080/SubscriptionService");
                 EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:4080/SubscriptionService");
                 InstanceContext callback = new InstanceContext(this);
                 DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, binding, endpointAddress);
@@ -114,6 +107,26 @@ namespace PubSubscribe
         public void PublishUIBreakers(bool IsIncident, long incidentBreaker)
         {
             publiesBreakers?.Invoke(IsIncident, incidentBreaker);
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

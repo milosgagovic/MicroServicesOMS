@@ -38,36 +38,37 @@ namespace FTN.Services.NetworkModelService
             GC.SuppressFinalize(this);
         }
 
-        private void InitializeHosts()
-        {
-            hosts = new List<ServiceHost>();
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = 1024 * 1024;
-            binding.TransactionFlow = true;
+        // unused, so binding config is not an issue currently
+        //private void InitializeHosts()
+        //{
+        //    hosts = new List<ServiceHost>();
+        //    var binding = new NetTcpBinding();
+        //    binding.SendTimeout = TimeSpan.MaxValue;
+        //    binding.ReceiveTimeout = TimeSpan.MaxValue;
+        //    binding.OpenTimeout = TimeSpan.MaxValue;
+        //    binding.CloseTimeout = TimeSpan.MaxValue;
+        //    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+        //    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+        //    //MaxConnections = int.MaxValue,
+        //    binding.MaxReceivedMessageSize = 1024 * 1024;
+        //    binding.TransactionFlow = true;
 
-            ServiceHost svc = new ServiceHost(typeof(NetworkModelTransactionService));
-            svc.Description.Name = "NetworkModelTransactionService";
-            svc.AddServiceEndpoint(typeof(ITransaction),
-                                    binding,
-                                    new Uri("net.tcp://localhost:8018/NetworkModelTransactionService"));
+        //    ServiceHost svc = new ServiceHost(typeof(NetworkModelTransactionService));
+        //    svc.Description.Name = "NetworkModelTransactionService";
+        //    svc.AddServiceEndpoint(typeof(ITransaction),
+        //                            binding,
+        //                            new Uri("net.tcp://localhost:8018/NetworkModelTransactionService"));
 
-            svc.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
-            svc.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
-
-
-            hosts.Add(svc);
+        //    svc.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
+        //    svc.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
 
 
-            // Service Parameters for GenericDataAccess are defined in App.config
-            hosts.Add(new ServiceHost(typeof(GenericDataAccess)));          
-        }
+        //    hosts.Add(svc);
+
+
+        //    // Service Parameters for GenericDataAccess are defined in App.config
+        //    hosts.Add(new ServiceHost(typeof(GenericDataAccess)));          
+        //}
 
         private void StartHosts()
         {

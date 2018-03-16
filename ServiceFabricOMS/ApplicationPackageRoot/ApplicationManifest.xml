@@ -1,12 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ServiceFabricOMSType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-   
     <!-- Stateful -->
     <Parameter Name="TMStatefulService_MinReplicaSetSize" DefaultValue="3" />
     <Parameter Name="TMStatefulService_PartitionCount" DefaultValue="1" />
     <Parameter Name="TMStatefulService_TargetReplicaSetSize" DefaultValue="3" />
-   
     <!-- Stateless -->
     <Parameter Name="DMStatelessService_InstanceCount" DefaultValue="1" />
     <Parameter Name="IMStatelessService_InstanceCount" DefaultValue="1" />
@@ -14,7 +12,6 @@
     <!-- DefaultValue=-1 -> app needs to be deployed on every node of the SF cluster -->
     <Parameter Name="PubSubStatelessService_InstanceCount" DefaultValue="-1" />
     <Parameter Name="ScadaStateless_InstanceCount" DefaultValue="-1" />
- 
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 

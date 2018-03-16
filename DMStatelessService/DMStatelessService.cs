@@ -58,13 +58,7 @@ namespace DMStatelessService
             var pathSufix = endpointConfig.PathSuffix.ToString();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/IDMSContract", scheme, host, port);
 
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //MaxConnections = int.MaxValue,
-            binding.MaxReceivedMessageSize = int.MaxValue;
+            var binding = CreateListenBinding();
             
             // to do: address parameter, vs endpointResourceName?
             var listener = new WcfCommunicationListener<IDMSContract>(
@@ -86,20 +80,10 @@ namespace DMStatelessService
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            //MaxReceivedMessageSize = 1024 * 1024
-            //var binding = WcfUtility.CreateTcpListenerBinding();
-            binding.MaxReceivedMessageSize = 1024 * 1024;
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/ITransaction", scheme, host, port);
 
+            var binding = CreateListenBinding();
+           
             var listener = new WcfCommunicationListener<ITransaction>(
                 serviceContext: context,
                 wcfServiceObject: new DMSTransactionService(),
@@ -119,20 +103,10 @@ namespace DMStatelessService
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
             var pathSufix = endpointConfig.PathSuffix.ToString();
-
-            var binding = new NetTcpBinding();
-            binding.SendTimeout = TimeSpan.MaxValue;
-            binding.ReceiveTimeout = TimeSpan.MaxValue;
-            binding.OpenTimeout = TimeSpan.MaxValue;
-            binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
-            //MaxReceivedMessageSize = 1024 * 1024
-            binding.MaxReceivedMessageSize = 1024 * 1024;
-            //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/IDMSToSCADAContract", scheme, host, port);
 
+            var binding = CreateListenBinding();
+                      
             var listener = new WcfCommunicationListener<IDMSToSCADAContract>(
                 serviceContext: context,
                 wcfServiceObject: new DMSServiceForSCADA(),
@@ -162,6 +136,26 @@ namespace DMStatelessService
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

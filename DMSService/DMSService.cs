@@ -55,15 +55,8 @@ namespace DMSService
             {
                 if (_imServiceFabricClient == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.SendTimeout = TimeSpan.MaxValue;
-                    binding.ReceiveTimeout = TimeSpan.MaxValue;
-                    binding.OpenTimeout = TimeSpan.MaxValue;
-                    binding.CloseTimeout = TimeSpan.MaxValue;
-                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-                    //MaxConnections = int.MaxValue,
-                    binding.MaxReceivedMessageSize = 1024 * 1024;
+                    NetTcpBinding binding = CreateClientBinding();
+
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
@@ -91,15 +84,8 @@ namespace DMSService
             {
                 if (_scadaServiceFabricClient == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.SendTimeout = TimeSpan.MaxValue;
-                    binding.ReceiveTimeout = TimeSpan.MaxValue;
-                    binding.OpenTimeout = TimeSpan.MaxValue;
-                    binding.CloseTimeout = TimeSpan.MaxValue;
-                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-                    //MaxConnections = int.MaxValue,
-                    binding.MaxReceivedMessageSize = 1024 * 1024;
+                    NetTcpBinding binding = CreateClientBinding();
+
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
@@ -211,10 +197,10 @@ namespace DMSService
             Tree<Element> retVal = new Tree<Element>();
             List<long> eSources = new List<long>();
 
-            List<IncidentReport> reports = new List<IncidentReport>();
-            List<ElementStateReport> elementStates = new List<ElementStateReport>();
-            // List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
-            // List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
+            //List<IncidentReport> reports = new List<IncidentReport>();
+            //List<ElementStateReport> elementStates = new List<ElementStateReport>();
+            List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
+            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
 
             Response response = null;
 
@@ -863,6 +849,26 @@ namespace DMSService
             string message = "The DMS Service is closed.";
             CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
             Console.WriteLine("\n\n{0}", message);
+        }
+
+        private NetTcpBinding CreateClientBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //OpenTimeout = TimeSpan.MaxValue,
+                //CloseTimeout = TimeSpan.MaxValue,
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }
