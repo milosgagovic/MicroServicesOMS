@@ -53,6 +53,12 @@ namespace PubSubStatelessService
             var pathSufix = endpointConfig.PathSuffix.ToString();
 
             var binding = new NetTcpBinding();
+			binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+           // binding.OpenTimeout = TimeSpan.FromMinutes(5);
+           // binding.CloseTimeout = TimeSpan.FromMinutes(5);
+			//MaxConnections = int.MaxValue,
+			//MaxReceivedMessageSize = 1024 * 1024
             //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/PubSubServiceEndpoint", scheme, host, port);
 
@@ -77,6 +83,12 @@ namespace PubSubStatelessService
             var pathSufix = endpointConfig.PathSuffix.ToString();
 
             var binding = new NetTcpBinding();
+			binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+           // binding.OpenTimeout = TimeSpan.FromMinutes(5);
+           // binding.CloseTimeout = TimeSpan.FromMinutes(5);
+			//MaxConnections = int.MaxValue,
+			//MaxReceivedMessageSize = 1024 * 1024
             //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/SubscriptionService", scheme, host, port);
 

@@ -53,6 +53,16 @@ namespace IMStatelessService
             var pathSufix = endpointConfig.PathSuffix.ToString();
 
             var binding = new NetTcpBinding();
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.MaxValue;
+            //binding.CloseTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.FromSeconds(5);
+            binding.CloseTimeout = TimeSpan.FromSeconds(5);
+            binding.MaxConnections = int.MaxValue;
+            binding.MaxReceivedMessageSize = 1024 * 1024;
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
             //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/IIMSContract", scheme, host, port);
 

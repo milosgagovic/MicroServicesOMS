@@ -52,6 +52,14 @@ namespace ScadaStateless
             var pathSufix = endpointConfig.PathSuffix.ToString();
 
             var binding = new NetTcpBinding();
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/SCADAService", scheme, host, port);
 
@@ -77,6 +85,14 @@ namespace ScadaStateless
             var pathSufix = endpointConfig.PathSuffix.ToString();
 
             var binding = new NetTcpBinding();
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             //var binding = WcfUtility.CreateTcpListenerBinding();
             string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/SCADATransactionService", scheme, host, port);
 

@@ -17,11 +17,16 @@ namespace DispatcherApp.Model
         private MainModelClass()
         {
             NetTcpBinding binding = new NetTcpBinding();
-            binding.CloseTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.OpenTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
 
+            // to do? 
             ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
                 new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
             ProxyToTransactionManager = factoryToTMS.CreateChannel();

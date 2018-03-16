@@ -5,22 +5,18 @@ using IMSContract;
 using IncidentManagementSystem.Service;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
-using OMSSCADACommon;
 using PubSubscribe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace DMSService
 {
     public class DMSDispatcherService : IDMSContract
     {
         private IMServiceFabricClient imsCommunicationClient;
-
         private IMServiceFabricClient IMSCommunicationClient
         {
             get
@@ -28,6 +24,14 @@ namespace DMSService
                 if (imsCommunicationClient == null)
                 {
                     NetTcpBinding binding = new NetTcpBinding();
+                    binding.SendTimeout = TimeSpan.MaxValue;
+                    binding.ReceiveTimeout = TimeSpan.MaxValue;
+                    binding.OpenTimeout = TimeSpan.MaxValue;
+                    binding.CloseTimeout = TimeSpan.MaxValue;
+                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                    //MaxConnections = int.MaxValue,
+                    binding.MaxReceivedMessageSize = 1024 * 1024;
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.

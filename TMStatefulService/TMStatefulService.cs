@@ -56,23 +56,19 @@ namespace TMStatefulService
             var endpointConfig = context.CodePackageActivationContext.GetEndpoint("TMServiceEndpoint");
             int port = endpointConfig.Port;
             var scheme = endpointConfig.Protocol.ToString();
-            var pathSufix = endpointConfig.PathSuffix.ToString();
+            var pathSufix = endpointConfig.PathSuffix.ToString();          
+            string listeningAddress = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/TMServiceEndpoint", scheme, host, port);
 
-            var binding = new NetTcpBinding();
-            //var binding = WcfUtility.CreateTcpListenerBinding();
-            string uri = string.Format(CultureInfo.InvariantCulture, "net.{0}://{1}:{2}/TMServiceEndpoint", scheme, host, port);
+            var binding = CreateListenBinding();
 
             var listener = new WcfCommunicationListener<IOMSClient>(
                 serviceContext: context,
                 wcfServiceObject: new TransactionManager.TransactionManager(this.Context.ReplicaId),
                 listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                address: new EndpointAddress(listeningAddress)
             );
-
-
             return listener;
         }
-
 
         /// <summary>
         /// This is the main entry point for your service replica.
@@ -94,8 +90,8 @@ namespace TMStatefulService
                 {
                     var result = await myDictionary.TryGetValueAsync(tx, "Counter");
 
-                    ServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
-                        result.HasValue ? result.Value.ToString() : "Value does not exist.");
+                   // ServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
+                     //   result.HasValue ? result.Value.ToString() : "Value does not exist.");
 
                     await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);
 
@@ -106,6 +102,24 @@ namespace TMStatefulService
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
+            };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+            return binding;
         }
     }
 }

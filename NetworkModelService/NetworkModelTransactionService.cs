@@ -22,11 +22,22 @@ namespace FTN.Services.NetworkModelService
         {
             get
             {
-                if(networkGDAServiceFabric == null)
+                if (networkGDAServiceFabric == null)
                 {
+                    NetTcpBinding binding = new NetTcpBinding();
+                    binding.SendTimeout = TimeSpan.MaxValue;
+                    binding.ReceiveTimeout = TimeSpan.MaxValue;
+                    binding.OpenTimeout = TimeSpan.MaxValue;
+                    binding.CloseTimeout = TimeSpan.MaxValue;
+                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                    //MaxConnections = int.MaxValue,
+                    binding.MaxReceivedMessageSize = 1024 * 1024;
+
                     IServicePartitionResolver partitionResolverToNMS = ServicePartitionResolver.GetDefault();
                     var wcfClientFactoryToNMS = new WcfCommunicationClientFactory<INetworkModelGDAContract>
-                        (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToNMS);
+                        (clientBinding: binding, servicePartitionResolver: partitionResolverToNMS);
+                    //(clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToNMS);
                     networkGDAServiceFabric = new NetworkGDAServiceFabric(
                                     wcfClientFactoryToNMS,
                                     new Uri("fabric:/ServiceFabricOMS/NMStatelessService"),
@@ -40,7 +51,7 @@ namespace FTN.Services.NetworkModelService
 
         public NetworkModelTransactionService()
         {
-          //  gda = new GenericDataAccess();
+            //  gda = new GenericDataAccess();
         }
 
         public void Enlist()
@@ -50,7 +61,7 @@ namespace FTN.Services.NetworkModelService
             try
             {
                 networkGDAServiceFabric.InvokeWithRetry(client => client.Channel.GetCopyOfNetworkModel());
-               // gda.GetCopyOfNetworkModel();
+                // gda.GetCopyOfNetworkModel();
                 callback.CallbackEnlist(true);
             }
             catch (Exception ex)
@@ -102,7 +113,7 @@ namespace FTN.Services.NetworkModelService
             ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
             callback.CallbackCommit("Uspjesno je prosao commit na NMS-u");
         }
-            
+
         public void Rollback()
         {
             Console.WriteLine("Pozvan je RollBack na NMSu");

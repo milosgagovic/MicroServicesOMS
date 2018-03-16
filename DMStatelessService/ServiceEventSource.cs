@@ -152,6 +152,22 @@ namespace DMStatelessService
         {
             WriteEvent(ServiceRequestStopEventId, requestTypeName, exception);
         }
+
+
+        private const int DebugEventId = 10;
+        [Event(DebugEventId, Level = EventLevel.Verbose, Message = "{0}")]
+        public void Debug(string msg)
+        {
+            WriteEvent(DebugEventId, msg);
+        }
+
+        private const int ErrorEventId = 11;
+        [Event(ErrorEventId, Level = EventLevel.Error, Message = "Error: {0} - {1}")]
+        public void Error(string error, string msg)
+        {
+            WriteEvent(ErrorEventId, error, msg);
+        }
+
         #endregion
 
         #region Private methods

@@ -2,13 +2,11 @@
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TransactionManagerContract
 {
+    // unable to use this because Dispatcher app as a WPF app type,
+    // so it has to connect to the service as a typical WCF client (ChannelFactory or ClientBase)
     public class DispatcherClient : ServicePartitionClient<WcfCommunicationClient<IOMSClient>>
     {
         public DispatcherClient(ICommunicationClientFactory<WcfCommunicationClient<IOMSClient>> communicationClientFactory, Uri serviceUri, ServicePartitionKey partitionKey = null, TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null)

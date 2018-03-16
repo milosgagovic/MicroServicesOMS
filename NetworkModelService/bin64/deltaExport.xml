@@ -1,7 +1,7 @@
 ﻿<delta id="0">
   <operations>
     <operation type="insert">
-      <ResourceDescriptions count="196">
+      <ResourceDescriptions count="198">
         <ResourceDescription>
           <id gid="0x00000001ffffffff" type="CONNECTNODECONT" />
           <Properties>
@@ -268,21 +268,13 @@
         <ResourceDescription>
           <id gid="0x00000004fffffffa" type="ACLINESEGMENT" />
           <Properties>
-            <Property id="IDOBJ_MRID" value="ACLS_14" />
-            <Property id="IDOBJ_NAME" value="ACLineSegment_14" />
-            <Property id="EQUIPMENT_NORMINSERV" value="1" />
-          </Properties>
-        </ResourceDescription>
-        <ResourceDescription>
-          <id gid="0x00000004fffffff9" type="ACLINESEGMENT" />
-          <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_15" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_15" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff8" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff9" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_2" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_2" />
@@ -290,7 +282,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff7" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff8" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_3" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_3" />
@@ -298,7 +290,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff6" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff7" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_4" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_4" />
@@ -306,7 +298,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff5" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff6" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_5" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_5" />
@@ -314,7 +306,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff4" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff5" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_6" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_6" />
@@ -322,7 +314,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff3" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff4" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_7" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_7" />
@@ -330,7 +322,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff2" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff3" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_8" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_8" />
@@ -338,7 +330,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000004fffffff1" type="ACLINESEGMENT" />
+          <id gid="0x00000004fffffff2" type="ACLINESEGMENT" />
           <Properties>
             <Property id="IDOBJ_MRID" value="ACLS_9" />
             <Property id="IDOBJ_NAME" value="ACLineSegment_9" />
@@ -366,6 +358,24 @@
         <ResourceDescription>
           <id gid="0x00000005fffffffd" type="BREAKER" />
           <Properties>
+            <Property id="IDOBJ_MRID" value="BR_13" />
+            <Property id="IDOBJ_NAME" value="Breaker_13" />
+            <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="SWITCH_NORMOPEN" value="0" />
+          </Properties>
+        </ResourceDescription>
+        <ResourceDescription>
+          <id gid="0x00000005fffffffc" type="BREAKER" />
+          <Properties>
+            <Property id="IDOBJ_MRID" value="BR_14" />
+            <Property id="IDOBJ_NAME" value="Breaker_14" />
+            <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="SWITCH_NORMOPEN" value="0" />
+          </Properties>
+        </ResourceDescription>
+        <ResourceDescription>
+          <id gid="0x00000005fffffffb" type="BREAKER" />
+          <Properties>
             <Property id="IDOBJ_MRID" value="BR_2" />
             <Property id="IDOBJ_NAME" value="Breaker_2" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
@@ -373,7 +383,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000005fffffffc" type="BREAKER" />
+          <id gid="0x00000005fffffffa" type="BREAKER" />
           <Properties>
             <Property id="IDOBJ_MRID" value="BR_3" />
             <Property id="IDOBJ_NAME" value="Breaker_3" />
@@ -382,7 +392,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000005fffffffb" type="BREAKER" />
+          <id gid="0x00000005fffffff9" type="BREAKER" />
           <Properties>
             <Property id="IDOBJ_MRID" value="BR_4" />
             <Property id="IDOBJ_NAME" value="Breaker_4" />
@@ -391,7 +401,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000005fffffffa" type="BREAKER" />
+          <id gid="0x00000005fffffff8" type="BREAKER" />
           <Properties>
             <Property id="IDOBJ_MRID" value="BR_5" />
             <Property id="IDOBJ_NAME" value="Breaker_5" />
@@ -400,7 +410,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000005fffffff9" type="BREAKER" />
+          <id gid="0x00000005fffffff7" type="BREAKER" />
           <Properties>
             <Property id="IDOBJ_MRID" value="BR_6" />
             <Property id="IDOBJ_NAME" value="Breaker_6" />
@@ -409,7 +419,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000005fffffff8" type="BREAKER" />
+          <id gid="0x00000005fffffff6" type="BREAKER" />
           <Properties>
             <Property id="IDOBJ_MRID" value="BR_7" />
             <Property id="IDOBJ_NAME" value="Breaker_7" />
@@ -418,7 +428,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000005fffffff7" type="BREAKER" />
+          <id gid="0x00000005fffffff5" type="BREAKER" />
           <Properties>
             <Property id="IDOBJ_MRID" value="BR_8" />
             <Property id="IDOBJ_NAME" value="Breaker_8" />
@@ -427,7 +437,7 @@
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
-          <id gid="0x00000005fffffff6" type="BREAKER" />
+          <id gid="0x00000005fffffff4" type="BREAKER" />
           <Properties>
             <Property id="IDOBJ_MRID" value="BR_9" />
             <Property id="IDOBJ_NAME" value="Breaker_9" />
@@ -441,6 +451,7 @@
             <Property id="IDOBJ_MRID" value="EC_1" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_1" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="22.43" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -449,6 +460,7 @@
             <Property id="IDOBJ_MRID" value="EC_10" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_10" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="26.19" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -457,6 +469,7 @@
             <Property id="IDOBJ_MRID" value="EC_11" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_11" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="21.89" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -465,6 +478,7 @@
             <Property id="IDOBJ_MRID" value="EC_12" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_12" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="41.45" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -473,6 +487,7 @@
             <Property id="IDOBJ_MRID" value="EC_13" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_13" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="46.82" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -481,6 +496,7 @@
             <Property id="IDOBJ_MRID" value="EC_14" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_14" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="34.21" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -489,6 +505,7 @@
             <Property id="IDOBJ_MRID" value="EC_15" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_16" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="23.78" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -497,6 +514,7 @@
             <Property id="IDOBJ_MRID" value="EC_16" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_16" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="35.28" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -505,6 +523,7 @@
             <Property id="IDOBJ_MRID" value="EC_17" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_17" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="30.93" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -513,6 +532,7 @@
             <Property id="IDOBJ_MRID" value="EC_18" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_18" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="37.92" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -521,6 +541,7 @@
             <Property id="IDOBJ_MRID" value="EC_19" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_19" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="25.92" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -529,6 +550,7 @@
             <Property id="IDOBJ_MRID" value="EC_2" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_2" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="47.64" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -537,6 +559,7 @@
             <Property id="IDOBJ_MRID" value="EC_20" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_20" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="20.84" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -545,6 +568,7 @@
             <Property id="IDOBJ_MRID" value="EC_21" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_21" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="42.78" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -553,6 +577,7 @@
             <Property id="IDOBJ_MRID" value="EC_22" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_22" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="36.87" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -561,6 +586,7 @@
             <Property id="IDOBJ_MRID" value="EC_23" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_23" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="29.01" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -569,6 +595,7 @@
             <Property id="IDOBJ_MRID" value="EC_24" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_24" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="40.45" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -577,6 +604,7 @@
             <Property id="IDOBJ_MRID" value="EC_25" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_25" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="40.63" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -585,6 +613,7 @@
             <Property id="IDOBJ_MRID" value="EC_26" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_26" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="31.36" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -593,6 +622,7 @@
             <Property id="IDOBJ_MRID" value="EC_27" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_27" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="28.52" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -601,6 +631,7 @@
             <Property id="IDOBJ_MRID" value="EC_28" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_28" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="35.74" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -609,6 +640,7 @@
             <Property id="IDOBJ_MRID" value="EC_29" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_29" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="45.73" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -617,6 +649,7 @@
             <Property id="IDOBJ_MRID" value="EC_3" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_3" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="36.42" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -625,6 +658,7 @@
             <Property id="IDOBJ_MRID" value="EC_4" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_4" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="25.62" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -633,6 +667,7 @@
             <Property id="IDOBJ_MRID" value="EC_5" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_5" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="33.08" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -641,6 +676,7 @@
             <Property id="IDOBJ_MRID" value="EC_6" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_6" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="44.26" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -649,6 +685,7 @@
             <Property id="IDOBJ_MRID" value="EC_7" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_7" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="28.13" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -657,6 +694,7 @@
             <Property id="IDOBJ_MRID" value="EC_8" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_8" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="33.02" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -665,6 +703,7 @@
             <Property id="IDOBJ_MRID" value="EC_9" />
             <Property id="IDOBJ_NAME" value="EnergyConsumer_9" />
             <Property id="EQUIPMENT_NORMINSERV" value="1" />
+            <Property id="ENERGCONSUMER_PFIXED" value="45.92" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -682,7 +721,7 @@
             <Property id="IDOBJ_MRID" value="TERM_10" />
             <Property id="IDOBJ_NAME" value="Terminal_10" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffa" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffc" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffa" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -691,7 +730,7 @@
             <Property id="IDOBJ_MRID" value="TERM_13" />
             <Property id="IDOBJ_NAME" value="Terminal_13" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffed" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffa" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff8" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -700,7 +739,7 @@
             <Property id="IDOBJ_MRID" value="TERM_11" />
             <Property id="IDOBJ_NAME" value="Terminal_11" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffec" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffb" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff9" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -709,7 +748,7 @@
             <Property id="IDOBJ_MRID" value="TERM_12" />
             <Property id="IDOBJ_NAME" value="Terminal_12" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffed" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffb" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff9" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -718,7 +757,7 @@
             <Property id="IDOBJ_MRID" value="TERM_13" />
             <Property id="IDOBJ_NAME" value="Terminal_13" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe7" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffa" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff8" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -736,7 +775,7 @@
             <Property id="IDOBJ_MRID" value="TERM_15" />
             <Property id="IDOBJ_NAME" value="Terminal_15" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffec" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff8" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff9" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -745,7 +784,7 @@
             <Property id="IDOBJ_MRID" value="TERM_16" />
             <Property id="IDOBJ_NAME" value="Terminal_16" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe9" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff8" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff9" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -790,7 +829,7 @@
             <Property id="IDOBJ_MRID" value="TERM_20" />
             <Property id="IDOBJ_NAME" value="Terminal_20" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffed" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff7" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff8" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -799,7 +838,7 @@
             <Property id="IDOBJ_MRID" value="TERM_200" />
             <Property id="IDOBJ_NAME" value="Terminal_200" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe8" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff6" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff4" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -835,7 +874,7 @@
             <Property id="IDOBJ_MRID" value="TERM_204" />
             <Property id="IDOBJ_NAME" value="Terminal_204" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffeb" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff6" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff4" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -853,7 +892,7 @@
             <Property id="IDOBJ_MRID" value="TERM_21" />
             <Property id="IDOBJ_NAME" value="Terminal_21" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe8" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff7" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff8" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -880,7 +919,7 @@
             <Property id="IDOBJ_MRID" value="TERM_24" />
             <Property id="IDOBJ_NAME" value="Terminal_24" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe7" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff6" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff7" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -889,7 +928,7 @@
             <Property id="IDOBJ_MRID" value="TERM_25" />
             <Property id="IDOBJ_NAME" value="Terminal_25" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe6" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff6" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff7" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -907,7 +946,7 @@
             <Property id="IDOBJ_MRID" value="TERM_27" />
             <Property id="IDOBJ_NAME" value="Terminal_27" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe6" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff5" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff6" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -916,7 +955,7 @@
             <Property id="IDOBJ_MRID" value="TERM_28" />
             <Property id="IDOBJ_NAME" value="Terminal_28" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffb" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff5" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff6" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -952,7 +991,7 @@
             <Property id="IDOBJ_MRID" value="TERM_31" />
             <Property id="IDOBJ_NAME" value="Terminal_31" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffe6" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff4" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff5" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -961,7 +1000,7 @@
             <Property id="IDOBJ_MRID" value="TERM_32" />
             <Property id="IDOBJ_NAME" value="Terminal_32" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffe" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff4" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff5" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -970,7 +1009,7 @@
             <Property id="IDOBJ_MRID" value="TERM_35" />
             <Property id="IDOBJ_NAME" value="Terminal_35" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffe" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff3" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff4" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -979,7 +1018,7 @@
             <Property id="IDOBJ_MRID" value="TERM_36" />
             <Property id="IDOBJ_NAME" value="Terminal_36" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffd" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff3" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff4" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -988,7 +1027,7 @@
             <Property id="IDOBJ_MRID" value="TERM_37" />
             <Property id="IDOBJ_NAME" value="Terminal_37" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffd" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff9" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff7" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -997,7 +1036,7 @@
             <Property id="IDOBJ_MRID" value="TERM_38" />
             <Property id="IDOBJ_NAME" value="Terminal_38" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffc" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff9" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff7" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1042,7 +1081,7 @@
             <Property id="IDOBJ_MRID" value="TERM_43" />
             <Property id="IDOBJ_NAME" value="Terminal_43" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffffa" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff2" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff3" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1051,7 +1090,7 @@
             <Property id="IDOBJ_MRID" value="TERM_44" />
             <Property id="IDOBJ_NAME" value="Terminal_44" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff9" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff2" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff3" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1078,7 +1117,7 @@
             <Property id="IDOBJ_MRID" value="TERM_47" />
             <Property id="IDOBJ_NAME" value="Terminal_47" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff9" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff1" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff2" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1087,7 +1126,7 @@
             <Property id="IDOBJ_MRID" value="TERM_48" />
             <Property id="IDOBJ_NAME" value="Terminal_48" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff8" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff1" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff2" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1132,7 +1171,7 @@
             <Property id="IDOBJ_MRID" value="TERM_52" />
             <Property id="IDOBJ_NAME" value="Terminal_52" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff7" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff8" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff6" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1141,7 +1180,7 @@
             <Property id="IDOBJ_MRID" value="TERM_53" />
             <Property id="IDOBJ_NAME" value="Terminal_53" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff2" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff8" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff6" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1150,7 +1189,7 @@
             <Property id="IDOBJ_MRID" value="TERM_54" />
             <Property id="IDOBJ_NAME" value="Terminal_54" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff7" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff7" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff5" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1159,7 +1198,7 @@
             <Property id="IDOBJ_MRID" value="TERM_55" />
             <Property id="IDOBJ_NAME" value="Terminal_55" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff6" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff7" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffff5" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1285,7 +1324,7 @@
             <Property id="IDOBJ_MRID" value="TERM_69" />
             <Property id="IDOBJ_NAME" value="Terminal_69" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff1" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffffa" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffd" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1294,7 +1333,7 @@
             <Property id="IDOBJ_MRID" value="TERM_7" />
             <Property id="IDOBJ_NAME" value="Terminal_7" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffee" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffd" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffb" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1303,7 +1342,7 @@
             <Property id="IDOBJ_MRID" value="TERM_70" />
             <Property id="IDOBJ_NAME" value="Terminal_70" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff0" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffffa" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffd" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1330,7 +1369,7 @@
             <Property id="IDOBJ_MRID" value="TERM_73" />
             <Property id="IDOBJ_NAME" value="Terminal_73" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002fffffff3" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff9" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffc" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1339,7 +1378,7 @@
             <Property id="IDOBJ_MRID" value="TERM_74" />
             <Property id="IDOBJ_NAME" value="Terminal_74" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffef" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000004fffffff9" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffc" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1375,7 +1414,7 @@
             <Property id="IDOBJ_MRID" value="TERM_8" />
             <Property id="IDOBJ_NAME" value="Terminal_8" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffed" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffd" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffb" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1384,7 +1423,7 @@
             <Property id="IDOBJ_MRID" value="TERM_9" />
             <Property id="IDOBJ_NAME" value="Terminal_9" />
             <Property id="TERMINAL_CONNECTNODE" value="0x00000002ffffffee" />
-            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffc" />
+            <Property id="TERMINAL_CONDEQUIP" value="0x00000005fffffffa" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
@@ -1409,49 +1448,49 @@
             <Property id="IDOBJ_NAME" value="DiscreteMeasurement_2" />
             <Property id="MEASUREMENT_DIRECTION" value="Write" />
             <Property id="MEASUREMENT_UNITSYMB" value="none" />
-            <Property id="MEASUREMENT_PSR" value="0x00000005fffffffd" />
-            <Property id="DISCRETE_MINVAL" value="0" />
-            <Property id="DISCRETE_MAXVAL" value="1" />
-            <Property id="DISCRETE_NORMVAL" value="1" />
-            <Property id="DISCRETE_VALIDCOMMANDS" value="OPEN" />
-            <Property id="DISCRETE_VALIDSTATES" value="CLOSED, OPENED" />
-          </Properties>
-        </ResourceDescription>
-        <ResourceDescription>
-          <id gid="0x00000008fffffffd" type="DISCRETE" />
-          <Properties>
-            <Property id="IDOBJ_MRID" value="MEAS_D_3" />
-            <Property id="IDOBJ_NAME" value="DiscreteMeasurement_3" />
-            <Property id="MEASUREMENT_DIRECTION" value="Write" />
-            <Property id="MEASUREMENT_UNITSYMB" value="none" />
-            <Property id="MEASUREMENT_PSR" value="0x00000005fffffffc" />
-            <Property id="DISCRETE_MINVAL" value="0" />
-            <Property id="DISCRETE_MAXVAL" value="1" />
-            <Property id="DISCRETE_NORMVAL" value="1" />
-            <Property id="DISCRETE_VALIDCOMMANDS" value="OPEN, CLOSE" />
-            <Property id="DISCRETE_VALIDSTATES" value="empty enum vector" />
-          </Properties>
-        </ResourceDescription>
-        <ResourceDescription>
-          <id gid="0x00000008fffffffc" type="DISCRETE" />
-          <Properties>
-            <Property id="IDOBJ_MRID" value="MEAS_D_4" />
-            <Property id="IDOBJ_NAME" value="DiscreteMeasurement_4" />
-            <Property id="MEASUREMENT_DIRECTION" value="Write" />
-            <Property id="MEASUREMENT_UNITSYMB" value="none" />
             <Property id="MEASUREMENT_PSR" value="0x00000005fffffffb" />
             <Property id="DISCRETE_MINVAL" value="0" />
             <Property id="DISCRETE_MAXVAL" value="1" />
             <Property id="DISCRETE_NORMVAL" value="1" />
             <Property id="DISCRETE_VALIDCOMMANDS" value="OPEN, CLOSE" />
-            <Property id="DISCRETE_VALIDSTATES" value="empty enum vector" />
+            <Property id="DISCRETE_VALIDSTATES" value="OPENED, CLOSED" />
+          </Properties>
+        </ResourceDescription>
+        <ResourceDescription>
+          <id gid="0x00000008fffffffd" type="DISCRETE" />
+          <Properties>
+            <Property id="IDOBJ_MRID" value="MEAS_D_4" />
+            <Property id="IDOBJ_NAME" value="DiscreteMeasurement_4" />
+            <Property id="MEASUREMENT_DIRECTION" value="Write" />
+            <Property id="MEASUREMENT_UNITSYMB" value="none" />
+            <Property id="MEASUREMENT_PSR" value="0x00000005fffffff9" />
+            <Property id="DISCRETE_MINVAL" value="0" />
+            <Property id="DISCRETE_MAXVAL" value="1" />
+            <Property id="DISCRETE_NORMVAL" value="1" />
+            <Property id="DISCRETE_VALIDCOMMANDS" value="OPEN, CLOSE" />
+            <Property id="DISCRETE_VALIDSTATES" value="OPENED, CLOSED" />
+          </Properties>
+        </ResourceDescription>
+        <ResourceDescription>
+          <id gid="0x00000008fffffffc" type="DISCRETE" />
+          <Properties>
+            <Property id="IDOBJ_MRID" value="MEAS_D_5" />
+            <Property id="IDOBJ_NAME" value="DiscreteMeasurement_5" />
+            <Property id="MEASUREMENT_DIRECTION" value="Write" />
+            <Property id="MEASUREMENT_UNITSYMB" value="none" />
+            <Property id="MEASUREMENT_PSR" value="0x00000005fffffff8" />
+            <Property id="DISCRETE_MINVAL" value="0" />
+            <Property id="DISCRETE_MAXVAL" value="1" />
+            <Property id="DISCRETE_NORMVAL" value="1" />
+            <Property id="DISCRETE_VALIDCOMMANDS" value="OPEN, CLOSE" />
+            <Property id="DISCRETE_VALIDSTATES" value="OPENED, CLOSED" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>
           <id gid="0x00000008fffffffb" type="DISCRETE" />
           <Properties>
-            <Property id="IDOBJ_MRID" value="MEAS_D_8" />
-            <Property id="IDOBJ_NAME" value="DiscreteMeasurement_8" />
+            <Property id="IDOBJ_MRID" value="MEAS_D_6" />
+            <Property id="IDOBJ_NAME" value="DiscreteMeasurement_6" />
             <Property id="MEASUREMENT_DIRECTION" value="Write" />
             <Property id="MEASUREMENT_UNITSYMB" value="none" />
             <Property id="MEASUREMENT_PSR" value="0x00000005fffffff7" />
@@ -1459,7 +1498,22 @@
             <Property id="DISCRETE_MAXVAL" value="1" />
             <Property id="DISCRETE_NORMVAL" value="1" />
             <Property id="DISCRETE_VALIDCOMMANDS" value="OPEN, CLOSE" />
-            <Property id="DISCRETE_VALIDSTATES" value="empty enum vector" />
+            <Property id="DISCRETE_VALIDSTATES" value="OPENED, CLOSED" />
+          </Properties>
+        </ResourceDescription>
+        <ResourceDescription>
+          <id gid="0x00000008fffffffa" type="DISCRETE" />
+          <Properties>
+            <Property id="IDOBJ_MRID" value="MEAS_D_9" />
+            <Property id="IDOBJ_NAME" value="DiscreteMeasurement_9" />
+            <Property id="MEASUREMENT_DIRECTION" value="Write" />
+            <Property id="MEASUREMENT_UNITSYMB" value="none" />
+            <Property id="MEASUREMENT_PSR" value="0x00000005fffffff4" />
+            <Property id="DISCRETE_MINVAL" value="0" />
+            <Property id="DISCRETE_MAXVAL" value="1" />
+            <Property id="DISCRETE_NORMVAL" value="1" />
+            <Property id="DISCRETE_VALIDCOMMANDS" value="OPEN, CLOSE" />
+            <Property id="DISCRETE_VALIDSTATES" value="OPENED, CLOSED" />
           </Properties>
         </ResourceDescription>
         <ResourceDescription>

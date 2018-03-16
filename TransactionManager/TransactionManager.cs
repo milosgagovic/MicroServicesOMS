@@ -68,6 +68,15 @@ namespace TransactionManager
                 if (_scadaServiceFabricClient == null)
                 {
                     NetTcpBinding binding = new NetTcpBinding();
+                    binding.SendTimeout = TimeSpan.MaxValue;
+                    binding.ReceiveTimeout = TimeSpan.MaxValue;
+                    binding.OpenTimeout = TimeSpan.MaxValue;
+                    binding.CloseTimeout = TimeSpan.MaxValue;
+                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                    //MaxConnections = int.MaxValue,
+                    binding.MaxReceivedMessageSize = 1024 * 1024;
+
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
@@ -129,6 +138,14 @@ namespace TransactionManager
 
             ///
             NetTcpBinding binding = new NetTcpBinding();
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             // Create a partition resolver
             IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
             // create a  WcfCommunicationClientFactory object.
@@ -148,6 +165,14 @@ namespace TransactionManager
 
             ///
             NetTcpBinding binding2 = new NetTcpBinding();
+            binding2.SendTimeout = TimeSpan.MaxValue;
+            binding2.ReceiveTimeout = TimeSpan.MaxValue;
+            binding2.OpenTimeout = TimeSpan.MaxValue;
+            binding2.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             // Create a partition resolver
             IServicePartitionResolver partitionResolver2 = ServicePartitionResolver.GetDefault();
 
@@ -173,6 +198,14 @@ namespace TransactionManager
 
 
             NetTcpBinding binding3 = new NetTcpBinding();
+            binding3.SendTimeout = TimeSpan.MaxValue;
+            binding3.ReceiveTimeout = TimeSpan.MaxValue;
+            binding3.OpenTimeout = TimeSpan.MaxValue;
+            binding3.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             // Create a partition resolver
             IServicePartitionResolver partitionResolver3 = ServicePartitionResolver.GetDefault();
 
@@ -195,6 +228,14 @@ namespace TransactionManager
 
 
             NetTcpBinding bindingScada = new NetTcpBinding();
+            bindingScada.SendTimeout = TimeSpan.MaxValue;
+            bindingScada.ReceiveTimeout = TimeSpan.MaxValue;
+            bindingScada.OpenTimeout = TimeSpan.MaxValue;
+            bindingScada.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            bindingScada.MaxReceivedMessageSize = 1024 * 1024;
             // Create a partition resolver
             IServicePartitionResolver partitionResolverScada = ServicePartitionResolver.GetDefault();
 
@@ -231,6 +272,14 @@ namespace TransactionManager
 
 
             NetTcpBinding binding4 = new NetTcpBinding();
+            binding4.SendTimeout = TimeSpan.MaxValue;
+            binding4.ReceiveTimeout = TimeSpan.MaxValue;
+            binding4.OpenTimeout = TimeSpan.MaxValue;
+            binding4.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding4.MaxReceivedMessageSize = 1024 * 1024;
             // Create a partition resolver
             IServicePartitionResolver partitionResolver4 = ServicePartitionResolver.GetDefault();
 

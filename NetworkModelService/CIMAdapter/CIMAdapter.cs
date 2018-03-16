@@ -25,6 +25,15 @@ namespace FTN.ESI.SIMES.CIM.CIMAdapter
         public CIMAdapter()
 		{
             NetTcpBinding binding = new NetTcpBinding();
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
+
             // Create a partition resolver
             IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
             // create a  WcfCommunicationClientFactory object.
@@ -48,13 +57,17 @@ namespace FTN.ESI.SIMES.CIM.CIMAdapter
 			{
 				if (proxyToTransactionManager == null /*&& factoryToTMS == null*/)
 				{
-                    var binding = new NetTcpBinding();
-                    binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                    binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                    binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                    binding.SendTimeout = TimeSpan.FromMinutes(10);
+                    NetTcpBinding binding = new NetTcpBinding();
+                    binding.CloseTimeout = TimeSpan.MaxValue;
+                    binding.OpenTimeout = TimeSpan.MaxValue;
+                    binding.ReceiveTimeout = TimeSpan.MaxValue;
+                    binding.SendTimeout = TimeSpan.MaxValue;
+                    binding.MaxReceivedMessageSize = Int32.MaxValue;
+                    //MaxConnections = int.MaxValue,
+                    //MaxReceivedMessageSize = 1024 * 1024
                     binding.TransactionFlow = true;
 
+                    //factoryToTMS = new ChannelFactory<IOMSClient>(binding, new EndpointAddress("net.tcp://omsmsc.westeurope.cloudapp.azure.com:7090/TMServiceEndpoint"));
                     factoryToTMS = new ChannelFactory<IOMSClient>(binding, new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
                     proxyToTransactionManager = factoryToTMS.CreateChannel();
                 }
@@ -209,6 +222,14 @@ namespace FTN.ESI.SIMES.CIM.CIMAdapter
         public void ClearDataBaseOnNMS()
         {
             NetTcpBinding binding = new NetTcpBinding();
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             ChannelFactory<IOMSClient>  factoryToTMS = new ChannelFactory<IOMSClient>(binding, new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
             proxyToTransactionManager = factoryToTMS.CreateChannel();
             proxyToTransactionManager.ClearNMSDB();

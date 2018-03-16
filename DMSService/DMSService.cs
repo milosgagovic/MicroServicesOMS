@@ -16,9 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using TransactionManagerContract;
 
 namespace DMSService
@@ -26,6 +24,7 @@ namespace DMSService
     public class DMSService : IDisposable
     {
         private List<ServiceHost> hosts = null;
+        private ServiceHost scadaHost;
 
         private List<Source> _sources = new List<Source>();
         private List<Consumer> _consumers = new List<Consumer>();
@@ -43,8 +42,6 @@ namespace DMSService
         private ModelResourcesDesc modelResourcesDesc = new ModelResourcesDesc();
         private ModelGdaDMS gda = new ModelGdaDMS();
 
-        private ServiceHost scadaHost;
-
         private static Tree<Element> tree;
         private static DMSService instance = null;
 
@@ -52,7 +49,6 @@ namespace DMSService
         public static bool isNetworkInitialized = false;
 
         private IMServiceFabricClient _imServiceFabricClient;
-
         private IMServiceFabricClient _IMServiceFabricClient
         {
             get
@@ -60,6 +56,14 @@ namespace DMSService
                 if (_imServiceFabricClient == null)
                 {
                     NetTcpBinding binding = new NetTcpBinding();
+                    binding.SendTimeout = TimeSpan.MaxValue;
+                    binding.ReceiveTimeout = TimeSpan.MaxValue;
+                    binding.OpenTimeout = TimeSpan.MaxValue;
+                    binding.CloseTimeout = TimeSpan.MaxValue;
+                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                    //MaxConnections = int.MaxValue,
+                    binding.MaxReceivedMessageSize = 1024 * 1024;
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
@@ -74,7 +78,6 @@ namespace DMSService
                                     wcfClientFactory,
                                     new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
                                     ServicePartitionKey.Singleton);
-                    
                 }
                 return _imServiceFabricClient;
             }
@@ -89,6 +92,14 @@ namespace DMSService
                 if (_scadaServiceFabricClient == null)
                 {
                     NetTcpBinding binding = new NetTcpBinding();
+                    binding.SendTimeout = TimeSpan.MaxValue;
+                    binding.ReceiveTimeout = TimeSpan.MaxValue;
+                    binding.OpenTimeout = TimeSpan.MaxValue;
+                    binding.CloseTimeout = TimeSpan.MaxValue;
+                    //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+                    //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                    //MaxConnections = int.MaxValue,
+                    binding.MaxReceivedMessageSize = 1024 * 1024;
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
@@ -200,8 +211,10 @@ namespace DMSService
             Tree<Element> retVal = new Tree<Element>();
             List<long> eSources = new List<long>();
 
-            List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
-            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
+            List<IncidentReport> reports = new List<IncidentReport>();
+            List<ElementStateReport> elementStates = new List<ElementStateReport>();
+            // List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
+            // List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
 
             Response response = null;
 
@@ -210,7 +223,7 @@ namespace DMSService
             if (delta.InsertOperations.Count == 0)
             {
                 ClearAllLists();
-                //Ovo je kod koji je komunikacija DMS-a sa NMS-om   
+                // Ovo je kod koji je komunikacija DMS-a sa NMS-om   
                 //Gda.GetExtentValuesExtended(ModelCode.TERMINAL).ForEach(ter => TerminalsRD.Add(ter));
                 //Gda.GetExtentValuesExtended(ModelCode.CONNECTNODE).ForEach(n => NodesRD.Add(n));
                 //Gda.GetExtentValuesExtended(ModelCode.BREAKER).ForEach(n => SwitchesRD.Add(n));
@@ -219,13 +232,13 @@ namespace DMSService
                 //Gda.GetExtentValuesExtended(ModelCode.ENERGSOURCE).ForEach(n => EnergySourcesRD.Add(n));
                 //Gda.GetExtentValuesExtended(ModelCode.DISCRETE).ForEach(n => DiscreteMeasurementsRD.Add(n));
 
-                //Posto smo uveli bazu RD-na napunicemo liste na DMS-u iz cloud baze
+                // Posto smo uveli bazu RD-na napunicemo liste na DMS-u iz cloud baze
                 using (NMSAdoNet ctx = new NMSAdoNet())
                 {
                     List<PropertyValue> propValues = (List<PropertyValue>)ctx.PropertyValue.ToList();
                     List<Property> properties = ctx.Property.ToList();
-                  
-                   // properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
+
+                    // properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
 
                     if (properties.Count > 0)
                     {
@@ -379,7 +392,17 @@ namespace DMSService
             int count = 0;
             while (response == null)
             {
-                response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
+                try
+                {
+                    response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("****----------\n----***-----{0}---\n", e.Message);
+                    System.Diagnostics.Trace.WriteLine("Trace.WriteLine(------***----\n----**-----{0}\n", e.Message);
+                    //throw;
+                }
+                //response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
                 Thread.Sleep(2000);
             }
 
@@ -504,7 +527,7 @@ namespace DMSService
                                 {
                                     sw.CanCommand = false;
                                 }
-                                
+
                                 break;
                             }
                             else if (report.MrID == sw.MRID && report.IncidentState == IncidentState.REPAIRED)
@@ -735,10 +758,14 @@ namespace DMSService
         private void InitializeHosts()
         {
             var binding = new NetTcpBinding();
-            binding.CloseTimeout = TimeSpan.FromMinutes(10);
-            binding.OpenTimeout = TimeSpan.FromMinutes(10);
-            binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-            binding.SendTimeout = TimeSpan.FromMinutes(10);
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             binding.TransactionFlow = true;
 
             hosts = new List<ServiceHost>();

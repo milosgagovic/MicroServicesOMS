@@ -42,10 +42,14 @@ namespace FTN.Services.NetworkModelService
         {
             hosts = new List<ServiceHost>();
             var binding = new NetTcpBinding();
-            binding.CloseTimeout = TimeSpan.FromMinutes(10);
-            binding.OpenTimeout = TimeSpan.FromMinutes(10);
-            binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-            binding.SendTimeout = TimeSpan.FromMinutes(10);
+            binding.SendTimeout = TimeSpan.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
+            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
+            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+            //MaxConnections = int.MaxValue,
+            binding.MaxReceivedMessageSize = 1024 * 1024;
             binding.TransactionFlow = true;
 
             ServiceHost svc = new ServiceHost(typeof(NetworkModelTransactionService));
