@@ -161,14 +161,13 @@ namespace DMSService
         public ModelGdaDMS Gda { get => gda; set => gda = value; }
         #endregion
 
+        // unused in SF
         public void Start()
         {
             string message = string.Empty;
             // u StartHosts() ce se startovati DMSTransaction i DMSDispatcher. 
             StartHosts();
             Tree = InitializeNetwork(new Delta());
-
-            //isNetworkInitialized = true;
 
             while (!isNetworkInitialized)
             {
@@ -197,10 +196,10 @@ namespace DMSService
             Tree<Element> retVal = new Tree<Element>();
             List<long> eSources = new List<long>();
 
-            //List<IncidentReport> reports = new List<IncidentReport>();
-            //List<ElementStateReport> elementStates = new List<ElementStateReport>();
-            List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
-            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
+            List<IncidentReport> reports = new List<IncidentReport>();
+            List<ElementStateReport> elementStates = new List<ElementStateReport>();
+            //List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
+            //List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
 
             Response response = null;
 
@@ -378,6 +377,8 @@ namespace DMSService
             int count = 0;
             while (response == null)
             {
+                // GRESKA! 
+                // ovde ne radi
                 try
                 {
                     response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
@@ -387,8 +388,7 @@ namespace DMSService
                     Console.WriteLine("****----------\n----***-----{0}---\n", e.Message);
                     System.Diagnostics.Trace.WriteLine("Trace.WriteLine(------***----\n----**-----{0}\n", e.Message);
                     //throw;
-                }
-                //response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
+                }                
                 Thread.Sleep(2000);
             }
 
@@ -741,6 +741,7 @@ namespace DMSService
             GC.SuppressFinalize(this);
         }
 
+        // unused in SF
         private void InitializeHosts()
         {
             var binding = new NetTcpBinding();
@@ -748,9 +749,6 @@ namespace DMSService
             binding.ReceiveTimeout = TimeSpan.MaxValue;
             binding.OpenTimeout = TimeSpan.MaxValue;
             binding.CloseTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-            //binding.CloseTimeout = TimeSpan.FromMinutes(5);
-            //MaxConnections = int.MaxValue,
             binding.MaxReceivedMessageSize = 1024 * 1024;
             binding.TransactionFlow = true;
 
@@ -857,12 +855,12 @@ namespace DMSService
             {
                 SendTimeout = TimeSpan.MaxValue,
                 ReceiveTimeout = TimeSpan.MaxValue,
-                OpenTimeout = TimeSpan.FromSeconds(5),
-                CloseTimeout = TimeSpan.FromSeconds(5),
+                // OpenTimeout = TimeSpan.FromSeconds(5),
+                // CloseTimeout = TimeSpan.FromSeconds(5),
                 //OpenTimeout = TimeSpan.MaxValue,
                 //CloseTimeout = TimeSpan.MaxValue,
-                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                OpenTimeout = TimeSpan.FromMinutes(5),
+                CloseTimeout = TimeSpan.FromMinutes(5),
                 MaxConnections = int.MaxValue,
                 MaxReceivedMessageSize = 1024 * 1024
             };

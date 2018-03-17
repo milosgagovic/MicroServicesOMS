@@ -134,12 +134,12 @@ namespace PubSubscribe
             {
                 SendTimeout = TimeSpan.MaxValue,
                 ReceiveTimeout = TimeSpan.MaxValue,
-                OpenTimeout = TimeSpan.FromSeconds(5),
-                CloseTimeout = TimeSpan.FromSeconds(5),
+                // OpenTimeout = TimeSpan.FromSeconds(5),
+                // CloseTimeout = TimeSpan.FromSeconds(5),
                 //OpenTimeout = TimeSpan.MaxValue,
                 //CloseTimeout = TimeSpan.MaxValue,
-                //binding.OpenTimeout = TimeSpan.FromMinutes(5);
-                //binding.CloseTimeout = TimeSpan.FromMinutes(5);
+                OpenTimeout = TimeSpan.FromMinutes(5),
+                CloseTimeout = TimeSpan.FromMinutes(5),
                 MaxConnections = int.MaxValue,
                 MaxReceivedMessageSize = 1024 * 1024
             };

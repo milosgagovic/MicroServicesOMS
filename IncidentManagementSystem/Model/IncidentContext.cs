@@ -13,9 +13,9 @@ namespace IncidentManagementSystem.Model
     {
         public IncidentContext()
         {
-            var adapter = (IObjectContextAdapter)this;
-            var objectContext = adapter.ObjectContext;
-            objectContext.CommandTimeout = 300;
+            //var adapter = (IObjectContextAdapter)this;
+            //var objectContext = adapter.ObjectContext;
+            //objectContext.CommandTimeout = 300;
         }
 
         public DbSet<IncidentReport> IncidentReports { get; set; }
