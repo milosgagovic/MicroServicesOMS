@@ -16,6 +16,7 @@ using System.ServiceModel;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using DMSContract;
+using FTN.Common;
 
 namespace SCADA.CommunicationAndControlling
 {
@@ -487,7 +488,7 @@ namespace SCADA.CommunicationAndControlling
 
                                                                 IServicePartitionResolver partitionResolverToDMS = ServicePartitionResolver.GetDefault();
                                                                 var wcfClientFactoryToDMS = new WcfCommunicationClientFactory<IDMSToSCADAContract>
-                                                                    (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToDMS);
+                                                                    (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolverToDMS);
 
                                                                 DmsClientSF dMSClient = new DmsClientSF(
                                                                     wcfClientFactoryToDMS,
@@ -546,7 +547,7 @@ namespace SCADA.CommunicationAndControlling
                                                                 //to do: propagacija analogih promena(ako se secate Pavlica je prvo rekao da nam to ne treba da samo jednom zakucamo vrednost na pocetku) xD
                                                                 IServicePartitionResolver partitionResolverToDMS = ServicePartitionResolver.GetDefault();
                                                                 var wcfClientFactoryToDMS = new WcfCommunicationClientFactory<IDMSToSCADAContract>
-                                                                    (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToDMS);
+                                                                    (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolverToDMS);
 
                                                                 DmsClientSF dMSClient = new DmsClientSF(
                                                                     wcfClientFactoryToDMS,

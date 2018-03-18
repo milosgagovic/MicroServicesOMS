@@ -1,6 +1,7 @@
 ﻿using DMSCommon;
 using DMSCommon.Model;
 using DMSContract;
+using FTN.Common;
 using IMSContract;
 using IncidentManagementSystem.Service;
 using Microsoft.ServiceFabric.Services.Client;
@@ -32,7 +33,7 @@ namespace DMSService
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
                     var wcfClientFactory = new WcfCommunicationClientFactory<IIMSContract>
-                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+                        (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver);
 
                     //
                     // Create a client for communicating with the ICalculator service that has been created with the

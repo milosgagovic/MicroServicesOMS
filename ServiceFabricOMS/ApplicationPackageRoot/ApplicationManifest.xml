@@ -6,9 +6,9 @@
     <Parameter Name="TMStatefulService_PartitionCount" DefaultValue="1" />
     <Parameter Name="TMStatefulService_TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="PubSubStatelessService_InstanceCount" DefaultValue="-1" />
-    <Parameter Name="NMStatelessService_InstanceCount" DefaultValue="1" />
-    <Parameter Name="DMStatelessService_InstanceCount" DefaultValue="1" />
-    <Parameter Name="IMStatelessService_InstanceCount" DefaultValue="1" />
+    <Parameter Name="NMStatelessService_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="DMStatelessService_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="IMStatelessService_InstanceCount" DefaultValue="-1" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 

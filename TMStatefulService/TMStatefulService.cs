@@ -6,6 +6,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+using FTN.Common;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
@@ -65,8 +66,9 @@ namespace TMStatefulService
             var listener = new WcfCommunicationListener<IOMSClient>(
                 serviceContext: context,
                 wcfServiceObject: new TransactionManager.TransactionManager(this.Context.ReplicaId),
-                listenerBinding: binding,
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
                 address: new EndpointAddress(uri)
+               // endpointResourceName: "TMServiceEndpoint"
             );
 
 

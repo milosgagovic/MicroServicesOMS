@@ -98,7 +98,7 @@ namespace PubSubscribe
             //  TransactionCallback CallBackTransactionDMS2 = new TransactionCallback();
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactory = new WcfCommunicationClientFactory<IPublishing>
-                (clientBinding: binding, servicePartitionResolver: partitionResolver);
+                (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver);
 
             //
             // Create a client for communicating with the ICalculator service that has been created with the

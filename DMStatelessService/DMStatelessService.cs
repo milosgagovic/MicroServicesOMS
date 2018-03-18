@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DMSContract;
 using DMSService;
+using FTN.Common;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -62,8 +63,9 @@ namespace DMStatelessService
             var listener = new WcfCommunicationListener<IDMSContract>(
                 serviceContext: context,
                 wcfServiceObject: new DMSDispatcherService(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+                //address: new EndpointAddress(uri)
+                endpointResourceName: "DMSDispatcherService"
             );
 
 
@@ -87,8 +89,9 @@ namespace DMStatelessService
             var listener = new WcfCommunicationListener<ITransaction>(
                 serviceContext: context,
                 wcfServiceObject: new DMSTransactionService(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+               // address: new EndpointAddress(uri)
+               endpointResourceName: "DMSTransactionService"
             );
 
 
@@ -112,8 +115,9 @@ namespace DMStatelessService
             var listener = new WcfCommunicationListener<IDMSToSCADAContract>(
                 serviceContext: context,
                 wcfServiceObject: new DMSServiceForSCADA(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+               // address: new EndpointAddress(uri)
+               endpointResourceName: "DMSServiceForSCADA"
             );
 
 

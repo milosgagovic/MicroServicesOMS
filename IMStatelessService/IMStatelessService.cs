@@ -6,6 +6,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+using FTN.Common;
 using IMSContract;
 using IncidentManagementSystem.Service;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -59,8 +60,9 @@ namespace IMStatelessService
             var listener = new WcfCommunicationListener<IIMSContract>(
                 serviceContext: context,
                 wcfServiceObject: new IMSService(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+               // address: new EndpointAddress(uri)
+               endpointResourceName: "IMServiceEndpoint"
             );
 
 

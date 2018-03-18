@@ -28,7 +28,7 @@
       <!-- This endpoint is used by the communication listener to obtain the port on which to 
            listen. Please note that if your service is partitioned, this port is shared with 
            replicas of different partitions that are placed in your code. -->
-      <Endpoint Name="PublishingServiceEndpoint" Protocol="tcp" Port="4070" />
+      <Endpoint Name="PublishingServiceEndpoint" />
       <Endpoint Name="SubscriptionServiceEndpoint" Protocol="tcp" Port="4080" />
     </Endpoints>
   </Resources>

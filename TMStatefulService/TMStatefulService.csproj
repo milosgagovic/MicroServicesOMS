@@ -126,6 +126,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TransactionManagerContract\TransactionManagerContract.csproj">
       <Project>{72A5DD5A-5613-49CB-8351-3CE33A86FC01}</Project>
       <Name>TransactionManagerContract</Name>

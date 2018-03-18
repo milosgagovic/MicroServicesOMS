@@ -23,7 +23,7 @@ namespace TransactionManager
                 {
                     IServicePartitionResolver partitionResolverToNMS = ServicePartitionResolver.GetDefault();
                     var wcfClientFactoryToNMS = new WcfCommunicationClientFactory<INetworkModelGDAContract>
-                        (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToNMS);
+                        (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolverToNMS);
                     proxyToNMServiceFabric = new NetworkGDAServiceFabric(
                                     wcfClientFactoryToNMS,
                                     new Uri("fabric:/ServiceFabricOMS/NMStatelessService"),

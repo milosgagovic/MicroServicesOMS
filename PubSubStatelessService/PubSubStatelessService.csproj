@@ -113,6 +113,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PubSubContract\PubSubContract.csproj">
       <Project>{C6CF75F4-B2F3-4139-88E9-0EBB37E04E16}</Project>
       <Name>PubSubContract</Name>

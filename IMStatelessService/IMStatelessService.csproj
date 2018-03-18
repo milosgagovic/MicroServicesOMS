@@ -120,6 +120,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IMSContract\IMSContract.csproj">
       <Project>{DB3DA680-83F3-422A-9C7D-7F3F883472A2}</Project>
       <Name>IMSContract</Name>

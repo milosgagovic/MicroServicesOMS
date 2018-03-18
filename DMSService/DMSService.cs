@@ -16,9 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using TransactionManagerContract;
 
 namespace DMSService
@@ -59,12 +57,11 @@ namespace DMSService
             {
                 if (_imServiceFabricClient == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
                     var wcfClientFactory = new WcfCommunicationClientFactory<IIMSContract>
-                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+                        (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver);
 
                     //
                     // Create a client for communicating with the ICalculator service that has been created with the
@@ -74,7 +71,7 @@ namespace DMSService
                                     wcfClientFactory,
                                     new Uri("fabric:/ServiceFabricOMS/IMStatelessService"),
                                     ServicePartitionKey.Singleton);
-                    
+
                 }
                 return _imServiceFabricClient;
             }
@@ -93,7 +90,7 @@ namespace DMSService
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
                     var wcfClientFactory = new WcfCommunicationClientFactory<ISCADAContract>
-                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+                        (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver);
 
                     //
                     // Create a client for communicating with the ICalculator service that has been created with the
@@ -168,7 +165,7 @@ namespace DMSService
         {
             string message = string.Empty;
             // u StartHosts() ce se startovati DMSTransaction i DMSDispatcher. 
-            StartHosts();
+            // StartHosts();
             Tree = InitializeNetwork(new Delta());
 
             //isNetworkInitialized = true;
@@ -200,8 +197,7 @@ namespace DMSService
             Tree<Element> retVal = new Tree<Element>();
             List<long> eSources = new List<long>();
 
-            List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
-            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
+           
 
             Response response = null;
 
@@ -224,8 +220,8 @@ namespace DMSService
                 {
                     List<PropertyValue> propValues = (List<PropertyValue>)ctx.PropertyValue.ToList();
                     List<Property> properties = ctx.Property.ToList();
-                  
-                   // properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
+
+                    // properties.ForEach(x => x.PropertyValue = ctx.PropertyValue.Where(y => y.Id == x.IdDB).FirstOrDefault());
 
                     if (properties.Count > 0)
                     {
@@ -377,11 +373,18 @@ namespace DMSService
             // Obrada od pocetnog CN ka svim ostalima. Iteracija po terminalima
             var watch = System.Diagnostics.Stopwatch.StartNew();
             int count = 0;
+
+
+            List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
+            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
+
             while (response == null)
             {
                 response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
                 Thread.Sleep(2000);
             }
+            //List<IncidentReport> reports = new List<IncidentReport>();
+            //List<ElementStateReport> elementStates = new List<ElementStateReport>();
 
             while (terminals.Count != 0)
             {
@@ -504,7 +507,7 @@ namespace DMSService
                                 {
                                     sw.CanCommand = false;
                                 }
-                                
+
                                 break;
                             }
                             else if (report.MrID == sw.MRID && report.IncidentState == IncidentState.REPAIRED)

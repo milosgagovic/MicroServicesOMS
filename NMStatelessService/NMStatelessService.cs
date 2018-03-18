@@ -6,6 +6,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+using FTN.Common;
 using FTN.ServiceContracts;
 using FTN.Services.NetworkModelService;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -62,8 +63,9 @@ namespace NMStatelessService
             var listener = new WcfCommunicationListener<INetworkModelGDAContract>(
                 serviceContext: context,
                 wcfServiceObject: new GenericDataAccess(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+                //address: new EndpointAddress(uri)
+                endpointResourceName: "NMServiceEndpoint"
             );
 
 
@@ -86,8 +88,9 @@ namespace NMStatelessService
             var listener = new WcfCommunicationListener<ITransaction>(
              serviceContext: context,
              wcfServiceObject: networkModelTransactionService,
-             listenerBinding: binding,
-             address: new EndpointAddress(uri)
+             listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+             //address: new EndpointAddress(uri)
+             endpointResourceName: "NMTransactionServiceEndpoint"
          );
 
             return listener;

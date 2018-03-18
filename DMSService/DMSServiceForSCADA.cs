@@ -31,7 +31,7 @@ namespace DMSService
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
                     var wcfClientFactory = new WcfCommunicationClientFactory<IIMSContract>
-                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+                        (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver);
 
                     //
                     // Create a client for communicating with the ICalculator service that has been created with the
