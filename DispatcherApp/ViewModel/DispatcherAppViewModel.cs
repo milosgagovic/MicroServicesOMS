@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using DispatcherApp.View.CustomControls.TabContentControls;
 using GravityAppsMandelkowMetroCharts;
 using DMSCommon;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DispatcherApp.ViewModel
 {
@@ -153,9 +154,11 @@ namespace DispatcherApp.ViewModel
             binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
             binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
             binding.MaxReceivedMessageSize = Int32.MaxValue;
+            //.Security.Transport.ClientCredentialType = TcpClientCredentialType.Certificate;
 
-            ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-                new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
+            ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
+                new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
+
             ProxyToTransactionManager = factoryToTMS.CreateChannel();
             TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
@@ -168,6 +171,23 @@ namespace DispatcherApp.ViewModel
             InitNetwork();
             InitElementsAndProperties(answerFromTransactionManager);
             DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
+        }
+        public static X509Certificate2 GetCertificateFromStorage(StoreName storeName, StoreLocation storeLocation, string subjectName)
+        {
+            X509Store store = new X509Store(storeName, storeLocation);
+            store.Open(OpenFlags.ReadOnly);
+
+            X509Certificate2Collection certCollection = store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, true);
+
+            foreach (X509Certificate2 cert in certCollection)
+            {
+                if (cert.SubjectName.Name.Equals(string.Format("CN={0}", subjectName)))
+                {
+                    return cert;
+                }
+            }
+
+            return null;
         }
 
         public void InitNetwork()
@@ -2036,8 +2056,8 @@ namespace DispatcherApp.ViewModel
                     binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
                     binding.MaxReceivedMessageSize = Int32.MaxValue;
 
-                    ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-               new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
+                    ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
+               new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
                     ProxyToTransactionManager = factoryToTMS.CreateChannel();
                     TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 

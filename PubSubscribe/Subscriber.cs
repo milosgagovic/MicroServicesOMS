@@ -1,4 +1,5 @@
 ﻿using DMSCommon;
+using FTN.Common;
 using IMSContract;
 using PubSubContract;
 using System;
@@ -39,14 +40,14 @@ namespace PubSubscribe
             try
             {  //***git
                 NetTcpBinding binding = new NetTcpBinding();
-                binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                binding.SendTimeout = TimeSpan.FromMinutes(10);
+                binding.CloseTimeout = TimeSpan.FromDays(10);
+                binding.OpenTimeout = TimeSpan.FromDays(10);
+                binding.ReceiveTimeout = TimeSpan.FromDays(10);
+                binding.SendTimeout = TimeSpan.FromDays(10);
                 binding.MaxReceivedMessageSize = Int32.MaxValue;
-                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:4080/SubscriptionService");
+                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://23.99.82.238:4080/SubscriptionService");
                 InstanceContext callback = new InstanceContext(this);
-                DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, binding, endpointAddress);
+                DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, BindingForTCP.CreateCustomNetTcp(), endpointAddress);
                 subscriptionProxy = channelFactory.CreateChannel();
             }
             catch (Exception e)

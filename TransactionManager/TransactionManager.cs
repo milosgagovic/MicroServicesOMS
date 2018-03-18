@@ -72,7 +72,7 @@ namespace TransactionManager
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
                     var wcfClientFactory = new WcfCommunicationClientFactory<ISCADAContract>
-                        (clientBinding: binding, servicePartitionResolver: partitionResolver);
+                        (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver);
 
                     //
                     // Create a client for communicating with the ICalculator service that has been created with the
@@ -133,7 +133,7 @@ namespace TransactionManager
             IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactory = new WcfCommunicationClientFactory<IIMSContract>
-                (clientBinding: binding, servicePartitionResolver: partitionResolver);
+                (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver);
 
             //
             // Create a client for communicating with the ICalculator service that has been created with the
@@ -156,7 +156,7 @@ namespace TransactionManager
             //  TransactionCallback CallBackTransactionDMS2 = new TransactionCallback();
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactory2 = new WcfCommunicationClientFactory<ITransaction>
-                (clientBinding: binding2, servicePartitionResolver: partitionResolver2, callback: CallBackTransactionDMS);
+                (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver2, callback: CallBackTransactionDMS);
 
             //
             // Create a client for communicating with the ICalculator service that has been created with the
@@ -179,7 +179,7 @@ namespace TransactionManager
             TransactionCallbacks.Add(CallBackTransactionNMS);
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactory3 = new WcfCommunicationClientFactory<ITransaction>
-                (clientBinding: binding3, servicePartitionResolver: partitionResolver3, callback: CallBackTransactionNMS);
+                (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver3, callback: CallBackTransactionNMS);
 
             //
             // Create a client for communicating with the ICalculator service that has been created with the
@@ -194,7 +194,6 @@ namespace TransactionManager
             TransactionProxys.Add(_WCFNMSTransactionClient);
 
 
-            NetTcpBinding bindingScada = new NetTcpBinding();
             // Create a partition resolver
             IServicePartitionResolver partitionResolverScada = ServicePartitionResolver.GetDefault();
 
@@ -203,7 +202,7 @@ namespace TransactionManager
             //  TransactionCallback CallBackTransactionDMS2 = new TransactionCallback();
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactoryScada = new WcfCommunicationClientFactory<ITransactionSCADA>
-                (clientBinding: bindingScada, servicePartitionResolver: partitionResolverScada, callback: CallBackTransactionSCADA);
+                (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolverScada, callback: CallBackTransactionSCADA);
 
             //
             // Create a client for communicating with the ICalculator service that has been created with the
@@ -221,7 +220,7 @@ namespace TransactionManager
 
             IServicePartitionResolver partitionResolverToDMS = ServicePartitionResolver.GetDefault();
             var wcfClientFactoryToDMS = new WcfCommunicationClientFactory<IDMSContract>
-                (clientBinding: new NetTcpBinding(), servicePartitionResolver: partitionResolverToDMS);
+                (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolverToDMS);
             proxyToDMS = new ServiceFabricDMSClient(
                             wcfClientFactoryToDMS,
                             new Uri("fabric:/ServiceFabricOMS/DMStatelessService"),
@@ -230,7 +229,6 @@ namespace TransactionManager
 
 
 
-            NetTcpBinding binding4 = new NetTcpBinding();
             // Create a partition resolver
             IServicePartitionResolver partitionResolver4 = ServicePartitionResolver.GetDefault();
 
@@ -239,7 +237,7 @@ namespace TransactionManager
             //  TransactionCallback CallBackTransactionDMS2 = new TransactionCallback();
             // create a  WcfCommunicationClientFactory object.
             var wcfClientFactory4 = new WcfCommunicationClientFactory<ISubscription>
-                (clientBinding: binding4, servicePartitionResolver: partitionResolver4);
+                (clientBinding: BindingForTCP.CreateCustomNetTcp(), servicePartitionResolver: partitionResolver4);
 
             //
             // Create a client for communicating with the ICalculator service that has been created with the
@@ -429,21 +427,22 @@ namespace TransactionManager
 
         public TMSAnswerToClient GetNetwork()
         {
-            CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=storageomsmsc;AccountKey=Hu9kN3vtydaxcJoqHLdScZghIDqQqxVoGxZf5yi1pE/W0NY5nC5np68CeE2b72sFGTtB160zl3DBD5XY1EQQUQ==;EndpointSuffix=core.windows.net");
-            CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+            //CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=storageomsmsc;AccountKey=Hu9kN3vtydaxcJoqHLdScZghIDqQqxVoGxZf5yi1pE/W0NY5nC5np68CeE2b72sFGTtB160zl3DBD5XY1EQQUQ==;EndpointSuffix=core.windows.net");
+            //CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
 
-            CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("logs");
-            var bla = cloudBlobContainer.CreateIfNotExists();
+            //CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("logs");
+            //var bla = cloudBlobContainer.CreateIfNotExists();
 
-            CloudAppendBlob appendBlob = cloudBlobContainer.GetAppendBlobReference("logfile");
+            //CloudAppendBlob appendBlob = cloudBlobContainer.GetAppendBlobReference("logfile");
 
-            if(!appendBlob.Exists())
-            {
-                appendBlob.CreateOrReplace();
-            }
-           
-            appendBlob.AppendText(string.Format("TransactionManager, GetNetwork(), instanceID: {0}, Time: {1}{2}", this.instanceID, DateTime.Now, Environment.NewLine));
-            cloudBlobContainer.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+            //if(!appendBlob.Exists())
+            //{
+            //    appendBlob.CreateOrReplace();
+            //}
+
+            //appendBlob.AppendText(string.Format("TransactionManager, GetNetwork(), instanceID: {0}, Time: {1}{2}", this.instanceID, DateTime.Now, Environment.NewLine));
+            //cloudBlobContainer.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+            //return new TMSAnswerToClient();
             List<Element> listOfDMSElement = proxyToDMS.InvokeWithRetry(client => client.Channel.GetAllElements());
             // ako se ne podignu svi servisi na DMSu, ovde pada
             //   List<Element> listOfDMSElement = proxyToDispatcherDMS.GetAllElements();

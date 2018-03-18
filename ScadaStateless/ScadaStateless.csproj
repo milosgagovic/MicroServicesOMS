@@ -118,6 +118,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DMSService\DMSService.csproj">
       <Project>{1C74A638-26EB-4F71-BE54-D24954BEDB0C}</Project>
       <Name>DMSService</Name>

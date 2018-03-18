@@ -169,6 +169,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\OMSSCADACommon\OMSSCADACommon.csproj">
       <Project>{a7f86ca6-39f1-4b61-bf71-c01e327fa861}</Project>
       <Name>OMSSCADACommon</Name>

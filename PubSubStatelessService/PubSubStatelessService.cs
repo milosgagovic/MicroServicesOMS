@@ -6,6 +6,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+using FTN.Common;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -59,8 +60,9 @@ namespace PubSubStatelessService
             var listener = new WcfCommunicationListener<IPublishing>(
                 serviceContext: context,
                 wcfServiceObject: new PublishingService(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+                //address: new EndpointAddress(uri)
+                endpointResourceName: "PubSubServiceEndpoint"
             );
 
 
@@ -83,8 +85,9 @@ namespace PubSubStatelessService
             var listener = new WcfCommunicationListener<ISubscription>(
                 serviceContext: context,
                 wcfServiceObject: new SubscriptionService(),
-                listenerBinding: binding,
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
                 address: new EndpointAddress(uri)
+                //endpointResourceName: "SubscriptionServiceEndpoint"
             );
 
 

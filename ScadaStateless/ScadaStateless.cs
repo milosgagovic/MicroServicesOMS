@@ -7,6 +7,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using DMSService;
+using FTN.Common;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -58,8 +59,9 @@ namespace ScadaStateless
             var listener = new WcfCommunicationListener<ISCADAContract>(
                 serviceContext: context,
                 wcfServiceObject: new Invoker(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+                //address: new EndpointAddress(uri)
+                endpointResourceName: "ScadaInvoker"
             );
 
 
@@ -83,8 +85,9 @@ namespace ScadaStateless
             var listener = new WcfCommunicationListener<ITransactionSCADA>(
                 serviceContext: context,
                 wcfServiceObject: new SCADATransactionService(),
-                listenerBinding: binding,
-                address: new EndpointAddress(uri)
+                listenerBinding: BindingForTCP.CreateCustomNetTcp(),
+                //address: new EndpointAddress(uri)
+                endpointResourceName: "ScadaTransactionService"
             );
 
 

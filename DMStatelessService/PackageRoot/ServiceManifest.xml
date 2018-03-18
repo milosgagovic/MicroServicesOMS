@@ -28,9 +28,9 @@
       <!-- This endpoint is used by the communication listener to obtain the port on which to 
            listen. Please note that if your service is partitioned, this port is shared with 
            replicas of different partitions that are placed in your code. -->
-      <Endpoint Name="DMSDispatcherService" Protocol="tcp" Port="8029" />
-      <Endpoint Name="DMSTransactionService" Protocol="tcp" Port="8028" />
-      <Endpoint Name="DMSServiceForSCADA" Protocol="tcp" Port="8039" />
+      <Endpoint Name="DMSDispatcherService"  />
+      <Endpoint Name="DMSTransactionService"  />
+      <Endpoint Name="DMSServiceForSCADA"  />
     </Endpoints>
   </Resources>
 </ServiceManifest>

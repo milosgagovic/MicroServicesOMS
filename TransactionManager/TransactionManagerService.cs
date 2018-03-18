@@ -18,10 +18,10 @@ namespace TransactionManager
             svc = new ServiceHost(typeof(TransactionManager));
 
             var binding = new NetTcpBinding();
-            binding.CloseTimeout = TimeSpan.FromMinutes(10);
-            binding.OpenTimeout = TimeSpan.FromMinutes(10);
-            binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-            binding.SendTimeout = TimeSpan.FromMinutes(10);
+            binding.CloseTimeout = TimeSpan.FromDays(10);
+            binding.OpenTimeout = TimeSpan.FromDays(10);
+            binding.ReceiveTimeout = TimeSpan.FromDays(10);
+            binding.SendTimeout = TimeSpan.FromDays(10);
             binding.TransactionFlow = true;
 
             svc.AddServiceEndpoint(typeof(IOMSClient),
