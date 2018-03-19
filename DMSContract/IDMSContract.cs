@@ -34,11 +34,11 @@ namespace DMSContract
         Dictionary<long, Element> InitNetwork();
 
         [OperationContract]
-
         Source GetTreeRoot();
 
         [OperationContract]
         int GetNetworkDepth();
+
         [OperationContract]
         List<Element> GetAllElements();
 
@@ -46,6 +46,6 @@ namespace DMSContract
         //void SendCrewToDms(string mrid);
 
         [OperationContract]
-        void SendCrewToDms(IncidentReport report);
+        void SendCrewToDms(IncidentReport report, Crew crew);
     }
 }

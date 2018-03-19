@@ -95,6 +95,8 @@ namespace DMSService
                     }
                     else if (state == OMSSCADACommon.States.CLOSED)
                     {
+                        sw.Incident = false;
+                        sw.CanCommand = false;
                         sw.State = SwitchState.Closed;
 
                         // i ovde takodje pojasnjenje

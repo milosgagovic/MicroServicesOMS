@@ -16,7 +16,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using TransactionManagerContract;
 
 namespace DMSService
@@ -57,6 +59,7 @@ namespace DMSService
             {
                 if (_imServiceFabricClient == null)
                 {
+                    NetTcpBinding binding = new NetTcpBinding();
                     // Create a partition resolver
                     IServicePartitionResolver partitionResolver = ServicePartitionResolver.GetDefault();
                     // create a  WcfCommunicationClientFactory object.
@@ -165,7 +168,7 @@ namespace DMSService
         {
             string message = string.Empty;
             // u StartHosts() ce se startovati DMSTransaction i DMSDispatcher. 
-            // StartHosts();
+            StartHosts();
             Tree = InitializeNetwork(new Delta());
 
             //isNetworkInitialized = true;
@@ -197,7 +200,8 @@ namespace DMSService
             Tree<Element> retVal = new Tree<Element>();
             List<long> eSources = new List<long>();
 
-           
+            List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
+            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
 
             Response response = null;
 
@@ -373,18 +377,11 @@ namespace DMSService
             // Obrada od pocetnog CN ka svim ostalima. Iteracija po terminalima
             var watch = System.Diagnostics.Stopwatch.StartNew();
             int count = 0;
-
-
-            List<IncidentReport> reports = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllReports());
-            List<ElementStateReport> elementStates = _IMServiceFabricClient.InvokeWithRetry(client => client.Channel.GetAllElementStateReports());
-
             while (response == null)
             {
                 response = _SCADAServiceFabricClient.InvokeWithRetry(c => c.Channel.ExecuteCommand(new ReadAll()));
                 Thread.Sleep(2000);
             }
-            //List<IncidentReport> reports = new List<IncidentReport>();
-            //List<ElementStateReport> elementStates = new List<ElementStateReport>();
 
             while (terminals.Count != 0)
             {

@@ -583,9 +583,9 @@ namespace TMStatefulService
             }
         }
 
-        public void SendCrew(IncidentReport report)
+        public void SendCrew(IncidentReport report, Crew crew)
         {
-            proxyToDMS.InvokeWithRetry(client => client.Channel.SendCrewToDms(report));
+            proxyToDMS.InvokeWithRetry(client => client.Channel.SendCrewToDms(report, crew));
             //proxyToDispatcherDMS.SendCrewToDms(report);
             return;
         }

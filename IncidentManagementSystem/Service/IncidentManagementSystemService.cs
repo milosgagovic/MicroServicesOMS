@@ -15,7 +15,7 @@ namespace IncidentManagementSystem.Service
         private ServiceHost svc = null;
         public void Start()
         {
-            Database.SetInitializer<IncidentContext>(new DropCreateDatabaseIfModelChanges<IncidentContext>());
+            //Database.SetInitializer<IncidentContext>(new DropCreateDatabaseIfModelChanges<IncidentContext>());
             LoadCrews();
 
             svc = new ServiceHost(typeof(IMSService));
@@ -54,21 +54,21 @@ namespace IncidentManagementSystem.Service
             crews.Add(c4);
             crews.Add(c5);
 
-            using (var ctx = new IncidentContext())
-            {
-                foreach (Crew c in crews)
-                {
-                    try
-                    {
-                        if (!ctx.Crews.Any(e => e.Id == c.Id))
-                        {
-                            ctx.Crews.Add(c);
-                            ctx.SaveChanges();
-                        }
-                    }
-                    catch (Exception e) { }
-                }
-            }
+            //using (var ctx = new IncidentContext())
+            //{
+            //    foreach (Crew c in crews)
+            //    {
+            //        try
+            //        {
+            //            if (!ctx.Crews.Any(e => e.Id == c.Id))
+            //            {
+            //                ctx.Crews.Add(c);
+            //                ctx.SaveChanges();
+            //            }
+            //        }
+            //        catch (Exception e) { }
+            //    }
+            //}
             using (var ctxCloud = new IncidentCloudContext())
             {
                 foreach (Crew c in crews)

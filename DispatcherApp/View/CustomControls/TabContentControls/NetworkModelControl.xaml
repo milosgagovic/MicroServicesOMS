@@ -39,7 +39,7 @@
             <Slider Name="SizeSlider" Style="{StaticResource ResourceKey=Horizontal_Slider}" Minimum="1" Maximum="10" Value="2" VerticalAlignment="Center" HorizontalAlignment="Right" Width="200" Margin="3, 8, 3, 0">
             </Slider>
         </StackPanel>
-        <Border Grid.Row="1" BorderBrush="{StaticResource MediumColor}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20, 20, 20, 20">
+        <Border Grid.Row="1" BorderBrush="{StaticResource MediumColor}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20, 20, 20, 20">
             <ItemsControl ItemsSource="{Binding ItemsSourceForCanvas, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NetworkModelControlExtended}}}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -224,23 +224,34 @@ namespace DMSService
             }
         }
 
-        public void SendCrewToDms(IncidentReport report)
+        public void SendCrewToDms(IncidentReport report, Crew crew)
         {
             /*Logic dms*/
-            Thread crewprocess = new Thread(() => ProcessCrew(report));
+            Thread crewprocess = new Thread(() => ProcessCrew(report, crew));
             crewprocess.Start();
             return;
 
         }
 
-        private void ProcessCrew(IncidentReport report)
+        private void ProcessCrew(IncidentReport report, Crew crew)
         {
+            Publisher publisher = new Publisher();
+
             report.Id = IMSCommunicationClient.InvokeWithRetry(client => client.Channel.GetReport(report.Time)).Id;
 
             if (report != null)
             {
                 if (report.Crewtype == CrewType.Investigation)
                 {
+                    crew.Working = true;
+                    report.InvestigationCrew = crew;
+                    report.RepairCrew = new Crew();
+                    report.CurrentValue = 0;
+                    report.MaxValue = 4;
+                    report.IncidentState = IncidentState.INVESTIGATING;
+
+                    publisher.PublishIncident(report);
+
                     Thread.Sleep(TimeSpan.FromSeconds(4));
 
                     var rnd = new Random(DateTime.Now.Second);
@@ -253,14 +264,24 @@ namespace DMSService
                     report.Reason = res;
                     report.RepairTime = TimeSpan.FromMinutes(repairtime);
                     report.CrewSent = true;
+                    crew.Working = false;
 
                     report.IncidentState = IncidentState.READY_FOR_REPAIR;
                     report.Crewtype = CrewType.Repair;
                 }
                 else if (report.Crewtype == CrewType.Repair)
                 {
+                    crew.Working = true;
+                    report.RepairCrew = crew;
+                    report.CurrentValue = 0;
+                    report.MaxValue = report.RepairTime.TotalMinutes / 10;
+                    report.IncidentState = IncidentState.REPAIRING;
+
+                    publisher.PublishIncident(report);
+
                     Thread.Sleep(TimeSpan.FromSeconds(report.RepairTime.TotalMinutes / 10));
 
+                    crew.Working = false;
                     report.IncidentState = IncidentState.REPAIRED;
 
                     Switch sw = null;
@@ -269,6 +290,7 @@ namespace DMSService
                         if (item.MRID == report.MrID)
                         {
                             sw = (Switch)item;
+                            sw.Incident = false;
 
                             if (item.UnderSCADA)
                             {
@@ -306,7 +328,6 @@ namespace DMSService
 
                 IMSCommunicationClient.InvokeWithRetry(client => client.Channel.UpdateReport(report));
 
-                Publisher publisher = new Publisher();
                 publisher.PublishIncident(report);
             }
         }

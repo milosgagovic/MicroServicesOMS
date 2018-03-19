@@ -67,7 +67,7 @@ namespace DispatcherApp.View.CustomControls
 
             Setter dataSetter1 = new Setter();
             dataSetter1.Property = Border.BackgroundProperty;
-            dataSetter1.Value = Brushes.Blue;
+            dataSetter1.Value = (SolidColorBrush)frameworkElement.FindResource("SwitchColorClosedDeenergized");
             dataSetter1.TargetName = "Border";
             dataTrigger1.Setters.Add(dataSetter1);
 

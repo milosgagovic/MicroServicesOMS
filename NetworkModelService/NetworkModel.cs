@@ -882,12 +882,15 @@ namespace FTN.Services.NetworkModelService
                             reference = originalUpdate.Where(r => r.Id == res).FirstOrDefault();
                         }
 
-                        if (this.EntityExistsMrid(res, reference.GetProperty(ModelCode.IDOBJ_MRID).ToString()))
+                        if (reference != null)
                         {
-                            DMSType type = (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(reference.Id);
-                            Container container = GetContainer(type);
-                            IdentifiedObject io = container.GetEntityMrid(reference.GetProperty(ModelCode.IDOBJ_MRID).ToString());
-                            p.SetValue(io.GlobalId);
+                            if (this.EntityExistsMrid(res, reference.GetProperty(ModelCode.IDOBJ_MRID).ToString()))
+                            {
+                                DMSType type = (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(reference.Id);
+                                Container container = GetContainer(type);
+                                IdentifiedObject io = container.GetEntityMrid(reference.GetProperty(ModelCode.IDOBJ_MRID).ToString());
+                                p.SetValue(io.GlobalId);
+                            }
                         }
                     }
                     else if (p.Type == PropertyType.ReferenceVector)
@@ -909,12 +912,15 @@ namespace FTN.Services.NetworkModelService
                             reference = originalUpdate.Where(r => r.Id == res).FirstOrDefault();
                         }
 
-                        if (this.EntityExistsMrid(res, reference.GetProperty(ModelCode.IDOBJ_MRID).ToString()))
+                        if (reference != null)
                         {
-                            DMSType type = (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(reference.Id);
-                            Container container = GetContainer(type);
-                            IdentifiedObject io = container.GetEntityMrid(reference.GetProperty(ModelCode.IDOBJ_MRID).ToString());
-                            p.SetValue(io.GlobalId);
+                            if (this.EntityExistsMrid(res, reference.GetProperty(ModelCode.IDOBJ_MRID).ToString()))
+                            {
+                                DMSType type = (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(reference.Id);
+                                Container container = GetContainer(type);
+                                IdentifiedObject io = container.GetEntityMrid(reference.GetProperty(ModelCode.IDOBJ_MRID).ToString());
+                                p.SetValue(io.GlobalId);
+                            }
                         }
                     }
                     else if (p.Type == PropertyType.ReferenceVector)

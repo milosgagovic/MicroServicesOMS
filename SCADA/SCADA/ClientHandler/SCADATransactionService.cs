@@ -38,7 +38,7 @@ namespace SCADA.ClientHandler
             var availableRtus = dbContext.GettAllRTUs().Values.Where(r => r.FreeSpaceForDigitals == true ||
                                                                     r.FreeSpaceForAnalogs == true).ToList();
             if (availableRtus.Count != 0)
-                isSuccessfull = false;
+                isSuccessfull = true;
 
             try
             {
@@ -47,7 +47,7 @@ namespace SCADA.ClientHandler
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                callback.CallbackEnlist(false);
+                //callback.CallbackEnlist(false);
             }
         }
 

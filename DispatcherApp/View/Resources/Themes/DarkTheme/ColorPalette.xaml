@@ -11,10 +11,13 @@
     <SolidColorBrush x:Key="SignatureLightColor" Color="#31DBD0">
     </SolidColorBrush>
 
-    <SolidColorBrush x:Key="DarkestColor" Color="#211F1F">
+    <SolidColorBrush x:Key="DarkestColor" Color="#211e1e">
     </SolidColorBrush>
 
     <SolidColorBrush x:Key="DarkColor" Color="#393535">
+    </SolidColorBrush>
+
+    <SolidColorBrush x:Key="MediumDarkColor" Color="#4a4545">
     </SolidColorBrush>
 
     <SolidColorBrush x:Key="MediumColor" Color="Gray">

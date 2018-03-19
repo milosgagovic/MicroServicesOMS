@@ -14,7 +14,7 @@
     <ControlTemplate x:Key="SwitchControlTemplate">
     </ControlTemplate>
 
-    <SolidColorBrush x:Key="SwitchColorClosedDeenergized" Color="#2C2CFF">
+    <SolidColorBrush x:Key="SwitchColorClosedDeenergized" Color="#002feb">
     </SolidColorBrush>
 
     <SolidColorBrush x:Key="SwitchColorMouseOverClosedDeenergized" Color="LightBlue">
