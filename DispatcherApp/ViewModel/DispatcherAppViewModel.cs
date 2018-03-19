@@ -157,7 +157,7 @@ namespace DispatcherApp.ViewModel
             //.Security.Transport.ClientCredentialType = TcpClientCredentialType.Certificate;
 
             ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
-                new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
+                new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
 
             ProxyToTransactionManager = factoryToTMS.CreateChannel();
             TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
@@ -2057,7 +2057,7 @@ namespace DispatcherApp.ViewModel
                     binding.MaxReceivedMessageSize = Int32.MaxValue;
 
                     ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
-               new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
+               new EndpointAddress("net.tcp://ocalhost:7090/TMServiceEndpoint"));
                     ProxyToTransactionManager = factoryToTMS.CreateChannel();
                     TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 

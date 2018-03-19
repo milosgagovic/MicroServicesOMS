@@ -118,6 +118,7 @@
     <Compile Include="TMStatefulService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ServiceEventSource.cs" />
+    <Compile Include="TransactionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PackageRoot\Config\Settings.xml" />
@@ -129,6 +130,38 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{892CBE15-9ED7-4540-81FA-0EAABA592138}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\DMSCommon\DMSCommon.csproj">
+      <Project>{86D0FD27-8DA2-476E-A046-FCB849F12414}</Project>
+      <Name>DMSCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\OMSSCADACommon\OMSSCADACommon.csproj">
+      <Project>{A7F86CA6-39F1-4B61-BF71-C01E327FA861}</Project>
+      <Name>OMSSCADACommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DMSContract\DMSContract.csproj">
+      <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>
+      <Name>DMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IMSContract\IMSContract.csproj">
+      <Project>{DB3DA680-83F3-422A-9C7D-7F3F883472A2}</Project>
+      <Name>IMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IncidentManagementSystem\IncidentManagementSystem.csproj">
+      <Project>{82198CE2-B255-4713-B0E2-D0CB7E483104}</Project>
+      <Name>IncidentManagementSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PubSubContract\PubSubContract.csproj">
+      <Project>{C6CF75F4-B2F3-4139-88E9-0EBB37E04E16}</Project>
+      <Name>PubSubContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceContracts\NetworkModelQueryContract\NetworkModelGDAContract.csproj">
+      <Project>{B726FB71-D295-41EE-9644-B2B0B1BC8911}</Project>
+      <Name>NetworkModelGDAContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceContracts\SCADAContracts\SCADAContracts.csproj">
+      <Project>{91FA4DB9-E3E0-4A3C-B0AB-29DCEC746770}</Project>
+      <Name>SCADAContracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\TransactionManagerContract\TransactionManagerContract.csproj">
       <Project>{72A5DD5A-5613-49CB-8351-3CE33A86FC01}</Project>

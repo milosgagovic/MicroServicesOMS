@@ -65,7 +65,7 @@ namespace TMStatefulService
 
             var listener = new WcfCommunicationListener<IOMSClient>(
                 serviceContext: context,
-                wcfServiceObject: new TransactionManager.TransactionManager(this.Context.ReplicaId),
+                wcfServiceObject: new TransactionManager(this.Context),
                 listenerBinding: BindingForTCP.CreateCustomNetTcp(),
                 address: new EndpointAddress(uri)
                // endpointResourceName: "TMServiceEndpoint"

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace TransactionManager
 {
-    class ModelGDATMS
+  public class ModelGDATMS
     {
         private ModelResourcesDesc modelResourcesDesc = new ModelResourcesDesc();
         private NetworkGDAServiceFabric proxyToNMServiceFabric = null;
