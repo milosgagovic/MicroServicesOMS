@@ -263,7 +263,8 @@ namespace TMStatefulService
         public void Enlist(Delta d)
         {
             Console.WriteLine("Transaction Manager calling enlist");
-
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Calling Enlist method on node: " + this.Context.NodeContext.NodeName.ToString());
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Transaction Manager calling enlist");
             foreach (WCFDMSTransactionClient svc in TransactionProxys)
             {
                 svc.InvokeWithRetry(client => client.Channel.Enlist());
@@ -291,6 +292,8 @@ namespace TMStatefulService
         public void Prepare(Delta delta)
         {
             Console.WriteLine("Transaction Manager calling prepare");
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Calling Prepare method on node: " + this.Context.NodeContext.NodeName.ToString());
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Transaction Manager calling prepare");
             //foreach (WCFDMSTransactionClient c in TransactionProxys)
             //{
             //    c.InvokeWithRetry(x => x.Channel.Prepare(delta));
@@ -370,6 +373,8 @@ namespace TMStatefulService
         private void Commit()
         {
             Console.WriteLine("Transaction Manager calling commit");
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Calling Commit method on node: " + this.Context.NodeContext.NodeName.ToString());
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Transaction Manager calling commit");
             foreach (WCFDMSTransactionClient c in TransactionProxys)
             {
                 c.InvokeWithRetry(x => x.Channel.Commit());
@@ -381,6 +386,8 @@ namespace TMStatefulService
         public void Rollback()
         {
             Console.WriteLine("Transaction Manager calling rollback");
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Calling Rollback method on node: " + this.Context.NodeContext.NodeName.ToString());
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Transaction Manager calling rollback");
             foreach (WCFDMSTransactionClient c in TransactionProxys)
             {
                 c.InvokeWithRetry(x => x.Channel.Rollback());
@@ -448,7 +455,10 @@ namespace TMStatefulService
             //appendBlob.AppendText(string.Format("TransactionManager, GetNetwork(), instanceID: {0}, Time: {1}{2}", this.instanceID, DateTime.Now, Environment.NewLine));
             //cloudBlobContainer.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
             //return new TMSAnswerToClient();
+
+            ServiceEventSource.Current.ServiceMessage(this.Context, "Calling GetNetwork method on node: " + this.Context.NodeContext.NodeName.ToString());
             List<Element> listOfDMSElement = proxyToDMS.InvokeWithRetry(client => client.Channel.GetAllElements());
+
             // ako se ne podignu svi servisi na DMSu, ovde pada
             //   List<Element> listOfDMSElement = proxyToDispatcherDMS.GetAllElements();
             ServiceEventSource.Current.ServiceMessage(this.Context, "Hour chart on " + this.Context.NodeContext.NodeName.ToString());

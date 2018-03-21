@@ -45,7 +45,7 @@ namespace PubSubscribe
                 binding.ReceiveTimeout = TimeSpan.FromDays(10);
                 binding.SendTimeout = TimeSpan.FromDays(10);
                 binding.MaxReceivedMessageSize = Int32.MaxValue;
-                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:4080/SubscriptionService");
+                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://23.99.82.238:4080/SubscriptionService");
                 InstanceContext callback = new InstanceContext(this);
                 DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, BindingForTCP.CreateCustomNetTcp(), endpointAddress);
                 subscriptionProxy = channelFactory.CreateChannel();

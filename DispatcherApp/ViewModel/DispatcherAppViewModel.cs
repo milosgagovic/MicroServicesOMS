@@ -155,7 +155,7 @@ namespace DispatcherApp.ViewModel
             binding.MaxReceivedMessageSize = Int32.MaxValue;
 
             ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
-                new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
+                new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
             ProxyToTransactionManager = factoryToTMS.CreateChannel();
             TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
@@ -2035,8 +2035,8 @@ namespace DispatcherApp.ViewModel
                     binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
                     binding.MaxReceivedMessageSize = Int32.MaxValue;
 
-                    ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-               new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
+                    ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
+               new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
                     ProxyToTransactionManager = factoryToTMS.CreateChannel();
                     TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
