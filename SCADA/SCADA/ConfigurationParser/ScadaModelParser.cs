@@ -21,7 +21,7 @@ namespace SCADA.ConfigurationParser
 
         public ScadaModelParser(string basePath = "")
         {
-           // this.basePath = basePath == "" ? Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName : basePath;
+            // this.basePath = basePath == "" ? Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName : basePath;
             dbContext = new DBContext();
         }
 
@@ -32,7 +32,7 @@ namespace SCADA.ConfigurationParser
 
             string message = string.Empty;
             string configurationName = deserializationSource;
-          //  string source = Path.Combine(basePath, configurationName);
+            //  string source = Path.Combine(basePath, configurationName);
 
             if (Database.Instance.RTUs.Count != 0)
                 Database.Instance.RTUs.Clear();
@@ -42,10 +42,10 @@ namespace SCADA.ConfigurationParser
 
             try
             {
-              //  XElement xdocument = XElement.Load(source);
+                //  XElement xdocument = XElement.Load(source);
 
                 // access RTUS, DIGITALS, ANALOGS, COUNTERS from ScadaModel root
-             //   IEnumerable<XElement> elements = xdocument.Elements();
+                //   IEnumerable<XElement> elements = xdocument.Elements();
 
                 //var rtus = xdocument.Element("RTUS").Elements("RTU").ToList();
                 //var digitals = (from dig in xdocument.Element("Digitals").Elements("Digital")
@@ -236,7 +236,7 @@ namespace SCADA.ConfigurationParser
                                 newDigital.ValidCommands.Add(CommandTypes.OPEN);
                                 newDigital.ValidCommands.Add(CommandTypes.CLOSE);
 
-                               
+
                                 newDigital.ValidStates.Add(States.CLOSED);
                                 newDigital.ValidStates.Add(States.OPENED);
 
@@ -543,7 +543,7 @@ namespace SCADA.ConfigurationParser
                             //        validStates
                             //    );
                             #endregion
-                            if (ctx.Digitals.FirstOrDefault(x => x.Name == dig.Name) == null)
+                            if (ctx.Digitals.Where(x => x.Name == dig.Name).Count() == 0)
                             {
                                 ctx.Digitals.Add(new ScadaDBClassLib.ModelData.Digital
                                 {
@@ -553,6 +553,17 @@ namespace SCADA.ConfigurationParser
                                     State = dig.State.ToString(),
                                     Command = dig.Command.ToString()
                                 });
+                            }
+                            else
+                            {
+                                ScadaDBClassLib.ModelData.Digital digital = ctx.Digitals.FirstOrDefault(x => x.Name == dig.Name);
+                                digital.Name = dig.Name;
+                                digital.RelativeAddress = dig.RelativeAddress;
+                                digital.ProcContrName = dig.ProcContrName;
+                                digital.State = dig.State.ToString();
+                                digital.Command = dig.Command.ToString();
+                                ctx.Entry(digital).State = System.Data.Entity.EntityState.Modified;
+
                             }
                             // digitals.Add(digEl);
                             break;
@@ -575,7 +586,7 @@ namespace SCADA.ConfigurationParser
 
                             //analogs.Add(anEl);
                             #endregion
-                            if (ctx.Analogs.FirstOrDefault(x => x.Name == analog.Name) == null)
+                            if (ctx.Analogs.Where(x => x.Name == analog.Name).Count() == 0)
                             {
                                 ctx.Analogs.Add(new ScadaDBClassLib.ModelData.Analog
                                 {
@@ -588,7 +599,22 @@ namespace SCADA.ConfigurationParser
                                     ProcContrName = analog.ProcContrName,
                                     RelativeAddress = analog.RelativeAddress,
                                     UnitSymbol = analog.UnitSymbol.ToString()
+
                                 });
+                            }
+                            else
+                            {
+                                ScadaDBClassLib.ModelData.Analog analogUpdate = ctx.Analogs.FirstOrDefault(x => x.Name == analog.Name);
+                                analogUpdate.Name = analog.Name;
+                                analogUpdate.NumOfRegisters = analog.NumOfRegisters;
+                                analogUpdate.AcqValue = analog.AcqValue;
+                                analogUpdate.CommValue = analog.CommValue;
+                                analogUpdate.MaxValue = analog.MaxValue;
+                                analogUpdate.MinValue = analog.MinValue;
+                                analogUpdate.ProcContrName = analog.ProcContrName;
+                                analogUpdate.RelativeAddress = analog.RelativeAddress;
+                                analogUpdate.UnitSymbol = analog.UnitSymbol.ToString();
+                                ctx.Entry(analog).State = System.Data.Entity.EntityState.Modified;
                             }
                             break;
                     }
