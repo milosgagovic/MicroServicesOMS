@@ -155,7 +155,7 @@ namespace DispatcherApp.ViewModel
             binding.MaxReceivedMessageSize = Int32.MaxValue;
 
             ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
-                new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
+                new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
             ProxyToTransactionManager = factoryToTMS.CreateChannel();
             TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
@@ -2036,7 +2036,7 @@ namespace DispatcherApp.ViewModel
                     binding.MaxReceivedMessageSize = Int32.MaxValue;
 
                     ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(),
-               new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
+               new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
                     ProxyToTransactionManager = factoryToTMS.CreateChannel();
                     TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
@@ -2156,6 +2156,7 @@ namespace DispatcherApp.ViewModel
                     temp.RepairCrew = this.Crews.Where(c => c.CrewName == report.RepairCrew.CrewName).FirstOrDefault();
                     temp.RepairCrew.Working = report.RepairCrew.Working;
                 }
+                RaisePropertyChanged("Crews");
             }
             else
             {

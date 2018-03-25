@@ -17,7 +17,7 @@ namespace FTN.Services.NetworkModelService
     {
         //   private static GenericDataAccess gda; // = new GenericDataAccess();
         private NetworkGDAServiceFabric networkGDAServiceFabric;
-
+        private Delta delta;
         public NetworkGDAServiceFabric NetworkGDAServiceFabric
         {
             get
@@ -71,8 +71,9 @@ namespace FTN.Services.NetworkModelService
                 //UpdateResult updateResult = gda.ApplyUpdate(delta);
                 if (updateResult.Result == ResultType.Succeeded)
                 {
+                    this.delta = delta;
                     callback.CallbackPrepare(true);
-                    PushDataToDatabase(delta);
+                    
                 }
                 else
                 {
@@ -96,8 +97,9 @@ namespace FTN.Services.NetworkModelService
             {
                 GenericDataAccess.NetworkModel = GenericDataAccess.NewNetworkModel;
                 ResourceIterator.NetworkModel = GenericDataAccess.NewNetworkModel;
+                PushDataToDatabase(delta);
             }
-
+           
 
             ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
             callback.CallbackCommit("Uspjesno je prosao commit na NMS-u");

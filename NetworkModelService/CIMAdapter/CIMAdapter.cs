@@ -55,7 +55,7 @@ namespace FTN.ESI.SIMES.CIM.CIMAdapter
                     binding.SendTimeout = TimeSpan.FromDays(10);
                     binding.TransactionFlow = true;
 
-                    factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(), new EndpointAddress("net.tcp://23.99.82.238:7090/TMServiceEndpoint"));
+                    factoryToTMS = new ChannelFactory<IOMSClient>(BindingForTCP.CreateCustomNetTcp(), new EndpointAddress("net.tcp://localhost:7090/TMServiceEndpoint"));
                     proxyToTransactionManager = factoryToTMS.CreateChannel();
                 }
 

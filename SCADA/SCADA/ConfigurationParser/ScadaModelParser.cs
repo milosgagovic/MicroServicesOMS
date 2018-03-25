@@ -543,7 +543,7 @@ namespace SCADA.ConfigurationParser
                             //        validStates
                             //    );
                             #endregion
-                            if (ctx.Digitals.Where(x => x.Name == dig.Name).Count() == 0)
+                            if (ctx.Digitals.FirstOrDefault(x => x.Name == dig.Name) == null)
                             {
                                 ctx.Digitals.Add(new ScadaDBClassLib.ModelData.Digital
                                 {
@@ -586,7 +586,7 @@ namespace SCADA.ConfigurationParser
 
                             //analogs.Add(anEl);
                             #endregion
-                            if (ctx.Analogs.Where(x => x.Name == analog.Name).Count() == 0)
+                            if (ctx.Analogs.FirstOrDefault(x => x.Name == analog.Name) == null)
                             {
                                 ctx.Analogs.Add(new ScadaDBClassLib.ModelData.Analog
                                 {
@@ -614,7 +614,9 @@ namespace SCADA.ConfigurationParser
                                 analogUpdate.ProcContrName = analog.ProcContrName;
                                 analogUpdate.RelativeAddress = analog.RelativeAddress;
                                 analogUpdate.UnitSymbol = analog.UnitSymbol.ToString();
-                                ctx.Entry(analog).State = System.Data.Entity.EntityState.Modified;
+
+                                // ovo je sporno
+                                ctx.Entry(analogUpdate).State = System.Data.Entity.EntityState.Modified;
                             }
                             break;
                     }
@@ -626,13 +628,17 @@ namespace SCADA.ConfigurationParser
                 //var xdocument = new XDocument(scadaModel);
                 try
                 {
+                    //i onda ovde rokne zbog onog update
+
                     //xdocument.Save(target);
                     ctx.SaveChanges();
                     Console.WriteLine("Serializing ScadaModel succeed.");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    throw;
+                    System.Diagnostics.Trace.Write(e.StackTrace);
+                    System.Diagnostics.Trace.Write(e.Message);
+                    //throw;
                 }
             }
         }
