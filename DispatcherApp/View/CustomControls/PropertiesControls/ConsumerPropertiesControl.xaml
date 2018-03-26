@@ -78,10 +78,9 @@
                     </TextBlock>
                     <Label Grid.Row="1">Value:
                     </Label>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.Measurements[0].Value}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentProperty.Measurements[0].Value}" Padding="5, 2, 0, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0.4,1.6,36.8,2">
                     </TextBlock>
-                    <Label Grid.Row="1" Grid.Column="2" Content="{Binding CurrentProperty.Measurements[0].UnitSymbol}" Padding="5, 2, 2, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 2, 2">
-                    </Label>
+                    <Label Grid.Row="1" Grid.Column="1" Content="kWh" Padding="5, 2, 2, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0,1.6,1.8,2" HorizontalAlignment="Right" Width="30"/>
                 </Grid>
             </Expander>
         </Grid>
